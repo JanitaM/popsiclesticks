@@ -306,6 +306,130 @@ app.delete('/idea', async (request, response) => {
   }
 });
 
+// POST Idea Pic - Done
+app.post('/pic', authorizeUser, async (request, response) => {
+  try {
+    console.log('POST PIC');
+
+    if (!request.body.s3uuid || !request.body.idea) {
+      response.status(400).send({ message: 'missing s3uuid or idea id' });
+    }
+    const con = await pool.getConnection();
+    const queryResponse = await con.execute(
+      'INSERT INTO popsicle_stick.ideapic (s3uuid, description, idea) VALUES (?, ?, ?)',
+      [
+        request.body.s3uuid,
+        request.body.description ? request.body.description : null,
+        request.body.idea
+      ]
+    );
+    con.release();
+
+    console.log(queryResponse);
+
+    response.status(200).send({ messge: queryResponse });
+  } catch (error) {
+    console.log(error);
+    response.status(500).send({ error: error.message, message: error });
+  }
+});
+
+// GET All Idea Pics - Done
+app.get('/pics', async (request, response) => {
+  try {
+    console.log('GET ALL PICS');
+
+    const con = await pool.getConnection();
+    const recordset = await con.query('SELECT * FROM popsicle_stick.ideapic');
+    con.release();
+
+    console.log(recordset[0]);
+
+    response.status(200).send({ message: recordset[0] });
+  } catch (error) {
+    console.log(error);
+    response.status(500).send({ error: error.message, message: error });
+  }
+});
+
+// GET One Idea Pic - Done
+app.get('/pic', authorizeUser, async (request, response) => {
+  try {
+    console.log('GET ONE PIC');
+
+    const con = await pool.getConnection();
+    const recordset = await con.execute(
+      'SELECT * FROM popsicle_stick.ideapic WHERE s3uuid = ? AND idea = ?',
+      [request.body.s3uuid, request.body.idea]
+    );
+    con.release();
+
+    console.log(recordset[0]);
+
+    response.status(200).send({ message: recordset[0] });
+  } catch (error) {
+    console.log(error);
+    response.status(500).send({ error: error.message, message: error });
+  }
+});
+
+// UPDATE Idea Pic - Done
+app.put('/pic', authorizeUser, async (request, response) => {
+  try {
+    console.log('UPDATE ONE PIC');
+
+    const selectQuery = await pool.execute(
+      'SELECT * FROM popsicle_stick.ideapic WHERE s3uuid = ? AND idea = ?',
+      [request.body.s3uuid, request.body.idea]
+    );
+
+    console.log(selectQuery[0][0]);
+
+    const selectedUser = selectQuery[0][0];
+    const con = await pool.getConnection();
+    const queryResponse = await con.execute(
+      'UPDATE popsicle_stick.ideapic SET s3uuid = ?, description = ?, idea = ? WHERE s3uuid = ? AND idea = ?',
+      [
+        request.body.s3uuid ? request.body.s3uuid : selectedUser.s3uuid,
+        request.body.description
+          ? request.body.description
+          : selectedUser.description,
+        request.body.idea ? request.body.idea : selectedUser.idea,
+        request.body.s3uuid,
+        request.body.idea
+      ]
+    );
+    con.release();
+
+    console.log(queryResponse);
+
+    response.status(200).send({ message: queryResponse });
+  } catch (error) {
+    console.log(error);
+    response.status(500).send({ error: error.message, message: error });
+  }
+});
+
+// DELETE Idea Pic - Done
+app.delete('/pic', async (request, response) => {
+  try {
+    console.log('DELETE A PIC');
+    const con = await pool.getConnection();
+    const recordset = await con.execute(
+      'DELETE FROM popsicle_stick.ideapic WHERE s3uuid = ? AND idea = ?',
+      [request.body.s3uuid, request.body.idea]
+    );
+    con.release();
+
+    console.log(recordset[0]);
+
+    response.status(200).send({ message: recordset[0] });
+  } catch (error) {
+    console.log(error);
+    response.status(500).send({ error: error.message, message: error });
+  }
+});
+
 function authorizeUser(request, response, next) {
   next();
 }
