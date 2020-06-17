@@ -163,6 +163,149 @@ app.delete('/user', async (request, response) => {
   }
 });
 
+// POST Idea
+app.post('/idea', authorizeUser, async (request, response) => {
+  try {
+    console.log('POST IDEA');
+
+    if (!request.body.username) {
+      response.status(400).send({ message: 'enter all requried information' });
+    }
+    const con = await pool.getConnection();
+    const queryResponse = await con.execute(
+      'INSERT INTO popsicle_stick.idea (username, title, location, description, cost, indoor_outdoor, category, url, picture, weather, isCompleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [
+        request.body.username,
+        request.body.title,
+        request.body.location ? request.body.location : null,
+        request.body.description ? request.body.description : null,
+        request.body.cost ? request.body.cost : null,
+        request.body.indoor_outdoor ? request.body.indoor_outdoor : null,
+        request.body.category ? request.body.category : null,
+        request.body.url ? request.body.url : null,
+        request.body.picture ? request.body.picture : null,
+        request.body.weather ? request.body.weather : null,
+        request.body.isCompleted ? request.body.isCompleted : null
+      ]
+    );
+    con.release();
+
+    console.log(queryResponse);
+
+    response.status(200).send({ messge: queryResponse });
+  } catch (error) {
+    console.log(error);
+    response.status(500).send({ message: error });
+  }
+});
+
+// GET ALL Ideas
+app.get('/ideas', async (request, response) => {
+  try {
+    console.log('GET ALL IDEAS');
+
+    const con = await pool.getConnection();
+    const recordset = await con.query('SELECT * FROM popsicle_stick.idea');
+    con.release();
+
+    console.log(recordset[0]);
+
+    response.status(200).send({ message: recordset[0] });
+  } catch (error) {
+    console.log(error);
+    response.status(500).send({ message: error });
+  }
+});
+
+// GET One Idea - Done
+app.get('/idea', authorizeUser, async (request, response) => {
+  try {
+    console.log('GET ONE IDEA');
+
+    const con = await pool.getConnection();
+    const recordset = await con.execute(
+      'SELECT * FROM popsicle_stick.idea WHERE id = ? AND username = ?',
+      [request.query.id, request.query.username]
+    );
+    con.release();
+
+    console.log(recordset[0]);
+
+    response.status(200).send({ message: recordset[0] });
+  } catch (error) {
+    console.log(error);
+    response.status(500).send({ message: error });
+  }
+});
+
+// UPDATE Idea
+app.put('/idea', authorizeUser, async (request, response) => {
+  try {
+    console.log('UPDATE ONE IDEA');
+
+    const selectQuery = await pool.execute(
+      'SELECT * FROM popsicle_stick.idea WHERE id = ? AND username = ?',
+      [request.body.id, request.body.username]
+    );
+
+    console.log(selectQuery[0][0]);
+
+    const selectedUser = selectQuery[0][0];
+    const con = await pool.getConnection();
+    const queryResponse = await con.execute(
+      'UPDATE popsicle_stick.idea SET title = ?, location = ?, description = ?, cost = ?, indoor_outdoor = ?, category = ?, url = ?, picture = ?, weather = ?, isCompleted = ? WHERE id = ? AND username = ?',
+      [
+        request.body.title ? request.body.title : selectedUser.title,
+        request.body.location ? request.body.location : selectedUser.location,
+        request.body.description
+          ? request.body.description
+          : selectedUser.description,
+        request.body.cost ? request.body.cost : selectedUser.cost,
+        request.body.indoor_outdoor
+          ? request.body.indoor_outdoor
+          : selectedUser.indoor_outdoor,
+        request.body.category ? request.body.category : selectedUser.category,
+        request.body.url ? request.body.url : selectedUser.url,
+        request.body.picture ? request.body.picture : selectedUser.picture,
+        request.body.weather ? request.body.weather : selectedUser.weather,
+        request.body.isCompleted
+          ? request.body.isCompleted
+          : selectedUser.isCompleted,
+        request.body.id,
+        request.body.username
+      ]
+    );
+    con.release();
+
+    console.log(queryResponse);
+
+    response.status(200).send({ message: queryResponse });
+  } catch (error) {
+    console.log(error);
+    response.status(500).send({ message: error });
+  }
+});
+
+// DELETE Idea
+app.delete('/idea', async (request, response) => {
+  try {
+    console.log('DELETE AN IDEA');
+    const con = await pool.getConnection();
+    const recordset = await con.execute(
+      'DELETE FROM popsicle_stick.idea WHERE id = ? AND username = ?',
+      [request.body.id, request.body.username]
+    );
+    con.release();
+
+    console.log(recordset[0]);
+
+    response.status(200).send({ message: recordset[0] });
+  } catch (error) {
+    console.log(error);
+    response.status(500).send({ message: error });
+  }
+});
+
 function authorizeUser(request, response, next) {
   next();
 }
