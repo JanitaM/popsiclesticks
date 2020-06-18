@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql2/promise');
 const path = require('path');
+const { response } = require('express');
 
 const PORT = 4000;
 
@@ -413,6 +414,47 @@ app.delete('/pic', async (request, response) => {
     console.log(recordset[0]);
 
     response.status(200).send({ message: recordset[0] });
+  } catch (error) {
+    console.log(error);
+    response.status(500).send({ error: error.message, message: error });
+  }
+});
+
+// GET Everything
+app.get('/everything', authorizeUser, async (request, response) => {
+  try {
+    console.log('GET EVERYTHING');
+
+    const con = await pool.getConnection();
+    const queryResponse = await con.execute(
+      'SELECT * FROM popsicle_stick.ideapic JOIN popsicle_stick.idea ON popsicle_stick.idea.id = popsicle_stick.ideapic.idea JOIN popsicle_stick.user ON popsicle_stick.idea.username = popsicle_stick.user.username'
+    );
+    con.release();
+
+    console.log(queryResponse[0]);
+
+    response.status(200).send({ message: queryResponse[0] });
+  } catch (error) {
+    console.log(error);
+    response.status(500).send({ error: error.message, message: error });
+  }
+});
+
+// GET Everything By User
+app.get('/everythingbyuser', authorizeUser, async (request, response) => {
+  try {
+    console.log('GET EVERYTHING');
+
+    const con = await pool.getConnection();
+    const queryResponse = await con.execute(
+      'SELECT * FROM popsicle_stick.ideapic JOIN popsicle_stick.idea ON popsicle_stick.idea.id = popsicle_stick.ideapic.idea JOIN popsicle_stick.user ON popsicle_stick.idea.username = popsicle_stick.user.username WHERE popsicle_stick.user.username = ?',
+      [request.body.username]
+    );
+    con.release();
+
+    console.log(queryResponse[0]);
+
+    response.status(200).send({ message: queryResponse[0] });
   } catch (error) {
     console.log(error);
     response.status(500).send({ error: error.message, message: error });
