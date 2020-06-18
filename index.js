@@ -420,7 +420,7 @@ app.delete('/pic', async (request, response) => {
   }
 });
 
-// GET Everything
+// GET Everything - Done
 app.get('/everything', authorizeUser, async (request, response) => {
   try {
     console.log('GET EVERYTHING');
@@ -440,7 +440,7 @@ app.get('/everything', authorizeUser, async (request, response) => {
   }
 });
 
-// GET Everything By User
+// GET Everything By User - Done
 app.get('/everythingbyuser', authorizeUser, async (request, response) => {
   try {
     console.log('GET EVERYTHING');
