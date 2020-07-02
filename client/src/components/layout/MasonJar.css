@@ -1,0 +1,65 @@
+.main-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.sticks-container {
+  width: 200px;
+}
+
+.img-container {
+  position: absolute;
+  margin: 10rem auto;
+}
+
+.btn {
+  border-radius: 30px;
+  padding: 20px 60px;
+}
+
+.btn:hover {
+  background-color: tan;
+}
+
+.btn:focus {
+  outline: none;
+}
+
+.btn1 {
+  background-color: yellow;
+  transform: rotate(70deg) translateX(190px) translateY(60px);
+}
+
+.btn2 {
+  background-color: green;
+  transform: rotate(95deg) translateY(-50px) translateX(140px);
+}
+
+.btn3 {
+  background-color: blue;
+  transform: rotate(75deg) translateY(-40px) translateX(110px);
+}
+
+.btn4 {
+  background-color: red;
+  transform: rotate(105deg) translateY(-100px) translateX(40px);
+}
+
+.btn5 {
+  background-color: orange;
+  transform: rotate(95deg) translateY(-130px);
+}
+
+.jar-img {
+  width: 350px;
+}
+
+.jar-container {
+  position: relative;
+}
+
+.jar-label {
+  transform: translateY(-150px);
+}

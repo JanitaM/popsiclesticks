@@ -1,0 +1,20 @@
+{
+    "dev": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-popsticks-dev-162918-authRole",
+            "UnauthRoleArn": "arn:aws:iam::337914884777:role/amplify-popsticks-dev-162918-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::337914884777:role/amplify-popsticks-dev-162918-authRole",
+            "Region": "us-east-2",
+            "DeploymentBucketName": "amplify-popsticks-dev-162918-deployment",
+            "UnauthRoleName": "amplify-popsticks-dev-162918-unauthRole",
+            "StackName": "amplify-popsticks-dev-162918",
+            "StackId": "arn:aws:cloudformation:us-east-2:337914884777:stack/amplify-popsticks-dev-162918/8c1eaf60-bbd9-11ea-8ce2-06c94a3c6390",
+            "AmplifyAppId": "d2ododzwkpxnz1"
+        },
+        "categories": {
+            "auth": {
+                "popsticksaf051804": {}
+            }
+        }
+    }
+}

@@ -9,9 +9,9 @@ import {
 } from '@material-ui/core';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import { connect } from 'react-redux';
-import { addUser } from '../../actions/userActions';
+import { registerUser } from '../../actions/userActions';
 
-const Register = ({ addUser }) => {
+const Register = ({ registerUser }) => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,7 +19,7 @@ const Register = ({ addUser }) => {
 
   // need to add alerts
   const onSubmit = () => {
-    addUser({ username, email, password, profile_pic });
+    registerUser({ username, email, password, profile_pic });
   };
 
   const classes = useStyles();
@@ -148,4 +148,4 @@ Register.propTypes = {
   addUser: PropTypes.func.isRequired
 };
 
-export default connect(null, { addUser })(Register);
+export default connect(null, { registerUser })(Register);

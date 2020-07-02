@@ -7,8 +7,9 @@ import Register from './components/pages/Register';
 import SignIn from './components/pages/SignIn';
 import NotFound from './components/pages/NotFound';
 import Navbar from './components/layout/Navbar';
-
 import './App.css';
+import Landing from './components/pages/Landing';
+// import { withAuthenticator } from '@aws-amplify/ui-react';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
             <Route exact path='/' component={Home} />
             <Route exact path='/register' component={Register} />
             <Route exact path='/signin' component={SignIn} />
+            <Route exact path='/landing' component={Landing} />
             <Route component={NotFound} />
           </Switch>
         </div>
@@ -28,4 +30,5 @@ function App() {
   );
 }
 
+// export default withAuthenticator(App);
 export default App;

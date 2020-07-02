@@ -17,7 +17,7 @@ const SignIn = ({ signIn }) => {
   };
 
   const onSubmit = () => {
-    console.log(currentUser);
+    // console.log('currentUser', currentUser);
     signIn(currentUser);
   };
 
@@ -55,6 +55,9 @@ const SignIn = ({ signIn }) => {
           <Button className={classes.registerBtn} onClick={onSubmit}>
             Sign In
           </Button>
+          <Button className={classes.forgotPasswordBtn} onClick={onSubmit}>
+            Forgot password
+          </Button>
         </form>
       </div>
     </div>
@@ -62,8 +65,13 @@ const SignIn = ({ signIn }) => {
 };
 
 SignIn.propTypes = {
-  signIn: PropTypes.func.isRequired
+  signIn: PropTypes.func.isRequired,
+  user: PropTypes.object.isRequired
 };
+
+const mapStateToProps = (state) => ({
+  user: state.user
+});
 
 const useStyles = makeStyles({
   container: {
@@ -84,7 +92,11 @@ const useStyles = makeStyles({
   registerBtn: {
     backgroundColor: 'orange',
     margin: '1rem'
+  },
+  forgotPasswordBtn: {
+    border: '1px solid blue',
+    margin: '1rem'
   }
 });
 
-export default connect(null, { signIn })(SignIn); //null??
+export default connect(mapStateToProps, { signIn })(SignIn);

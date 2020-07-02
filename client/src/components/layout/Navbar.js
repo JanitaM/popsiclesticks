@@ -3,20 +3,27 @@ import { Link } from 'react-router-dom';
 import {
   makeStyles,
   AppBar,
+  Divider,
+  Drawer,
   Toolbar,
   Typography,
   CssBaseline,
   useScrollTrigger,
   Slide,
   IconButton,
-  Menu,
-  MenuItem
+  List,
+  ListItem,
+  Menu
 } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import popsicle from '../../assets/popsicle.png';
+import clsx from 'clsx';
+
+const drawerWidth = 265;
 
 function HideOnScroll({ children, window }) {
   const trigger = useScrollTrigger(window);
+
   return (
     <Slide appear={false} direction='down' in={!trigger}>
       {children}
@@ -27,20 +34,19 @@ function HideOnScroll({ children, window }) {
 const Navbar = (props) => {
   const classes = useStyles();
 
+  const [open, setOpen] = React.useState(false);
+
+  const handleDrawerOpen = () => {
+    setOpen(true);
+  };
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
-  // const isMenuOpen = Boolean(anchorEl);
+  const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-  const handleMobileMenuClose = () => {
-    setMobileMoreAnchorEl(null);
-  };
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-    handleMobileMenuClose();
-  };
-  const handleMobileMenuOpen = (event) => {
-    setMobileMoreAnchorEl(event.currentTarget);
-  };
 
   const mobileMenuId = 'primary-search-account-menu-mobile';
   const renderMobileMenu = (
@@ -51,25 +57,39 @@ const Navbar = (props) => {
       keepMounted
       transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       open={isMobileMenuOpen}
-      onClose={handleMobileMenuClose}
-      onClick={handleMenuClose}
+      onClick={handleDrawerClose}
+      aria-label='open drawer'
       className={classes.mobileMenu}
     >
-      <MenuItem>
-        <Link to='/' className={classes.mobileLink}>
-          Home
-        </Link>
-      </MenuItem>
-      <MenuItem>
-        <Link to='/register' className={classes.mobileLink}>
-          Register
-        </Link>
-      </MenuItem>
-      <MenuItem>
-        <Link to='/signin' className={classes.mobileLink}>
-          Sign
-        </Link>
-      </MenuItem>
+      <Drawer
+        className={classes.drawer}
+        anchor='right'
+        open={open}
+        classes={{
+          paper: classes.drawerPaper
+        }}
+        onClose={handleDrawerClose}
+      >
+        <List onClick={handleDrawerClose}>
+          <ListItem>
+            <Link to='/' className={classes.mobileLink}>
+              Home
+            </Link>
+          </ListItem>
+          <Divider />
+          <ListItem>
+            <Link to='/register' className={classes.mobileLink}>
+              Register
+            </Link>
+          </ListItem>
+          <Divider />
+          <ListItem>
+            <Link to='/signin' className={classes.mobileLink}>
+              Sign In
+            </Link>
+          </ListItem>
+        </List>
+      </Drawer>
     </Menu>
   );
 
@@ -80,10 +100,15 @@ const Navbar = (props) => {
         <div className={classes.grow}>
           <AppBar>
             <Toolbar>
-              <img src={popsicle} alt='popsicle-icon' />
-              <Typography variant='h6' noWrap>
-                Popsicle Sticks
-              </Typography>
+              <Link to='/'>
+                <img src={popsicle} alt='popsicle-icon' />
+              </Link>
+              <Link to='/'>
+                <Typography variant='h6' noWrap className={classes.title}>
+                  Popsicle Sticks
+                </Typography>
+              </Link>
+
               <div className={classes.grow} />
 
               <div className={classes.sectionDesktop}>
@@ -100,12 +125,11 @@ const Navbar = (props) => {
 
               <div className={classes.sectionMobile}>
                 <IconButton
-                  aria-label='open drawer'
-                  aria-controls={mobileMenuId}
-                  aria-haspopup='true'
-                  edge='end'
-                  onClick={handleMobileMenuOpen}
                   color='inherit'
+                  aria-label='open drawer'
+                  onClick={handleDrawerOpen}
+                  edge='end'
+                  className={clsx(classes.menuButton, open && classes.hide)}
                 >
                   <MenuIcon />
                 </IconButton>
@@ -150,6 +174,23 @@ const useStyles = makeStyles((theme) => ({
     '& .MuiPaper-root': {
       backgroundColor: 'lightblue'
     }
+  },
+  menuButton: {
+    color: '#f1f5f8',
+    marginRight: theme.spacing(2)
+  },
+  hide: {
+    display: 'none'
+  },
+  drawer: {
+    width: drawerWidth,
+    flexShrink: 0
+  },
+  drawerPaper: {
+    width: drawerWidth
+  },
+  title: {
+    color: '#fff'
   }
 }));
 
