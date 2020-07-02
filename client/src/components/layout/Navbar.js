@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { signOut, user } from '../../actions/userActions';
 import {
   makeStyles,
   AppBar,
@@ -18,6 +20,7 @@ import {
 import MenuIcon from '@material-ui/icons/Menu';
 import popsicle from '../../assets/popsicle.png';
 import clsx from 'clsx';
+import UserMobileNavBar from '../user/UserMobileNavbar';
 
 const drawerWidth = 265;
 
@@ -31,10 +34,12 @@ function HideOnScroll({ children, window }) {
   );
 }
 
-const Navbar = (props) => {
+const Navbar = ({ props, user, signOut }) => {
   const classes = useStyles();
 
-  const [open, setOpen] = React.useState(false);
+  console.log('user navbar', user); //undefined
+
+  const [open, setOpen] = useState(false);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -70,25 +75,30 @@ const Navbar = (props) => {
         }}
         onClose={handleDrawerClose}
       >
-        <List onClick={handleDrawerClose}>
-          <ListItem>
-            <Link to='/' className={classes.mobileLink}>
-              Home
-            </Link>
-          </ListItem>
-          <Divider />
-          <ListItem>
-            <Link to='/register' className={classes.mobileLink}>
-              Register
-            </Link>
-          </ListItem>
-          <Divider />
-          <ListItem>
-            <Link to='/signin' className={classes.mobileLink}>
-              Sign In
-            </Link>
-          </ListItem>
-        </List>
+        {user ? (
+          // <UserMobileNavBar />
+          <button onClick={signOut}>Sign Out</button>
+        ) : (
+          <List onClick={handleDrawerClose}>
+            <ListItem>
+              <Link to='/' className={classes.mobileLink}>
+                Home
+              </Link>
+            </ListItem>
+            <Divider />
+            <ListItem>
+              <Link to='/register' className={classes.mobileLink}>
+                Register
+              </Link>
+            </ListItem>
+            <Divider />
+            <ListItem>
+              <Link to='/signin' className={classes.mobileLink}>
+                Sign In
+              </Link>
+            </ListItem>
+          </List>
+        )}
       </Drawer>
     </Menu>
   );
@@ -111,17 +121,28 @@ const Navbar = (props) => {
 
               <div className={classes.grow} />
 
-              <div className={classes.sectionDesktop}>
-                <Link to='/' className={classes.desktopLink}>
-                  Home
-                </Link>
-                <Link to='/register' className={classes.desktopLink}>
-                  Register
-                </Link>
-                <Link to='/signin' className={classes.desktopLink}>
-                  Sign In
-                </Link>
-              </div>
+              {user ? (
+                <div className={classes.sectionDesktop}>
+                  <Link to='/' className={classes.desktopLink}>
+                    Home
+                  </Link>
+                  <Link to='/' className={classes.desktopLink}>
+                    Sign Out
+                  </Link>
+                </div>
+              ) : (
+                <div className={classes.sectionDesktop}>
+                  <Link to='/' className={classes.desktopLink}>
+                    Home
+                  </Link>
+                  <Link to='/register' className={classes.desktopLink}>
+                    Register
+                  </Link>
+                  <Link to='/signin' className={classes.desktopLink}>
+                    Sign In
+                  </Link>
+                </div>
+              )}
 
               <div className={classes.sectionMobile}>
                 <IconButton
@@ -194,4 +215,8 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default Navbar;
+const mapStateToProps = (state) => ({
+  user: state.user
+});
+
+export default connect(mapStateToProps, { signOut })(Navbar);

@@ -64,15 +64,6 @@ const SignIn = ({ signIn }) => {
   );
 };
 
-SignIn.propTypes = {
-  signIn: PropTypes.func.isRequired,
-  user: PropTypes.object.isRequired
-};
-
-const mapStateToProps = (state) => ({
-  user: state.user
-});
-
 const useStyles = makeStyles({
   container: {
     textAlign: 'center',
@@ -97,6 +88,15 @@ const useStyles = makeStyles({
     border: '1px solid blue',
     margin: '1rem'
   }
+});
+
+SignIn.propTypes = {
+  signIn: PropTypes.func.isRequired,
+  user: PropTypes.object.isRequired
+};
+
+const mapStateToProps = (state) => ({
+  user: state.user
 });
 
 export default connect(mapStateToProps, { signIn })(SignIn);

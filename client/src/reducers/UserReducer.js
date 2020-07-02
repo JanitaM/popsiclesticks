@@ -28,7 +28,13 @@ export default (state = initialState, action) => {
         user: action.payload,
         loading: false
       };
-    case CURRENT_USER:
+    case SIGNOUT_USER:
+      return {
+        ...state,
+        user: action.payload,
+        loading: false
+      };
+    case CURRENT_USER: //needed?
       return {
         ...state,
         currentUser: action.payload,
