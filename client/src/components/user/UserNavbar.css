@@ -1,0 +1,36 @@
+.signOutBtnM {
+  background-color: #fff;
+  border: none;
+  color: #333;
+  cursor: pointer;
+  font-size: 1.75rem;
+  line-height: 1.43;
+  letter-spacing: 0.01071em;
+  padding: 0;
+  text-transform: capitalize;
+}
+
+.signOutBtnM:hover {
+  background-color: #fff;
+}
+
+.signOutBtnD {
+  background-color: #3f51b5;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 1.25rem;
+  line-height: 1.43;
+  letter-spacing: 0.01071em;
+  padding: 0;
+  text-transform: capitalize;
+}
+
+.signOutBtnD:hover {
+  background-color: #3f51b5;
+  color: #fff;
+}
+
+.signOutBtn:focus {
+  outline: none;
+}

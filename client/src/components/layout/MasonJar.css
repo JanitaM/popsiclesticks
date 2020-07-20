@@ -11,7 +11,8 @@
 
 .img-container {
   position: absolute;
-  margin: 10rem auto;
+  top: 3rem;
+  margin: 0 auto;
 }
 
 .btn {

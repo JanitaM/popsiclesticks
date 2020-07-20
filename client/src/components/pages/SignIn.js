@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Button, makeStyles, TextField } from '@material-ui/core';
 import { connect } from 'react-redux';
-import { signIn } from '../../actions/userActions';
+import { signIn, user } from '../../actions/userActions';
+import { useHistory } from 'react-router-dom';
 
-const SignIn = ({ signIn }) => {
+const SignIn = ({ signIn, user }) => {
+  const history = useHistory();
+
   const [currentUser, setCurrentUser] = useState({
     username: '',
     password: ''
@@ -16,9 +19,16 @@ const SignIn = ({ signIn }) => {
     setCurrentUser({ ...currentUser, [e.target.name]: e.target.value });
   };
 
-  const onSubmit = () => {
-    // console.log('currentUser', currentUser);
+  const onSubmit = (e) => {
+    e.preventDefault();
+
     signIn(currentUser);
+    handleNext();
+  };
+
+  const handleNext = () => {
+    console.log(user);
+    if (user) return history.push('/landing');
   };
 
   const classes = useStyles();
@@ -35,7 +45,7 @@ const SignIn = ({ signIn }) => {
           <TextField
             required
             variant='outlined'
-            label='Username'
+            label='Email'
             type='text'
             name='username'
             value={username}
@@ -91,12 +101,15 @@ const useStyles = makeStyles({
 });
 
 SignIn.propTypes = {
-  signIn: PropTypes.func.isRequired,
-  user: PropTypes.object.isRequired
+  signIn: PropTypes.func.isRequired
 };
 
-const mapStateToProps = (state) => ({
-  user: state.user
-});
+const mapStateToProps = (state) => {
+  console.log(state);
+
+  return {
+    user: state.user
+  };
+};
 
 export default connect(mapStateToProps, { signIn })(SignIn);

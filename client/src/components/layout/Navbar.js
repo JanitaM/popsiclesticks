@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { signOut, user } from '../../actions/userActions';
+import { user } from '../../actions/userActions';
 import {
   makeStyles,
   AppBar,
@@ -21,6 +22,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import popsicle from '../../assets/popsicle.png';
 import clsx from 'clsx';
 import UserMobileNavBar from '../user/UserMobileNavbar';
+import UserDesktopNavbar from '../user/UserDesktopNavbar';
 
 const drawerWidth = 265;
 
@@ -34,10 +36,8 @@ function HideOnScroll({ children, window }) {
   );
 }
 
-const Navbar = ({ props, user, signOut }) => {
+const Navbar = ({ props, user }) => {
   const classes = useStyles();
-
-  console.log('user navbar', user); //undefined
 
   const [open, setOpen] = useState(false);
 
@@ -75,9 +75,8 @@ const Navbar = ({ props, user, signOut }) => {
         }}
         onClose={handleDrawerClose}
       >
-        {user ? (
-          // <UserMobileNavBar />
-          <button onClick={signOut}>Sign Out</button>
+        {user.user ? (
+          <UserMobileNavBar />
         ) : (
           <List onClick={handleDrawerClose}>
             <ListItem>
@@ -118,17 +117,10 @@ const Navbar = ({ props, user, signOut }) => {
                   Popsicle Sticks
                 </Typography>
               </Link>
-
               <div className={classes.grow} />
-
-              {user ? (
+              {user.user ? (
                 <div className={classes.sectionDesktop}>
-                  <Link to='/' className={classes.desktopLink}>
-                    Home
-                  </Link>
-                  <Link to='/' className={classes.desktopLink}>
-                    Sign Out
-                  </Link>
+                  <UserDesktopNavbar />
                 </div>
               ) : (
                 <div className={classes.sectionDesktop}>
@@ -143,7 +135,6 @@ const Navbar = ({ props, user, signOut }) => {
                   </Link>
                 </div>
               )}
-
               <div className={classes.sectionMobile}>
                 <IconButton
                   color='inherit'
@@ -215,8 +206,12 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+Navbar.propTypes = {
+  user: PropTypes.object.isRequired
+};
+
 const mapStateToProps = (state) => ({
   user: state.user
 });
 
-export default connect(mapStateToProps, { signOut })(Navbar);
+export default connect(mapStateToProps)(Navbar);

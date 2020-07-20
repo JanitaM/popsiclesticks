@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import masonJar from '../../assets/masonJar.png';
 import './MasonJar.css';
-import dummyDB from '../../dummyDB';
 
 const MasonJar = () => {
   return (

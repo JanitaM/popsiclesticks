@@ -1,19 +1,19 @@
 {
     "dev": {
         "awscloudformation": {
-            "AuthRoleName": "amplify-popsticks-dev-162918-authRole",
-            "UnauthRoleArn": "arn:aws:iam::337914884777:role/amplify-popsticks-dev-162918-unauthRole",
-            "AuthRoleArn": "arn:aws:iam::337914884777:role/amplify-popsticks-dev-162918-authRole",
+            "AuthRoleName": "amplify-popsiclesticks-dev-153356-authRole",
+            "UnauthRoleArn": "arn:aws:iam::337914884777:role/amplify-popsiclesticks-dev-153356-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::337914884777:role/amplify-popsiclesticks-dev-153356-authRole",
             "Region": "us-east-2",
-            "DeploymentBucketName": "amplify-popsticks-dev-162918-deployment",
-            "UnauthRoleName": "amplify-popsticks-dev-162918-unauthRole",
-            "StackName": "amplify-popsticks-dev-162918",
-            "StackId": "arn:aws:cloudformation:us-east-2:337914884777:stack/amplify-popsticks-dev-162918/8c1eaf60-bbd9-11ea-8ce2-06c94a3c6390",
-            "AmplifyAppId": "d2ododzwkpxnz1"
+            "DeploymentBucketName": "amplify-popsiclesticks-dev-153356-deployment",
+            "UnauthRoleName": "amplify-popsiclesticks-dev-153356-unauthRole",
+            "StackName": "amplify-popsiclesticks-dev-153356",
+            "StackId": "arn:aws:cloudformation:us-east-2:337914884777:stack/amplify-popsiclesticks-dev-153356/a03d1390-c92d-11ea-b6ef-066f8b7a8772",
+            "AmplifyAppId": "d2agvi4ylqsqe0"
         },
         "categories": {
             "auth": {
-                "popsticksaf051804": {}
+                "popsiclesticks8ee78272": {}
             }
         }
     }
