@@ -27,8 +27,7 @@ const SignIn = ({ signIn, user }) => {
   };
 
   const handleNext = () => {
-    console.log(user);
-    if (user) return history.push('/landing');
+    return history.push('/landing');
   };
 
   const classes = useStyles();

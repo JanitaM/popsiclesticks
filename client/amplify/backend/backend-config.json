@@ -1,6 +1,6 @@
 {
 	"auth": {
-		"popsiclesticks8ee78272": {
+		"popsiclestickse718f956": {
 			"service": "Cognito",
 			"providerPlugin": "awscloudformation",
 			"dependsOn": [],

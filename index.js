@@ -81,7 +81,6 @@ app.post('/user', authorizeUser, async (request, response) => {
   try {
     console.log('POST USER');
     const email = request.decodedToken.email;
-
     if (!email) {
       response.status(400).send({ message: 'enter all requried information' });
     }

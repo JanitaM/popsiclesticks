@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { Auth } from 'aws-amplify';
+import React from 'react';
 import { Provider } from 'react-redux';
 import store from './store';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
@@ -11,7 +10,6 @@ import SignIn from './components/pages/SignIn';
 import Landing from './components/pages/Landing';
 import NotFound from './components/pages/NotFound';
 import './App.css';
-import ConfirmSignUp from './components/user/signUp/ConfirmSignUp';
 
 function App() {
   return (
@@ -25,7 +23,6 @@ function App() {
             <Route exact path='/signin' component={SignIn} />
             {/* <PrivateRoute exact path='/' component={Landing} /> */}
             <Route exact path='/landing' component={Landing} />
-            <Route exact path='/register/confirm' component={ConfirmSignUp} />
             <Route component={NotFound} />
           </Switch>
         </>

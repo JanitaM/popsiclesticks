@@ -1,6 +1,4 @@
 import {
-  REGISTER_USER,
-  CONFIRM_USER,
   SIGNIN_USER,
   SIGNOUT_USER,
   SET_LOADING,
@@ -8,7 +6,6 @@ import {
 } from '../actions/types';
 
 const initialState = {
-  newUser: null,
   user: null,
   loading: false,
   error: null,
@@ -17,20 +14,6 @@ const initialState = {
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case REGISTER_USER:
-      return {
-        ...state,
-        newUser: action.payload,
-        loading: false,
-        isAuthenticated: false
-      };
-    case CONFIRM_USER:
-      return {
-        ...state,
-        newUser: action.payload,
-        loading: false,
-        isAuthenticated: false
-      };
     case SIGNIN_USER:
       return {
         ...state,

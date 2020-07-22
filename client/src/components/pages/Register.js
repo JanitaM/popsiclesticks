@@ -5,32 +5,87 @@ import {
   Button,
   makeStyles,
   TextField,
-  Typography
+  Typography,
+  Input
 } from '@material-ui/core';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
-import { connect } from 'react-redux';
-import { registerUser } from '../../actions/userActions';
 import { useHistory } from 'react-router-dom';
+import { Auth } from 'aws-amplify';
+import ConfirmSignUp from './ConfirmSignUp';
 
-const Register = ({ registerUser }) => {
+const Register = () => {
   const classes = useStyles();
   const history = useHistory();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [profilepic, setProfilePic] = useState(undefined);
-  const [confirmationCode, setConfirmationCode] = useState('');
+  const [isRegisterPage, setIsRegisterPage] = useState(true);
 
-  // need to add alerts
-  const onSubmit = (e) => {
-    e.preventDefault();
+  const [signUpForm, setSignUpForm] = useState({
+    email: '',
+    password: '',
+    profilepic: undefined,
+    convertprofilepic: '',
+    confirmationCode: ''
+  });
 
-    registerUser({ email, password, profilepic, confirmationCode });
-    handleNext();
+  const [signUpUser, setSignUpUser] = useState(undefined);
+
+  if (!isRegisterPage) {
+    return (
+      <ConfirmSignUp
+        setIsRegisterPage={setIsRegisterPage}
+        signUpForm={signUpForm}
+        setSignUpForm={setSignUpForm}
+      />
+    );
+  }
+
+  const onChange = (e) => {
+    setSignUpForm({
+      ...signUpForm,
+      profilepic: e.target.files[0]
+    });
+    // renderProfilePic(e);
   };
 
-  const handleNext = () => {
-    history.push('/register/confirm');
+  // Can't do both setProfilePic and renderProfilePic??
+  // const renderProfilePic = (e) => {
+  //   const fileReader = new FileReader();
+  //   fileReader.readAsDataURL(e.target.files[0]);
+  //   fileReader.onload = (e) => {
+  //     setSignUpForm({
+  //       ...signUpForm,
+  //       convertprofilepic: e.target.result
+  //     });
+  //   };
+  // };
+
+  // need to add alerts
+  const registerUser = (e) => {
+    e.preventDefault();
+
+    if (signUpForm.email === '' || signUpForm.password === '') {
+      alert('Please enter an email and password');
+    } else {
+      try {
+        console.log(signUpForm);
+
+        async function signUp() {
+          const user = await Auth.signUp({
+            username: signUpForm.email, //use username to but pass in email
+            password: signUpForm.password,
+            attributes: {
+              email: signUpForm.email
+            }
+          });
+          setSignUpUser(user);
+        }
+        signUp();
+        // need to alerts
+        setIsRegisterPage(false);
+      } catch (error) {
+        console.log(error);
+      }
+    }
   };
 
   return (
@@ -41,7 +96,7 @@ const Register = ({ registerUser }) => {
         </Typography>
         <Typography gutterBottom>It's free and only takes a minute.</Typography>
         <form
-          onSubmit={onSubmit}
+          onSubmit={registerUser}
           className={classes.formContainer}
           autoComplete='off'
         >
@@ -51,8 +106,10 @@ const Register = ({ registerUser }) => {
             label='Email'
             type='email'
             name='email'
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={signUpForm.email}
+            onChange={(e) =>
+              setSignUpForm({ ...signUpForm, email: e.target.value })
+            }
             className={classes.m1}
           />
           <TextField
@@ -61,17 +118,23 @@ const Register = ({ registerUser }) => {
             label='Password'
             type='password'
             name='password'
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={signUpForm.password}
+            onChange={(e) =>
+              setSignUpForm({ ...signUpForm, password: e.target.value })
+            }
             className={classes.m1}
           />
 
           <Typography gutterBottom className={classes.m1}>
             Optional - Upload a profile pic
           </Typography>
+
           <div className={classes.uploadContainer}>
-            <Avatar src={profilepic} className={classes.image} />
-            <input
+            <Avatar
+              // src={signUpForm.convertprofilepic}
+              className={classes.image}
+            />
+            <Input
               accept='image/*'
               className={classes.uploadInput}
               id='upload-btn'
@@ -79,15 +142,7 @@ const Register = ({ registerUser }) => {
               type='file'
               name='profilepic'
               label='profilepic'
-              onChange={(event) => {
-                const fileReader = new FileReader();
-
-                fileReader.readAsDataURL(event.target.files[0]);
-
-                fileReader.onload = (e) => {
-                  setProfilePic(e.target.result);
-                };
-              }}
+              onChange={(e) => onChange(e)}
             />
             <label htmlFor='upload-btn'>
               <Button
@@ -100,7 +155,8 @@ const Register = ({ registerUser }) => {
               </Button>
             </label>
           </div>
-          <Button className={classes.registerBtn} onClick={onSubmit}>
+
+          <Button className={classes.registerBtn} onClick={registerUser}>
             Register
           </Button>
         </form>
@@ -154,11 +210,4 @@ Register.propTypes = {
   registerUser: PropTypes.func.isRequired
 };
 
-const mapStateToProps = (state) => {
-  console.log(state.user.newUser);
-  return {
-    newUser: state.user.newUser
-  };
-};
-
-export default connect(mapStateToProps, { registerUser })(Register);
+export default Register;

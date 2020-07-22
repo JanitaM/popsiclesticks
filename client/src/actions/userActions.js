@@ -1,90 +1,48 @@
-import {
-  REGISTER_USER,
-  CONFIRM_USER,
-  SIGNIN_USER,
-  SIGNOUT_USER,
-  SET_LOADING,
-  USER_ERROR
-} from './types';
-import { Auth, Storage } from 'aws-amplify';
+import { SIGNIN_USER, SIGNOUT_USER, SET_LOADING, USER_ERROR } from './types';
+import { Auth } from 'aws-amplify';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 
-// POST user to cognito
-export const registerUser = (user) => async (dispatch) => {
-  setLoading();
-  console.log('user', user); //profile pic is here user.profilepic
+//   async function uploadToSql() {
+//     console.log('upload to mysql');
 
-  try {
-    const newUser = await Auth.signUp({
-      username: user.email,
-      password: user.password,
-      attributes: {
-        email: user.email
-      }
-    });
+//     return await axios({
+//       method: 'post',
+//       url: 'https://ds7m4gu0n5.execute-api.us-east-2.amazonaws.com/dev/user',
+//       data: {
+//         username: newUser.user.username,
+//         profilepic: newUser.user.profilepic
+//       }
+//     });
+//   }
 
-    dispatch({
-      type: REGISTER_USER,
-      payload: newUser
-    });
-  } catch (error) {
-    console.log(error);
-  }
-};
+//   try {
+//     const response = await Auth.confirmSignUp(
+//       newUser.user.username,
+//       confirmationCode
+//     );
 
-export const confirmUser = (confirmationCode, newUser) => async (dispatch) => {
-  setLoading();
+//     // prompt(response);
+//     if (response === 'SUCCESS') {
+//       // const myUuid = uuidv4();
 
-  // console.log('confirmationCode', confirmationCode); //this works
-  console.log('newUser', newUser.user); //this works
+//       Storage.put(
+//         `${newUser.user.username}/profilepics/${newUser.user.profilepic}`,
+//         newUser.user.profilepic,
+//         {
+//           contentType: 'image/*'
+//         }
+//       )
+//         .then((result) => console.log(result))
+//         .then(() => uploadToSql(newUser.user.profilepic))
+//         // .then(() => navigate('/'))
+//         .catch((error) => console.log(error));
+//     }
 
-  // profilepic is undefined
-
-  async function uploadToSql() {
-    console.log('upload to mysql');
-
-    return await axios({
-      method: 'post',
-      url: 'https://ds7m4gu0n5.execute-api.us-east-2.amazonaws.com/dev/user',
-      data: {
-        username: newUser.user.username,
-        profilepic: newUser.user.profilepic
-      }
-    });
-  }
-
-  try {
-    const response = await Auth.confirmSignUp(
-      newUser.user.username,
-      confirmationCode
-    );
-
-    // prompt(response);
-    if (response === 'SUCCESS') {
-      // const myUuid = uuidv4();
-
-      Storage.put(
-        `${newUser.user.username}/profilepics/${newUser.user.profilepic}`,
-        newUser.user.profilepic,
-        {
-          contentType: 'image/*'
-        }
-      )
-        .then((result) => console.log(result))
-        .then(() => uploadToSql(newUser.user.profilepic))
-        // .then(() => navigate('/'))
-        .catch((error) => console.log(error));
-    }
-
-    dispatch({
-      type: REGISTER_USER,
-      payload: newUser
-    });
-  } catch (error) {
-    console.log(error);
-  }
-};
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
 
 // Sign In to AWS
 export const signIn = (currentUser) => async (dispatch) => {
