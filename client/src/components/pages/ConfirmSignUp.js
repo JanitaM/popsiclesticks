@@ -18,17 +18,12 @@ const ConfirmSignUp = ({ signUpForm, setSignUpForm, setIsRegisterPage }) => {
   const classes = useStyles();
   const history = useHistory();
 
-  const [confirmationCode, setConfirmationCode] = useState('');
-
-  console.log(signUpForm); //this works
-
   const confirmUser = async (e) => {
     e.preventDefault();
 
     async function uploadToSql(myUuid) {
-      console.log('upload to mysql'); //this works
+      console.log('upload to mysql');
 
-      //not uploading to mysql status code 400
       return await axios({
         method: 'post',
         url: 'https://ds7m4gu0n5.execute-api.us-east-2.amazonaws.com/dev/user',

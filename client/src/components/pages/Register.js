@@ -9,13 +9,11 @@ import {
   Input
 } from '@material-ui/core';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
-import { useHistory } from 'react-router-dom';
 import { Auth } from 'aws-amplify';
 import ConfirmSignUp from './ConfirmSignUp';
 
 const Register = () => {
   const classes = useStyles();
-  const history = useHistory();
 
   const [isRegisterPage, setIsRegisterPage] = useState(true);
 
@@ -42,22 +40,10 @@ const Register = () => {
   const onChange = (e) => {
     setSignUpForm({
       ...signUpForm,
+      convertprofilepic: URL.createObjectURL(e.target.files[0]),
       profilepic: e.target.files[0]
     });
-    // renderProfilePic(e);
   };
-
-  // Can't do both setProfilePic and renderProfilePic??
-  // const renderProfilePic = (e) => {
-  //   const fileReader = new FileReader();
-  //   fileReader.readAsDataURL(e.target.files[0]);
-  //   fileReader.onload = (e) => {
-  //     setSignUpForm({
-  //       ...signUpForm,
-  //       convertprofilepic: e.target.result
-  //     });
-  //   };
-  // };
 
   // need to add alerts
   const registerUser = (e) => {
@@ -131,7 +117,7 @@ const Register = () => {
 
           <div className={classes.uploadContainer}>
             <Avatar
-              // src={signUpForm.convertprofilepic}
+              src={signUpForm.convertprofilepic}
               className={classes.image}
             />
             <Input

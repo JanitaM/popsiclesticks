@@ -51,21 +51,15 @@ app.post('/user', authorizeUser, async (request, response) => {
   try {
     console.log('POST USER');
 
-    if (
-      !request.body.username ||
-      !request.body.email ||
-      !request.body.password
-    ) {
+    if (!request.body.email) {
       response.status(400).send({ message: 'enter all requried information' });
     }
     const con = await pool.getConnection();
     const queryResponse = await con.execute(
-      'INSERT INTO popsicle_stick.user (username, email, password, profile_pic, date) VALUES (?, ?, ?, ?, ?)',
+      'INSERT INTO popsicle_stick.user (email, profilepic, date) VALUES (?, ?, ?)',
       [
-        request.body.username,
         request.body.email,
-        request.body.password,
-        request.body.profile_pic ? request.body.profile_pic : null,
+        request.body.profilepic ? request.body.profilepic : null,
         new Date()
       ]
     );
