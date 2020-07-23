@@ -1,16 +1,3 @@
-// const express = require('express');
-// const app = express();
-// const serverless = require('serverless-http');
-// const cors = require('cors');
-
-// app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
-// app.use(cors());
-
-// app.get('/api/info', (request, response) => {
-//   response.send('Hello from lambda');
-// });
-
 require('dotenv').config();
 const serverless = require('serverless-http');
 const express = require('express');
@@ -28,10 +15,44 @@ const pool = mysql.createPool({
   password: process.env.AWS_PASSWORD
 });
 
+const jwks = {
+  keys: [
+    {
+      alg: 'RS256',
+      e: 'AQAB',
+      kid: 'mwBui5OGtlWrfkdbR1/ZzfbXXcF6TsMw7207hQqlhOY=',
+      kty: 'RSA',
+      n:
+        'rL4sw19DtbKaKDLbncrmBMn8n8_Zpt6X2wdrE-Vh0po4EYlVDng8wn3cye_LO0_nIDSmzA2kKRzF3ExKWVVVZ6YU9Ukxpoy5pKkxn1AeHk7fazicLWDjSlcaUaI0Q2bNQyq6seRc-ixX7FptLaIoBcJs4Ga0a3jJwtnpLTSUA_OkBKG96yhmeJidxbAwCAgUt53ksMxgQu4kbFCTW-wJAYxNb4-xlOoca_Kz0R3aOBQcCNqAe5s-QlBuHVxgDo65kbW6IaMac7hbc4u758biWacH3kEPhanM7syUwc-taDYHv73hTn-knu8BqgmW58mizRvEowH7zSx4Q8IAPNOxUQ',
+      use: 'sig'
+    },
+    {
+      alg: 'RS256',
+      e: 'AQAB',
+      kid: 'xfVBBSZuZL7cklp9WAEpxmBmA426CIJ6HuA9cua9fKk=',
+      kty: 'RSA',
+      n:
+        'ncKGDGr_-tvhI-0kKx2prNtJ9IPXxxKiSWa9BXYvX9VYO3aO03mBo6fjgmD3B4kzygVxIzFZGKMzBdMyxpycZSzKA5zqlI8O_wYnSulB26zXXgG5wNRU6GfkcXukXMoIvyWpOGFOkE55VL-Me-sq6M5wCG3IKhj6QZMFDDoKXgSAfEa_DfAa3ZOO21gzNQHwKslwHgHhjAjM5q0zN8bShVwGb29i37dN-WiLxjYkg0tv171vFdzgohM6Fsp2cUJvlJ1m59y3qniP_gSg8RcutAI5qlFQuqYgHT9R_vT1sNyfVo9vlbuIxA--NT9xN3pDcL-GbXVKk-aYUMKoXNCW6Q',
+      use: 'sig'
+    }
+  ]
+};
+
+const jwkIdToken = jwks.keys[0];
+const jwkAccessToken = jwks.keys[1];
+const pem = jwkToPem(jwkIdToken);
+
 // GET All Users
 app.get('/users', authorizeUser, async (request, response) => {
   try {
     console.log('GET ALL USERS');
+    console.log('request after authorization', request.decodedToken);
+    console.log('request after authorization', request.decodedToken.email);
+
+    const email = request.decodedToken.email;
+    if (!email) {
+      response.status(400).send({ message: 'access denied' });
+    }
 
     const con = await pool.getConnection();
     const recordset = await con.query('SELECT * FROM popsicle_stick.user');
@@ -42,7 +63,7 @@ app.get('/users', authorizeUser, async (request, response) => {
     response.status(200).send({ message: recordset[0] });
   } catch (error) {
     console.log(error);
-    response.status(500).send({ message: error });
+    response.status(500).send({ error: error.message, message: error });
   }
 });
 
@@ -51,14 +72,16 @@ app.post('/user', authorizeUser, async (request, response) => {
   try {
     console.log('POST USER');
 
-    if (!request.body.email) {
-      response.status(400).send({ message: 'enter all requried information' });
+    const email = request.decodedToken.email;
+    if (!email) {
+      response.status(400).send({ message: 'enter all required information' });
     }
+
     const con = await pool.getConnection();
     const queryResponse = await con.execute(
       'INSERT INTO popsicle_stick.user (email, profilepic, date) VALUES (?, ?, ?)',
       [
-        request.body.email,
+        email,
         request.body.profilepic ? request.body.profilepic : null,
         new Date()
       ]
@@ -70,7 +93,7 @@ app.post('/user', authorizeUser, async (request, response) => {
     response.status(200).send({ messge: queryResponse });
   } catch (error) {
     console.log(error);
-    response.status(500).send({ message: error });
+    response.status(500).send({ error: error.message, message: error });
   }
 });
 
@@ -79,10 +102,15 @@ app.get('/user', authorizeUser, async (request, response) => {
   try {
     console.log('GET ONE USER');
 
+    const email = request.decodedToken.email;
+    if (!email) {
+      response.status(400).send({ message: 'access denied' });
+    }
+
     const con = await pool.getConnection();
     const recordset = await con.execute(
-      'SELECT * FROM popsicle_stick.user WHERE username=?',
-      [request.query.username]
+      'SELECT * FROM popsicle_stick.user WHERE email=?',
+      [email]
     );
     con.release();
 
@@ -91,7 +119,7 @@ app.get('/user', authorizeUser, async (request, response) => {
     response.status(200).send({ message: recordset[0] });
   } catch (error) {
     console.log(error);
-    response.status(500).send({ message: error });
+    response.status(500).send({ error: error.message, message: error });
   }
 });
 
@@ -100,14 +128,14 @@ app.put('/user', authorizeUser, async (request, response) => {
   try {
     console.log('UPDATE ONE USER');
 
-    if (!request.body.username || !request.body.password) {
-      response
-        .status(400)
-        .send({ message: 'entered valid username and password' });
+    const email = request.decodedToken.email;
+    if (!email) {
+      response.status(400).send({ message: 'access denied' });
     }
+
     const selectQuery = await pool.execute(
-      'SELECT * FROM popsicle_stick.user WHERE username = ? AND password = ?',
-      [request.body.username, request.body.password]
+      'SELECT * FROM popsicle_stick.user WHERE email = ?',
+      [email]
     );
 
     console.log(selectQuery[0][0]);
@@ -115,15 +143,13 @@ app.put('/user', authorizeUser, async (request, response) => {
     const selectedUser = selectQuery[0][0];
     const con = await pool.getConnection();
     const queryResponse = await con.execute(
-      'UPDATE popsicle_stick.user SET email = ?, password = ?, profile_pic = ? WHERE username = ? AND password = ?',
+      'UPDATE popsicle_stick.user SET email = ?, profilepic = ? WHERE email = ?',
       [
-        request.body.email ? request.body.email : selectedUser.email,
-        request.body.password ? request.body.password : selectedUser.password,
-        request.body.profile_pic
-          ? request.body.profile_pic
-          : selectedUser.profile_pic,
-        request.body.username,
-        request.body.password
+        email ? request.body.email : selectedUser.email,
+        request.body.profilepic
+          ? request.body.profilepic
+          : selectedUser.profilepic,
+        email
       ]
     );
     con.release();
@@ -133,18 +159,24 @@ app.put('/user', authorizeUser, async (request, response) => {
     response.status(200).send({ message: queryResponse });
   } catch (error) {
     console.log(error);
-    response.status(500).send({ message: error });
+    response.status(500).send({ error: error.message, message: error });
   }
 });
 
 // DELETE User
-app.delete('/user', async (request, response) => {
+app.delete('/user', authorizeUser, async (request, response) => {
   try {
     console.log('DELETE USER');
+
+    const email = request.decodedToken.email;
+    if (!email) {
+      response.status(400).send({ message: 'access denied' });
+    }
+
     const con = await pool.getConnection();
     const recordset = await con.execute(
-      'DELETE FROM popsicle_stick.user WHERE username = ? AND password = ?',
-      [request.body.username, request.body.password]
+      'DELETE FROM popsicle_stick.user WHERE email = ?',
+      [email]
     );
     con.release();
 
@@ -153,7 +185,7 @@ app.delete('/user', async (request, response) => {
     response.status(200).send({ message: recordset[0] });
   } catch (error) {
     console.log(error);
-    response.status(500).send({ message: error });
+    response.status(500).send({ error: error.message, message: error });
   }
 });
 
@@ -162,14 +194,16 @@ app.post('/idea', authorizeUser, async (request, response) => {
   try {
     console.log('POST IDEA');
 
-    if (!request.body.username) {
-      response.status(400).send({ message: 'enter all requried information' });
+    const email = request.decodedToken.email;
+    if (!email) {
+      response.status(400).send({ message: 'access denied' });
     }
+
     const con = await pool.getConnection();
     const queryResponse = await con.execute(
-      'INSERT INTO popsicle_stick.idea (username, title, location, description, cost, indoor_outdoor, category, url, picture, weather, isCompleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      'INSERT INTO popsicle_stick.idea (email, title, location, description, cost, indoor_outdoor, category, url, picture, weather, isCompleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
       [
-        request.body.username,
+        email,
         request.body.title,
         request.body.location ? request.body.location : null,
         request.body.description ? request.body.description : null,
@@ -189,14 +223,19 @@ app.post('/idea', authorizeUser, async (request, response) => {
     response.status(200).send({ messge: queryResponse });
   } catch (error) {
     console.log(error);
-    response.status(500).send({ message: error });
+    response.status(500).send({ error: error.message, message: error });
   }
 });
 
 // GET ALL Ideas
-app.get('/ideas', async (request, response) => {
+app.get('/ideas', authorizeUser, async (request, response) => {
   try {
     console.log('GET ALL IDEAS');
+
+    const email = request.decodedToken.email;
+    if (!email) {
+      response.status(400).send({ message: 'access denied' });
+    }
 
     const con = await pool.getConnection();
     const recordset = await con.query('SELECT * FROM popsicle_stick.idea');
@@ -207,19 +246,25 @@ app.get('/ideas', async (request, response) => {
     response.status(200).send({ message: recordset[0] });
   } catch (error) {
     console.log(error);
-    response.status(500).send({ message: error });
+    response.status(500).send({ error: error.message, message: error });
   }
 });
 
-// GET One Idea - Done
+// GET One Idea
 app.get('/idea', authorizeUser, async (request, response) => {
   try {
     console.log('GET ONE IDEA');
 
+    const email = request.decodedToken.email;
+    if (!email) {
+      response.status(400).send({ message: 'access denied' });
+    }
+
     const con = await pool.getConnection();
     const recordset = await con.execute(
-      'SELECT * FROM popsicle_stick.idea WHERE id = ? AND username = ?',
-      [request.query.id, request.query.username]
+      'SELECT * FROM popsicle_stick.idea WHERE id = ? AND email = ?',
+      // [request.query.id, email]
+      [request.body.id, email]
     );
     con.release();
 
@@ -228,7 +273,7 @@ app.get('/idea', authorizeUser, async (request, response) => {
     response.status(200).send({ message: recordset[0] });
   } catch (error) {
     console.log(error);
-    response.status(500).send({ message: error });
+    response.status(500).send({ error: error.message, message: error });
   }
 });
 
@@ -237,9 +282,14 @@ app.put('/idea', authorizeUser, async (request, response) => {
   try {
     console.log('UPDATE ONE IDEA');
 
+    const email = request.decodedToken.email;
+    if (!email) {
+      response.status(400).send({ message: 'access denied' });
+    }
+
     const selectQuery = await pool.execute(
-      'SELECT * FROM popsicle_stick.idea WHERE id = ? AND username = ?',
-      [request.body.id, request.body.username]
+      'SELECT * FROM popsicle_stick.idea WHERE id = ? AND email = ?',
+      [request.body.id, email]
     );
 
     console.log(selectQuery[0][0]);
@@ -247,7 +297,7 @@ app.put('/idea', authorizeUser, async (request, response) => {
     const selectedUser = selectQuery[0][0];
     const con = await pool.getConnection();
     const queryResponse = await con.execute(
-      'UPDATE popsicle_stick.idea SET title = ?, location = ?, description = ?, cost = ?, indoor_outdoor = ?, category = ?, url = ?, picture = ?, weather = ?, isCompleted = ? WHERE id = ? AND username = ?',
+      'UPDATE popsicle_stick.idea SET title = ?, location = ?, description = ?, cost = ?, indoor_outdoor = ?, category = ?, url = ?, picture = ?, weather = ?, isCompleted = ? WHERE id = ? AND email = ?',
       [
         request.body.title ? request.body.title : selectedUser.title,
         request.body.location ? request.body.location : selectedUser.location,
@@ -266,7 +316,7 @@ app.put('/idea', authorizeUser, async (request, response) => {
           ? request.body.isCompleted
           : selectedUser.isCompleted,
         request.body.id,
-        request.body.username
+        email
       ]
     );
     con.release();
@@ -276,18 +326,24 @@ app.put('/idea', authorizeUser, async (request, response) => {
     response.status(200).send({ message: queryResponse });
   } catch (error) {
     console.log(error);
-    response.status(500).send({ message: error });
+    response.status(500).send({ error: error.message, message: error });
   }
 });
 
 // DELETE Idea
-app.delete('/idea', async (request, response) => {
+app.delete('/idea', authorizeUser, async (request, response) => {
   try {
     console.log('DELETE AN IDEA');
+
+    const email = request.decodedToken.email;
+    if (!email) {
+      response.status(400).send({ message: 'access denied' });
+    }
+
     const con = await pool.getConnection();
     const recordset = await con.execute(
-      'DELETE FROM popsicle_stick.idea WHERE id = ? AND username = ?',
-      [request.body.id, request.body.username]
+      'DELETE FROM popsicle_stick.idea WHERE id = ? AND email = ?',
+      [request.body.id, email]
     );
     con.release();
 
@@ -296,14 +352,19 @@ app.delete('/idea', async (request, response) => {
     response.status(200).send({ message: recordset[0] });
   } catch (error) {
     console.log(error);
-    response.status(500).send({ message: error });
+    response.status(500).send({ error: error.message, message: error });
   }
 });
 
-// POST Idea Pic - Done
+// POST Idea Pic
 app.post('/pic', authorizeUser, async (request, response) => {
   try {
     console.log('POST PIC');
+
+    const email = request.decodedToken.email;
+    if (!email) {
+      response.status(400).send({ message: 'access denied' });
+    }
 
     if (!request.body.s3uuid || !request.body.idea) {
       response.status(400).send({ message: 'missing s3uuid or idea id' });
@@ -328,10 +389,15 @@ app.post('/pic', authorizeUser, async (request, response) => {
   }
 });
 
-// GET All Idea Pics - Done
-app.get('/pics', async (request, response) => {
+// GET All Idea Pics
+app.get('/pics', authorizeUser, async (request, response) => {
   try {
     console.log('GET ALL PICS');
+
+    const email = request.decodedToken.email;
+    if (!email) {
+      response.status(400).send({ message: 'access denied' });
+    }
 
     const con = await pool.getConnection();
     const recordset = await con.query('SELECT * FROM popsicle_stick.ideapic');
@@ -346,10 +412,15 @@ app.get('/pics', async (request, response) => {
   }
 });
 
-// GET One Idea Pic - Done
+// GET One Idea Pic
 app.get('/pic', authorizeUser, async (request, response) => {
   try {
     console.log('GET ONE PIC');
+
+    const email = request.decodedToken.email;
+    if (!email) {
+      response.status(400).send({ message: 'access denied' });
+    }
 
     const con = await pool.getConnection();
     const recordset = await con.execute(
@@ -367,10 +438,15 @@ app.get('/pic', authorizeUser, async (request, response) => {
   }
 });
 
-// UPDATE Idea Pic - Done
+// UPDATE Idea Pic
 app.put('/pic', authorizeUser, async (request, response) => {
   try {
     console.log('UPDATE ONE PIC');
+
+    const email = request.decodedToken.email;
+    if (!email) {
+      response.status(400).send({ message: 'access denied' });
+    }
 
     const selectQuery = await pool.execute(
       'SELECT * FROM popsicle_stick.ideapic WHERE s3uuid = ? AND idea = ?',
@@ -404,10 +480,16 @@ app.put('/pic', authorizeUser, async (request, response) => {
   }
 });
 
-// DELETE Idea Pic - Done
-app.delete('/pic', async (request, response) => {
+// DELETE Idea Pic
+app.delete('/pic', authorizeUser, async (request, response) => {
   try {
     console.log('DELETE A PIC');
+
+    const email = request.decodedToken.email;
+    if (!email) {
+      response.status(400).send({ message: 'access denied' });
+    }
+
     const con = await pool.getConnection();
     const recordset = await con.execute(
       'DELETE FROM popsicle_stick.ideapic WHERE s3uuid = ? AND idea = ?',
@@ -424,14 +506,19 @@ app.delete('/pic', async (request, response) => {
   }
 });
 
-// GET Everything - Done
+// GET Everything
 app.get('/everything', authorizeUser, async (request, response) => {
   try {
     console.log('GET EVERYTHING');
 
+    const email = request.decodedToken.email;
+    if (!email) {
+      response.status(400).send({ message: 'access denied' });
+    }
+
     const con = await pool.getConnection();
     const queryResponse = await con.execute(
-      'SELECT * FROM popsicle_stick.ideapic JOIN popsicle_stick.idea ON popsicle_stick.idea.id = popsicle_stick.ideapic.idea JOIN popsicle_stick.user ON popsicle_stick.idea.username = popsicle_stick.user.username'
+      'SELECT * FROM popsicle_stick.ideapic JOIN popsicle_stick.idea ON popsicle_stick.idea.id = popsicle_stick.ideapic.idea JOIN popsicle_stick.user ON popsicle_stick.idea.email = popsicle_stick.user.email'
     );
     con.release();
 
@@ -449,10 +536,15 @@ app.get('/everythingbyuser', authorizeUser, async (request, response) => {
   try {
     console.log('GET EVERYTHING');
 
+    const email = request.decodedToken.email;
+    if (!email) {
+      response.status(400).send({ message: 'access denied' });
+    }
+
     const con = await pool.getConnection();
     const queryResponse = await con.execute(
-      'SELECT * FROM popsicle_stick.ideapic JOIN popsicle_stick.idea ON popsicle_stick.idea.id = popsicle_stick.ideapic.idea JOIN popsicle_stick.user ON popsicle_stick.idea.username = popsicle_stick.user.username WHERE popsicle_stick.user.username = ?',
-      [request.body.username]
+      'SELECT * FROM popsicle_stick.ideapic JOIN popsicle_stick.idea ON popsicle_stick.idea.id = popsicle_stick.ideapic.idea JOIN popsicle_stick.user ON popsicle_stick.idea.email = popsicle_stick.user.email WHERE popsicle_stick.user.email = ?',
+      [email]
     );
     con.release();
 
@@ -466,7 +558,28 @@ app.get('/everythingbyuser', authorizeUser, async (request, response) => {
 });
 
 function authorizeUser(request, response, next) {
-  next();
+  console.log('request before auth', request.decodedToken);
+
+  if (request.query.token) request.body.token = request.query.token;
+
+  const tokenFromRequestBody = request.body.token;
+
+  try {
+    jwt.verify(tokenFromRequestBody, pem, function (error, decodedToken) {
+      if (error) {
+        console.log(error);
+        return response.status(403).send(error);
+      }
+
+      console.log('the decoded token', decodedToken);
+      request.decodedToken = decodedToken;
+    });
+
+    next();
+  } catch (error) {
+    console.log(error);
+    return response.status(500).send(error);
+  }
 }
 
 module.exports.handler = serverless(app);

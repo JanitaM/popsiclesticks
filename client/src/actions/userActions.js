@@ -1,48 +1,5 @@
 import { SIGNIN_USER, SIGNOUT_USER, SET_LOADING, USER_ERROR } from './types';
 import { Auth } from 'aws-amplify';
-import axios from 'axios';
-import { v4 as uuidv4 } from 'uuid';
-
-//   async function uploadToSql() {
-//     console.log('upload to mysql');
-
-//     return await axios({
-//       method: 'post',
-//       url: 'https://ds7m4gu0n5.execute-api.us-east-2.amazonaws.com/dev/user',
-//       data: {
-//         username: newUser.user.username,
-//         profilepic: newUser.user.profilepic
-//       }
-//     });
-//   }
-
-//   try {
-//     const response = await Auth.confirmSignUp(
-//       newUser.user.username,
-//       confirmationCode
-//     );
-
-//     // prompt(response);
-//     if (response === 'SUCCESS') {
-//       // const myUuid = uuidv4();
-
-//       Storage.put(
-//         `${newUser.user.username}/profilepics/${newUser.user.profilepic}`,
-//         newUser.user.profilepic,
-//         {
-//           contentType: 'image/*'
-//         }
-//       )
-//         .then((result) => console.log(result))
-//         .then(() => uploadToSql(newUser.user.profilepic))
-//         // .then(() => navigate('/'))
-//         .catch((error) => console.log(error));
-//     }
-
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
 
 // Sign In to AWS
 export const signIn = (currentUser) => async (dispatch) => {
