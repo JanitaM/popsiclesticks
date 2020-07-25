@@ -3,15 +3,19 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import './UserNavbar.css';
 import { connect } from 'react-redux';
-import { signOut } from '../../actions/userActions';
+import { signOut, user } from '../../redux/actions/userActions';
 import { Avatar, makeStyles } from '@material-ui/core';
 
-const UserDesktopNavbar = ({ signOut }) => {
+const UserDesktopNavbar = ({ signOut, user, setProfilePic, profilePic }) => {
   const classes = useStyles();
   return (
     <div className={classes.sectionDesktop}>
-      {/* <Avatar src={profile_pic} className={classes.image} /> */}
-      <Avatar src='/broken-image.jpg' className={classes.image} />
+      <Avatar
+        src={user.user && profilePic[0]}
+        alt='user profile picture'
+        className={classes.image}
+        variant='rounded'
+      />
       <Link to='/account' className={classes.desktopLink}>
         Account Settings
       </Link>

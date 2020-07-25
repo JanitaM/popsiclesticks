@@ -1,31 +1,33 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { user } from '../actions/userActions';
-import Home from '../components/pages/Home';
-import Register from '../components/pages/Register';
-import SignIn from '../components/pages/SignIn';
-import NotFound from '../components/pages/NotFound';
+import { user } from '../redux/actions/userActions';
 
-const PublicRoutes = ({ user }) => {
-  console.log(user);
+const PublicRoutes = ({ user, component: Component, restricted, ...rest }) => {
+  console.log(user.isAuthenticated); //always true
+  console.log(user.user);
+  // restricted = false meaning public route
+  // restricted = true meaning restricted route
   return (
-    <Switch>
-      <Route exact path='/' component={Home} />
-      <Route exact path='/register' component={Register} />
-      <Route exact path='/signin' component={SignIn} />
-      <Route component={NotFound} />
-    </Switch>
+    <Route
+      {...rest}
+      render={(props) =>
+        user.user && restricted ? <Redirect to='/' /> : <Component {...props} />
+      }
+    />
   );
 };
 
-PublicRoutes.propTypes = {
-  user: PropTypes.object.isRequired
-};
+// PublicRoutes.propTypes = {
+//   user: PropTypes.object.isRequired
+// };
 
-const mapStateToProps = (state) => ({
-  user: state.user
-});
+const mapStateToProps = (state) => {
+  console.log(state);
+  return {
+    user: state.user //should have access to this.props.auth
+  };
+};
 
 export default connect(mapStateToProps)(PublicRoutes);

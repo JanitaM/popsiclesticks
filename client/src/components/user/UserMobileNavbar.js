@@ -3,17 +3,10 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import './UserNavbar.css';
 import { connect } from 'react-redux';
-import { signOut, user } from '../../actions/userActions';
-import {
-  Avatar,
-  makeStyles,
-  Divider,
-  Typography,
-  List,
-  ListItem
-} from '@material-ui/core';
+import { signOut, user } from '../../redux/actions/userActions';
+import { Avatar, makeStyles, Divider, List, ListItem } from '@material-ui/core';
 
-const UserMobileNavbar = ({ user, signOut }) => {
+const UserMobileNavbar = ({ user, signOut, setProfilePic, profilePic }) => {
   const [open, setOpen] = useState(false);
   const handleDrawerClose = () => {
     setOpen(false);
@@ -29,11 +22,12 @@ const UserMobileNavbar = ({ user, signOut }) => {
           alignItems: 'center'
         }}
       >
-        {/* <Avatar src={profile_pic} className={classes.image} /> */}
-        <Avatar src='/broken-image.jpg' className={classes.image} />
-      </ListItem>
-      <ListItem>
-        <Typography variant='h4'>Hello {user?.user?.username}</Typography>
+        <Avatar
+          src={user.user && profilePic[0]}
+          alt='user profile picture'
+          className={classes.image}
+          variant='rounded'
+        />
       </ListItem>
       <Divider />
       <ListItem>
@@ -54,13 +48,13 @@ const UserMobileNavbar = ({ user, signOut }) => {
 
 const useStyles = makeStyles((theme) => ({
   image: {
-    textAlign: 'center',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
-    width: '5rem',
-    height: '5rem',
-    padding: '1rem'
+    height: '80%',
+    textAlign: 'center',
+    padding: '1rem',
+    width: '80%'
   },
   mobileLink: {
     color: '#333',

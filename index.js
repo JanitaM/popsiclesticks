@@ -6,12 +6,28 @@ const path = require('path');
 const { response } = require('express');
 const jwt = require('jsonwebtoken');
 const jwkToPem = require('jwk-to-pem');
+const aws = require('aws-sdk');
+const asyncMap = require('./helpers');
+
+function setCreds() {
+  aws.config.setPromisesDependency();
+  aws.config.update({
+    accessKeyId: process.env.AWS_ACCESS_KEY,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    region: 'us-east-2'
+  });
+}
+setCreds();
+
+const s3 = new aws.S3();
+const bucket = 'popsiclestickbucket153356-dev';
 
 const PORT = 4000;
 
 const app = express();
 app.use(express.json());
 app.use(express.json({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 const pool = mysql.createPool({
@@ -22,7 +38,7 @@ const pool = mysql.createPool({
 
 // later comes from currentAuthenticatedUser-the one that says token_use: id
 const jwtIdToken =
-  'eyJraWQiOiJtd0J1aTVPR3RsV3Jma2RiUjFcL1p6ZmJYWGNGNlRzTXc3MjA3aFFxbGhPWT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI3MjFjMGNjYy0xMDAzLTQ1NTQtOWQxNS05YjE2YWMxOGNiNjEiLCJhdWQiOiI5cjRmcGhqcHB2bWg3dDg0NmFpYTlhYm02IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImV2ZW50X2lkIjoiMGRiZDM2NTMtMWExMi00YjRmLWE5MDItM2ExMWE5ZDdlMWRiIiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE1OTU1MDc4MjAsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTIuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0yX1gzVE1IUWVUbSIsImNvZ25pdG86dXNlcm5hbWUiOiJqdm1zdXJmc0BnbWFpbC5jb20iLCJleHAiOjE1OTU1MTE0MjAsImlhdCI6MTU5NTUwNzgyMCwiZW1haWwiOiJqdm1zdXJmc0BnbWFpbC5jb20ifQ.YMO9BR-cHfTWJbZJgHPpfGr4IKLYsQ0ieEkQqtTTqYGtMYWWxhmtASDYJIo2MFWb0J1sAzs6k3Y4WvUNLlYaoatwRYmnaV7LF3CZVXNKeD9cn3dEVJUkaRFVcIAfnQnp70DTMlgzQ0QdzvywtCypEwgGxi8j0n5BF33vadpsPtvovfWjMMqbaknbI_xZdEdx2E1DI4y0w8x2Brj-PfkHu9PGj1LCMXea_gbmXc5Ld6-eCRarbgq1nfo5SbNvrUud9nthAkgEe4s1NjYlgg22h8ly0dCyuUm8bgyd1k39_-Ql9a3qcbPlvwWFRnu2fiLkxYT3hIB1iR3BoWEbfkMBhQ';
+  'eyJraWQiOiJtd0J1aTVPR3RsV3Jma2RiUjFcL1p6ZmJYWGNGNlRzTXc3MjA3aFFxbGhPWT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI0ZDIzYzI1My05ZDAyLTRlNWItYmZkMS1mNDc1NzcwYWZhZDYiLCJhdWQiOiI5cjRmcGhqcHB2bWg3dDg0NmFpYTlhYm02IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImV2ZW50X2lkIjoiYzc2NGU3YTQtMmIxOS00YmYwLWI2NmEtYzRjYzFmOTMzYTYzIiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE1OTU3MTkwMjksImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTIuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0yX1gzVE1IUWVUbSIsImNvZ25pdG86dXNlcm5hbWUiOiJqdm1zdXJmc0BnbWFpbC5jb20iLCJleHAiOjE1OTU3MjI2MjksImlhdCI6MTU5NTcxOTAyOSwiZW1haWwiOiJqdm1zdXJmc0BnbWFpbC5jb20ifQ.NLK7fKXZ7XSeMI3fo0dqF0M7-Yred-NmSGU7gRlfFDE7hMPy3meS2e2ofVFcGw7LDSlLr_YF_HTofOjlyV8-6cKPNiOga3SrWRY8nZLR2OcKOl9FLVHscxIZFfCaS-NfgpQn5hwyCBk6skHynxS0xEiZtZoi9rccd7jHHWAlcxTb0YYflCRuOlW8_pLEFlDvEDVTi_PtpiqIOFNpZ36D34VIh7aqWqtsLuc2HnmNfhSZTTDv7hT61VNUEHjhXijhwaGK8WuOvoxSqaK1Q_O9nmN4Fwo7PKV_Ix5esh3cFNVq_1_lXGdOvHUCB19yGWedrX5Ls6V3Zy0TxQb8tcIQcA';
 
 const jwks = {
   keys: [
@@ -55,8 +71,6 @@ const pem = jwkToPem(jwkIdToken);
 app.get('/users', authorizeUser, async (request, response) => {
   try {
     console.log('GET ALL USERS');
-    console.log('request after authorization', request.decodedToken);
-    console.log('request after authorization', request.decodedToken.email);
 
     const email = request.decodedToken.email;
     if (!email) {
@@ -130,6 +144,47 @@ app.get('/user', authorizeUser, async (request, response) => {
     console.log(error);
     response.status(500).send({ error: error.message, message: error });
   }
+});
+
+// GET User Profile Pic
+app.get('/user/profilepic', authorizeUser, async (request, response) => {
+  console.log('GET USER PROFILE PIC');
+
+  const email = request.decodedToken.email;
+  if (!email) {
+    response.status(400).send({ message: 'access denied' });
+  }
+
+  async function getS3Data() {
+    const s3Response = await s3
+      .listObjectsV2({
+        Bucket: bucket,
+        Prefix: `public/${email}`
+      })
+      .promise();
+
+    // console.log(s3Response.Contents);
+    const filesToRetriveArray = s3Response.Contents;
+
+    try {
+      const resolvedFiles = await asyncMap(
+        filesToRetriveArray.map((file) =>
+          s3
+            .getObject({
+              Bucket: bucket,
+              Key: file.Key
+            })
+            .promise()
+        )
+      );
+      // console.log('resolved files', resolvedFiles);
+      response.status(200).send(resolvedFiles);
+    } catch (error) {
+      console.log(error);
+      response.status(500).send(error);
+    }
+  }
+  getS3Data();
 });
 
 // UPDATE User
@@ -567,10 +622,7 @@ app.get('/everythingbyuser', authorizeUser, async (request, response) => {
 });
 
 function authorizeUser(request, response, next) {
-  console.log('request before auth', request.decodedToken);
-
   if (request.query.token) request.body.token = request.query.token;
-
   const tokenFromRequestBody = request.body.token;
 
   try {
@@ -580,7 +632,6 @@ function authorizeUser(request, response, next) {
         return response.status(403).send(error);
       }
 
-      console.log('the decoded token', decodedToken);
       request.decodedToken = decodedToken;
     });
 

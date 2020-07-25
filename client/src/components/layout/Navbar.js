@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { user } from '../../actions/userActions';
+import { user } from '../../redux/actions/userActions';
 import {
   makeStyles,
   AppBar,
@@ -23,8 +23,18 @@ import popsicle from '../../assets/popsicle.png';
 import clsx from 'clsx';
 import UserMobileNavBar from '../user/UserMobileNavbar';
 import UserDesktopNavbar from '../user/UserDesktopNavbar';
+import { Auth } from 'aws-amplify';
+import axios from 'axios';
 
 const drawerWidth = 265;
+
+function convertImg(binArr) {
+  let arrayBufferView = new Uint8Array(binArr);
+  let blob = new Blob([arrayBufferView], { type: 'image/*' });
+  let urlCreator = window.url || window.webkitURL;
+  let imgUrl = urlCreator.createObjectURL(blob);
+  return imgUrl;
+}
 
 function HideOnScroll({ children, window }) {
   const trigger = useScrollTrigger(window);
@@ -38,9 +48,31 @@ function HideOnScroll({ children, window }) {
 
 const Navbar = ({ props, user }) => {
   const classes = useStyles();
+  const [profilePic, setProfilePic] = useState([]);
+
+  useEffect(() => {
+    async function getPhotos() {
+      const fullInfo = await Auth.currentAuthenticatedUser();
+      const token = await fullInfo.signInUserSession.idToken.jwtToken;
+      const username = await fullInfo.username;
+
+      // needs to call s3 bucket
+      const res = await axios.get(
+        `http://localhost:4000/user/profilepic?email=${username}&token=${token}`,
+        {
+          data: {
+            email: username,
+            token: token
+          }
+        }
+      );
+
+      setProfilePic(res.data.map((item) => convertImg(item.Body.data)));
+    }
+    getPhotos();
+  }, []);
 
   const [open, setOpen] = useState(false);
-
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -76,7 +108,10 @@ const Navbar = ({ props, user }) => {
         onClose={handleDrawerClose}
       >
         {user.user ? (
-          <UserMobileNavBar />
+          <UserMobileNavBar
+            setProfilePic={setProfilePic}
+            profilePic={profilePic}
+          />
         ) : (
           <List onClick={handleDrawerClose}>
             <ListItem>
@@ -120,7 +155,10 @@ const Navbar = ({ props, user }) => {
               <div className={classes.grow} />
               {user.user ? (
                 <div className={classes.sectionDesktop}>
-                  <UserDesktopNavbar />
+                  <UserDesktopNavbar
+                    setProfilePic={setProfilePic}
+                    profilePic={profilePic}
+                  />
                 </div>
               ) : (
                 <div className={classes.sectionDesktop}>
@@ -210,8 +248,11 @@ Navbar.propTypes = {
   user: PropTypes.object.isRequired
 };
 
-const mapStateToProps = (state) => ({
-  user: state.user
-});
+const mapStateToProps = (state) => {
+  // console.log(state);
+  return {
+    user: state.user
+  };
+};
 
 export default connect(mapStateToProps)(Navbar);

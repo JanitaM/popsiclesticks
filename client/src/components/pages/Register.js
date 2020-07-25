@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import { Auth } from 'aws-amplify';
+import ConfirmSignUp from './ConfirmSignUp';
 import {
   Avatar,
   Button,
@@ -9,8 +10,6 @@ import {
   Input
 } from '@material-ui/core';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
-import { Auth } from 'aws-amplify';
-import ConfirmSignUp from './ConfirmSignUp';
 
 const Register = () => {
   const classes = useStyles();
@@ -191,9 +190,5 @@ const useStyles = makeStyles({
     backgroundRepeat: 'no-repeat'
   }
 });
-
-Register.propTypes = {
-  registerUser: PropTypes.func.isRequired
-};
 
 export default Register;
