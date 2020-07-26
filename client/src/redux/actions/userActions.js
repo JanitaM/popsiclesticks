@@ -6,13 +6,11 @@ import {
   USER_LOADED,
   USER_LOADING
 } from './types';
-import { Auth, Storage } from 'aws-amplify';
-import { useHistory } from 'react-router-dom';
-import axios from 'axios';
+import { Auth } from 'aws-amplify';
 
 // Sign In to AWS
 export const signIn = (currentUser) => async (dispatch) => {
-  console.log(currentUser); //this works
+  console.log(currentUser);
 
   try {
     const userInfo = await Auth.signIn(
@@ -20,6 +18,7 @@ export const signIn = (currentUser) => async (dispatch) => {
       currentUser.password
     );
     const user = await Auth.currentAuthenticatedUser();
+    console.log(user);
     const token = await user.signInUserSession.idToken.jwtToken;
     const username = await user.username;
     const data = { user, token };
@@ -40,8 +39,6 @@ export const signIn = (currentUser) => async (dispatch) => {
 export const loadUser = () => async (dispatch, getState) => {
   dispatch({ type: USER_LOADING });
 
-  // const history = useHistory();
-
   const user = await Auth.currentAuthenticatedUser();
   console.log(user);
 
@@ -49,7 +46,6 @@ export const loadUser = () => async (dispatch, getState) => {
     type: USER_LOADED,
     payload: user
   });
-  // .then(() => history.push('/'));
 };
 
 // Sign Out to AWS
@@ -57,7 +53,7 @@ export const signOut = (user) => (dispatch) => {
   try {
     setLoading();
 
-    const test = Auth.signOut({ global: true });
+    const user = Auth.signOut({ global: true });
 
     dispatch({
       type: SIGNOUT_USER,

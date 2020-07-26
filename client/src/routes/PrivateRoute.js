@@ -4,33 +4,34 @@ import { Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { user } from '../redux/actions/userActions';
 import Preloader from '../components/layout/Preloader';
+const PrivateRoute = ({ user, component: Component, ...rest }) => {
+  // console.log(user.isAuthenticated);
 
-const PrivateRoutes = ({ user, component: Component, ...rest }) => {
-  console.log(user.user);
   return (
     <Route
       {...rest}
       render={(props) => {
-        if (user.user) {
-          return <Redirect to='/signin' />;
-        } else if (user.isAuthenticated) {
+        if (user.loading) {
+          return <Preloader />;
+        } else if (!user.loading && user.isAuthenticated) {
           return <Component {...props} />;
+        } else {
+          return <Redirect to='/signin' />;
         }
       }}
     />
   );
 };
 
-// PrivateRoutes.propTypes = {
-//   token: PropTypes.object.isRequired,
-//   isAuthenticated: PropTypes.object.isRequired
-// };
+PrivateRoute.propTypes = {
+  isAuthenticated: PropTypes.bool.isRequired
+};
 
 const mapStateToProps = (state) => {
   console.log(state);
   return {
-    user: state.user //should have access to this.props.auth
+    user: state.user
   };
 };
 
-export default connect(mapStateToProps)(PrivateRoutes);
+export default connect(mapStateToProps)(PrivateRoute);

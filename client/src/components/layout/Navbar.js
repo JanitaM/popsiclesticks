@@ -107,7 +107,7 @@ const Navbar = ({ props, user }) => {
         }}
         onClose={handleDrawerClose}
       >
-        {user.user ? (
+        {user.user && user.isAuthenticated ? (
           <UserMobileNavBar
             setProfilePic={setProfilePic}
             profilePic={profilePic}
@@ -153,7 +153,7 @@ const Navbar = ({ props, user }) => {
                 </Typography>
               </Link>
               <div className={classes.grow} />
-              {user.user ? (
+              {user.user && user.isAuthenticated ? (
                 <div className={classes.sectionDesktop}>
                   <UserDesktopNavbar
                     setProfilePic={setProfilePic}
