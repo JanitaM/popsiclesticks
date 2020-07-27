@@ -3,7 +3,7 @@ import FilterListIcon from '@material-ui/icons/FilterList';
 import { Typography, Fab, makeStyles } from '@material-ui/core';
 import PropTypes from 'prop-types';
 
-const FilterIdeas = () => {
+const FilterIdeasBtn = () => {
   const classes = useStyles();
 
   return (
@@ -17,6 +17,8 @@ const FilterIdeas = () => {
 
 const useStyles = makeStyles((theme) => ({
   container: {
+    display: 'flex',
+    justifySelf: 'flex-start',
     alignSelf: 'flex-start'
   },
   btn: {
@@ -24,6 +26,6 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-FilterIdeas.propTypes = {};
+FilterIdeasBtn.propTypes = {};
 
-export default FilterIdeas;
+export default FilterIdeasBtn;

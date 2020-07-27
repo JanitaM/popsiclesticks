@@ -19,12 +19,9 @@ const useStyles = makeStyles((theme) => ({
   container: {
     display: 'flex',
     flexDirection: 'column',
-    position: 'absolute',
-    bottom: '0',
-    right: '0'
-  },
-  btn: {
-    margin: '.5rem'
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+    marginTop: '14rem'
   }
 }));
 

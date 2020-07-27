@@ -15,7 +15,6 @@ const MasonJar = () => {
         </div>
         <div className='jar-container'>
           <img src={masonJar} alt='mason-jar' className='jar-img' />
-          <h3 className='jar-label'>{5} ideas in the jar</h3>
         </div>
       </div>
     </div>

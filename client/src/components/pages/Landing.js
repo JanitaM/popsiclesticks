@@ -1,50 +1,70 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
+import { user } from '../../redux/actions/userActions';
+import { Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import Preloader from '../layout/Preloader';
 import MasonJar from '../layout/MasonJar';
-import FilterIdeas from '../ideas/FilterIdeas';
+import FilterIdeas from '../ideas/FilterIdeasBtn';
 import AddEditIdeaBtns from '../ideas/AddEditIdeaBtns';
-import { Auth } from 'aws-amplify';
 import axios from 'axios';
+import { connect } from 'react-redux';
 
-const Landing = () => {
+const Landing = ({ user }) => {
   const classes = useStyles();
 
-  // useEffect(() => {
-  //   async function getUserInfo() {
-  //     const fullInfo = await Auth.currentAuthenticatedUser();
-  //     const token = await fullInfo.signInUserSession.idToken.jwtToken;
-  //     console.log(token);
-
-  //     await axios({
-  //       method: 'get',
-  //       url: `https://ds7m4gu0n5.execute-api.us-east-2.amazonaws.com/dev/user`,
-  //       data: {
-  //         token: token
-  //         // email: email
-  //       }
-  //     });
-  //   }
-  //   getUserInfo();
-  // }, []);
-
   return (
-    <div className={classes.container}>
-      <h1>Pick a stick</h1>
-      <FilterIdeas className={classes.filter} />
-      <MasonJar />
-      <AddEditIdeaBtns className={classes.addEdit} />
-    </div>
+    <>
+      {user.user && user.loading ? (
+        <Preloader />
+      ) : (
+        <div className={classes.mainContainer}>
+          <h1>Pick a stick</h1>
+          <Grid container spacing={2} direction='column'>
+            <Grid item xs={12}>
+              <FilterIdeas className={classes.filter} />
+            </Grid>
+
+            <Grid
+              item
+              container
+              spacing={6}
+              xs={12}
+              direction='row'
+              justify='flex-end'
+              alignItems='flex-end'
+            >
+              <Grid item xs={12} sm={9}>
+                <MasonJar />
+              </Grid>
+              <Grid item xs={12} sm={3}>
+                <AddEditIdeaBtns className={classes.addEdit} />
+              </Grid>
+            </Grid>
+          </Grid>
+        </div>
+      )}
+    </>
   );
 };
 
 const useStyles = makeStyles((theme) => ({
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    alignItems: 'center'
+  mainContainer: {
+    maxWidth: 900,
+    textAlign: 'center',
+    margin: '2rem auto'
   }
 }));
 
-export default Landing;
+Landing.propTypes = {
+  user: PropTypes.object.isRequired
+};
+
+const mapStateToProps = (state) => {
+  console.log(state);
+  return {
+    user: state.user
+  };
+};
+
+export default connect(mapStateToProps)(Landing);

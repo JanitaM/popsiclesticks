@@ -21,7 +21,8 @@ const App = () => {
             <Route exact path='/' component={Home} />
             <Route exact path='/register' component={Register} />
             <Route exact path='/signin' component={SignIn} />
-            <PrivateRoute exact path='/landing' component={Landing} />
+            {/* <PrivateRoute exact path='/landing' component={Landing} /> */}
+            <Route exact path='/landing' component={Landing} />
             <Route component={NotFound} />
           </Switch>
         </>
