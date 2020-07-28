@@ -5,38 +5,28 @@ import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    width: '100%'
-  },
-  button: {
-    marginRight: theme.spacing(1)
-  },
-  instructions: {
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1)
-  }
-}));
+import Step1 from './addIdea/Step1';
+import Step2 from './addIdea/Step2';
+import Step3 from './addIdea/Step3';
 
 function getSteps() {
-  return ['Select campaign settings', 'Create an ad group', 'Create an ad'];
+  return ['Step 1', 'Step 2', 'Step 3'];
 }
 
 function getStepContent(step) {
   switch (step) {
     case 0:
-      return 'Select campaign settings...';
+      return <Step1 />;
     case 1:
-      return 'What is an ad group anyways?';
+      return <Step2 />;
     case 2:
-      return 'This is the bit I really care about!';
+      return <Step3 />;
     default:
       return 'Unknown step';
   }
 }
 
-export default function HorizontalLinearStepper() {
+const AddIdeaStepper = ({ open, setOpen, handleClose }) => {
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
@@ -67,8 +57,7 @@ export default function HorizontalLinearStepper() {
 
   const handleSkip = () => {
     if (!isStepOptional(activeStep)) {
-      // You probably want to guard against something like this,
-      // it should never occur unless someone's actively trying to break something.
+      // You probably want to guard against something like this, it should never occur unless someone's actively trying to break something.
       throw new Error("You can't skip a step that isn't optional.");
     }
 
@@ -80,9 +69,11 @@ export default function HorizontalLinearStepper() {
     });
   };
 
-  const handleReset = () => {
-    setActiveStep(0);
-  };
+  // const handleReset = () => {
+  //   setActiveStep(0);
+  // };
+
+  console.log(handleClose);
 
   return (
     <div className={classes.root}>
@@ -90,11 +81,6 @@ export default function HorizontalLinearStepper() {
         {steps.map((label, index) => {
           const stepProps = {};
           const labelProps = {};
-          if (isStepOptional(index)) {
-            labelProps.optional = (
-              <Typography variant='caption'>Optional</Typography>
-            );
-          }
           if (isStepSkipped(index)) {
             stepProps.completed = false;
           }
@@ -109,10 +95,10 @@ export default function HorizontalLinearStepper() {
         {activeStep === steps.length ? (
           <div>
             <Typography className={classes.instructions}>
-              All steps completed - you&apos;re finished
+              Idea added to the jar!
             </Typography>
-            <Button onClick={handleReset} className={classes.button}>
-              Reset
+            <Button onClick={handleClose} className={classes.button}>
+              Close
             </Button>
           </div>
         ) : (
@@ -153,4 +139,19 @@ export default function HorizontalLinearStepper() {
       </div>
     </div>
   );
-}
+};
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: '100%'
+  },
+  button: {
+    marginRight: theme.spacing(1)
+  },
+  instructions: {
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1)
+  }
+}));
+
+export default AddIdeaStepper;

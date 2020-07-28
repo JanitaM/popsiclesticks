@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
 import {
-  Button,
   Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   useMediaQuery,
   Fab,
   useTheme,
@@ -25,7 +20,7 @@ export default function AddIdeaModal() {
 
   const [open, setOpen] = useState(false);
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const fullScreen = useMediaQuery(theme.breakpoints.down('xs'));
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -42,6 +37,9 @@ export default function AddIdeaModal() {
         aria-label='add'
         className={classes.btn}
         onClick={handleClickOpen}
+        open={open}
+        setOpen={setOpen}
+        handleClose={handleClose}
       >
         <AddIcon />
       </Fab>
@@ -53,23 +51,6 @@ export default function AddIdeaModal() {
         aria-labelledby='responsive-dialog-title'
       >
         <AddIdeaStepper />
-        {/* <DialogTitle id='responsive-dialog-title'>
-          {"Use Google's location service?"}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Let Google help apps determine location. This means sending
-            anonymous location data to Google, even when no apps are running.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button autoFocus onClick={handleClose} color='primary'>
-            Save
-          </Button>
-          <Button onClick={handleClose} color='primary' autoFocus>
-            Cancel
-          </Button>
-        </DialogActions> */}
       </Dialog>
     </div>
   );

@@ -11,7 +11,7 @@ const UserDesktopNavbar = ({ signOut, user, setProfilePic, profilePic }) => {
   return (
     <div className={classes.sectionDesktop}>
       <Avatar
-        src={user.user && profilePic[0]}
+        src={user.user && profilePic}
         alt='user profile picture'
         className={classes.image}
         variant='rounded'

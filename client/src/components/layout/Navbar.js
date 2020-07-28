@@ -66,8 +66,9 @@ const Navbar = ({ props, user }) => {
           }
         }
       );
-
-      setProfilePic(res.data.map((item) => convertImg(item.Body.data)));
+      // console.log(res.data.Body.data);
+      setProfilePic(convertImg(res.data.Body.data));
+      // setProfilePic(res.data.map((item) => convertImg(item.Body.data)));
     }
     getPhotos();
   }, []);

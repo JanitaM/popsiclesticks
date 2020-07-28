@@ -12,6 +12,8 @@ import { Auth } from 'aws-amplify';
 export const signIn = (currentUser) => async (dispatch) => {
   console.log(currentUser);
 
+  dispatch({ type: USER_LOADING });
+
   try {
     const userInfo = await Auth.signIn(
       currentUser.username,
@@ -37,7 +39,7 @@ export const signIn = (currentUser) => async (dispatch) => {
 
 // CHECK TOKEN & LOAD USER
 export const loadUser = () => async (dispatch, getState) => {
-  dispatch({ type: USER_LOADING });
+  // dispatch({ type: USER_LOADING });
 
   const user = await Auth.currentAuthenticatedUser();
   console.log(user);
@@ -51,7 +53,8 @@ export const loadUser = () => async (dispatch, getState) => {
 // Sign Out to AWS
 export const signOut = (user) => (dispatch) => {
   try {
-    setLoading();
+    // setLoading();
+    dispatch({ type: USER_LOADING });
 
     const user = Auth.signOut({ global: true });
 

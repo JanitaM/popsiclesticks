@@ -38,7 +38,7 @@ const pool = mysql.createPool({
 
 // later comes from currentAuthenticatedUser-the one that says token_use: id
 const jwtIdToken =
-  'eyJraWQiOiJtd0J1aTVPR3RsV3Jma2RiUjFcL1p6ZmJYWGNGNlRzTXc3MjA3aFFxbGhPWT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI0ZDIzYzI1My05ZDAyLTRlNWItYmZkMS1mNDc1NzcwYWZhZDYiLCJhdWQiOiI5cjRmcGhqcHB2bWg3dDg0NmFpYTlhYm02IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImV2ZW50X2lkIjoiNDcxNmEyMTYtYjE2ZS00ZDI3LThkOWItN2RlNzdhMWUxNDRmIiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE1OTU3OTU0MTAsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTIuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0yX1gzVE1IUWVUbSIsImNvZ25pdG86dXNlcm5hbWUiOiJqdm1zdXJmc0BnbWFpbC5jb20iLCJleHAiOjE1OTU3OTkwMTAsImlhdCI6MTU5NTc5NTQxMCwiZW1haWwiOiJqdm1zdXJmc0BnbWFpbC5jb20ifQ.iwllJakLRgwqaT8kHQBUoGIB3bu_Za6smqh8QofYSq7m5tRTJvQ_lb5rhFZ3bzPMCv8x71Xzedno8fZvOvQvdmWYnf7RVlXtPicORMGITpKd7cmfa3AaicY0YtdDoRqIc06pdMhE1xA-uGr450CH-2C6jS175K9Ad25t__9irT8y-EidXWH_da94JND3b71Sz1rd1epxFp2WHBCxGuLixbFkkxv-VvCS6f0wgI6Z3yh25vS5XQb2IV5TdjccJ3DbQzqjdsr3nC6t4W8St4K2n5m2BdF_Es1gNQO4mI2oi4fub6TKz7ogDRqJhA3ZeTuFuHSIeUr69OIHKACd1VWqJA';
+  'eyJraWQiOiJtd0J1aTVPR3RsV3Jma2RiUjFcL1p6ZmJYWGNGNlRzTXc3MjA3aFFxbGhPWT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI0ZDIzYzI1My05ZDAyLTRlNWItYmZkMS1mNDc1NzcwYWZhZDYiLCJhdWQiOiI5cjRmcGhqcHB2bWg3dDg0NmFpYTlhYm02IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImV2ZW50X2lkIjoiNmYxM2Q0NjEtYjc0Yi00ZjhkLWI0MDUtNmJiMjdmM2NhN2Q1IiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE1OTU5NzA4MTQsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTIuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0yX1gzVE1IUWVUbSIsImNvZ25pdG86dXNlcm5hbWUiOiJqdm1zdXJmc0BnbWFpbC5jb20iLCJleHAiOjE1OTU5NzQ0MTQsImlhdCI6MTU5NTk3MDgxNCwiZW1haWwiOiJqdm1zdXJmc0BnbWFpbC5jb20ifQ.pTF7e0ADManem64MnN7Zhvk4wfL1Kt7hYyHqldDr9BHCReG8miEC6RcJej4ybZpPheTVPvecWbz8tMuBH2FtHAGCcTqG-zNETGOQjtNJ3SHmB12pV_it5SAhYIrNcWj9Bol0M9mTHj6QYDCIyEHBFJE1pL_R9f6r3u3MpXfHigH-b3pNx3ZYtxotH8_xzO5viN_62RsUhLzVZj2duyTImXtezxi3k3NUgNjJvF8ORw3KWS8RHNa2EsSAx7oIyHVJUbSnOv9uZ2AwWpMyhLIQSKuoJt8XJVHqMRQtka-QKYYiOWlg0SAwCDxkI47MLpFiiYWf2mV6R3xTsyQLWlKjvg';
 
 const jwks = {
   keys: [
@@ -178,7 +178,15 @@ app.get('/user/profilepic', authorizeUser, async (request, response) => {
         )
       );
       // console.log('resolved files', resolvedFiles);
-      response.status(200).send(resolvedFiles);
+
+      let sortedResolvedFiles = resolvedFiles.sort(function (a, b) {
+        return a.LastModified - b.LastModified;
+      });
+      const currentPic = sortedResolvedFiles[sortedResolvedFiles.length - 1];
+      console.log(currentPic);
+
+      // response.status(200).send(resolvedFiles);
+      response.status(200).send(currentPic);
     } catch (error) {
       console.log(error);
       response.status(500).send(error);

@@ -7,7 +7,6 @@ import Preloader from '../layout/Preloader';
 import MasonJar from '../layout/MasonJar';
 import FilterIdeas from '../ideas/FilterIdeasBtn';
 import AddEditIdeaBtns from '../ideas/AddEditIdeaBtns';
-import axios from 'axios';
 import { connect } from 'react-redux';
 
 const Landing = ({ user }) => {
@@ -20,7 +19,12 @@ const Landing = ({ user }) => {
       ) : (
         <div className={classes.mainContainer}>
           <h1>Pick a stick</h1>
-          <Grid container spacing={2} direction='column'>
+          <Grid
+            container
+            spacing={2}
+            direction='column'
+            style={{ marginLeft: '1rem' }}
+          >
             <Grid item xs={12}>
               <FilterIdeas className={classes.filter} />
             </Grid>

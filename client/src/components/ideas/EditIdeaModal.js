@@ -23,7 +23,7 @@ export default function EditIdeaModal() {
 
   const [open, setOpen] = useState(false);
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const fullScreen = useMediaQuery(theme.breakpoints.down('xs'));
 
   const handleClickOpen = () => {
     setOpen(true);
