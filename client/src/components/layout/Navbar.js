@@ -19,7 +19,6 @@ import {
   Menu
 } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
-import popsicle from '../../assets/popsicle.png';
 import clsx from 'clsx';
 import UserMobileNavBar from '../user/UserMobileNavbar';
 import UserDesktopNavbar from '../user/UserDesktopNavbar';
@@ -146,7 +145,10 @@ const Navbar = ({ props, user }) => {
           <AppBar>
             <Toolbar>
               <Link to='/'>
-                <img src={popsicle} alt='popsicle-icon' />
+                <img
+                  src='https://img.icons8.com/cotton/64/000000/ice-pop.png'
+                  alt='popsicle-icon'
+                />
               </Link>
               <Link to='/'>
                 <Typography variant='h6' noWrap className={classes.title}>

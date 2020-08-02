@@ -1,27 +1,24 @@
 import React, { useState } from 'react';
 import { makeStyles, TextField } from '@material-ui/core';
 
-const Step1 = () => {
+const Step1 = ({ ideaForm, setIdeaForm }) => {
   const classes = useStyles();
+  console.log('ideaForm', ideaForm);
 
   return (
     <div className={classes.container}>
       <div>
-        <form
-          // onSubmit={registerUser}
-          className={classes.formContainer}
-          autoComplete='off'
-        >
+        <form className={classes.formContainer} autoComplete='off'>
           <TextField
             required
             variant='outlined'
             label='Title'
             type='text'
             name='title'
-            // value={signUpForm.title}
-            // onChange={(e) =>
-            //   setSignUpForm({ ...signUpForm, title: e.target.value })
-            // }
+            value={ideaForm.title}
+            onChange={(e) =>
+              setIdeaForm({ ...ideaForm, title: e.target.value })
+            }
             className={classes.m1}
           />
           <TextField
@@ -29,10 +26,10 @@ const Step1 = () => {
             label='Location'
             type='text'
             name='location'
-            // value={signUpForm.location}
-            // onChange={(e) =>
-            //   setSignUpForm({ ...signUpForm, location: e.target.value })
-            // }
+            value={ideaForm.location}
+            onChange={(e) =>
+              setIdeaForm({ ...ideaForm, location: e.target.value })
+            }
             className={classes.m1}
           />
           <TextField
@@ -40,10 +37,10 @@ const Step1 = () => {
             label='Description'
             type='text'
             name='description'
-            // value={signUpForm.description}
-            // onChange={(e) =>
-            //   setSignUpForm({ ...signUpForm, description: e.target.value })
-            // }
+            value={ideaForm.description}
+            onChange={(e) =>
+              setIdeaForm({ ...ideaForm, description: e.target.value })
+            }
             className={classes.m1}
           />
           <TextField
@@ -51,10 +48,8 @@ const Step1 = () => {
             label='URL'
             type='url'
             name='url'
-            // value={signUpForm.url}
-            // onChange={(e) =>
-            //   setSignUpForm({ ...signUpForm, url: e.target.value })
-            // }
+            value={ideaForm.url}
+            onChange={(e) => setIdeaForm({ ...ideaForm, url: e.target.value })}
             className={classes.m1}
           />
         </form>

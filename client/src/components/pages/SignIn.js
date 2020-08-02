@@ -21,7 +21,9 @@ const SignIn = ({ signIn }) => {
   const onSubmit = (e) => {
     e.preventDefault();
 
-    signIn(currentUser).then(() => history.push('/landing'));
+    signIn(currentUser);
+    // .then(() => history.push('/landing'));
+    history.push('/landing');
   };
 
   return (

@@ -39,7 +39,7 @@ const pool = mysql.createPool({
 //     const con = await pool.getConnection();
 //     con.query('USE popsicle_stick');
 //     const ideaDB = await con.query(
-//       'CREATE TABLE IF NOT EXISTS idea (id INT UNIQUE NOT NULL AUTO_INCREMENT, email VARCHAR(255) NOT NULL, title VARCHAR(255) NOT NULL, location VARCHAR(255), description VARCHAR(4095), cost DECIMAL(10,2), indoor_outdoor VARCHAR(10), category VARCHAR(255), url VARCHAR(255), picture VARCHAR(255), weather VARCHAR(50), isCompleted BOOLEAN, PRIMARY KEY(id), FOREIGN KEY(email) REFERENCES user(email))'
+//       'CREATE TABLE IF NOT EXISTS idea (id INT UNIQUE NOT NULL AUTO_INCREMENT, email VARCHAR(255) NOT NULL, title VARCHAR(255) NOT NULL, location VARCHAR(255), description VARCHAR(4095), cost VARCHAR(255), indoor_outdoor VARCHAR(255), category VARCHAR(255), url VARCHAR(255), picture VARCHAR(255), weather VARCHAR(255), isCompleted BOOLEAN, PRIMARY KEY(id), FOREIGN KEY(email) REFERENCES user(email))'
 //     );
 
 //     console.log(ideaDB);

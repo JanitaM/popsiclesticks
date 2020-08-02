@@ -30,6 +30,20 @@ export default function AddIdeaModal() {
     setOpen(false);
   };
 
+  const [ideaForm, setIdeaForm] = useState({
+    title: '',
+    location: '',
+    description: '',
+    url: '',
+    cost: '',
+    indoorOutdoor: '',
+    weather: '',
+    ideaPic: undefined,
+    convertIdeaPic: '',
+    isCompleted: false
+  });
+  console.log('ideaForm', ideaForm);
+
   return (
     <div>
       <Fab
@@ -38,8 +52,6 @@ export default function AddIdeaModal() {
         className={classes.btn}
         onClick={handleClickOpen}
         open={open}
-        setOpen={setOpen}
-        handleClose={handleClose}
       >
         <AddIcon />
       </Fab>
@@ -50,7 +62,7 @@ export default function AddIdeaModal() {
         onClose={handleClose}
         aria-labelledby='responsive-dialog-title'
       >
-        <AddIdeaStepper />
+        <AddIdeaStepper ideaForm={ideaForm} setIdeaForm={setIdeaForm} />
       </Dialog>
     </div>
   );

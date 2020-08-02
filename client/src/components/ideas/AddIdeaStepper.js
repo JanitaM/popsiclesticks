@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
@@ -13,126 +13,96 @@ function getSteps() {
   return ['Step 1', 'Step 2', 'Step 3'];
 }
 
-function getStepContent(step) {
+function getStepContent(step, ideaForm, setIdeaForm) {
   switch (step) {
     case 0:
-      return <Step1 />;
+      return <Step1 ideaForm={ideaForm} setIdeaForm={setIdeaForm} />;
     case 1:
-      return <Step2 />;
+      return <Step2 ideaForm={ideaForm} setIdeaForm={setIdeaForm} />;
     case 2:
-      return <Step3 />;
+      return <Step3 ideaForm={ideaForm} setIdeaForm={setIdeaForm} />;
     default:
       return 'Unknown step';
   }
 }
 
-const AddIdeaStepper = ({ open, setOpen, handleClose }) => {
+const AddIdeaStepper = ({ ideaForm, setIdeaForm }) => {
   const classes = useStyles();
-  const [activeStep, setActiveStep] = React.useState(0);
-  const [skipped, setSkipped] = React.useState(new Set());
+  console.log('ideaForm', ideaForm);
+
+  const [activeStep, setActiveStep] = useState(0);
   const steps = getSteps();
-
-  const isStepOptional = (step) => {
-    return step === 1;
-  };
-
-  const isStepSkipped = (step) => {
-    return skipped.has(step);
-  };
-
   const handleNext = () => {
-    let newSkipped = skipped;
-    if (isStepSkipped(activeStep)) {
-      newSkipped = new Set(newSkipped.values());
-      newSkipped.delete(activeStep);
-    }
-
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    setSkipped(newSkipped);
   };
-
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
-
-  const handleSkip = () => {
-    if (!isStepOptional(activeStep)) {
-      // You probably want to guard against something like this, it should never occur unless someone's actively trying to break something.
-      throw new Error("You can't skip a step that isn't optional.");
-    }
-
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    setSkipped((prevSkipped) => {
-      const newSkipped = new Set(prevSkipped.values());
-      newSkipped.add(activeStep);
-      return newSkipped;
-    });
+  // change to handleClose
+  const handleReset = () => {
+    setActiveStep(0);
   };
 
-  // const handleReset = () => {
-  //   setActiveStep(0);
-  // };
+  const renderButton = () => {
+    if (activeStep === steps.length - 1) {
+      return (
+        <Button variant='contained' color='primary' onClick={handleSaveIdea}>
+          Save
+        </Button>
+      );
+    } else {
+      return (
+        <Button variant='contained' color='primary' onClick={handleNext}>
+          Next
+        </Button>
+      );
+    }
+  };
 
-  console.log(handleClose);
+  const handleSaveIdea = () => console.log('save idea');
 
   return (
     <div className={classes.root}>
       <Stepper activeStep={activeStep}>
-        {steps.map((label, index) => {
-          const stepProps = {};
-          const labelProps = {};
-          if (isStepSkipped(index)) {
-            stepProps.completed = false;
-          }
-          return (
-            <Step key={label} {...stepProps}>
-              <StepLabel {...labelProps}>{label}</StepLabel>
-            </Step>
-          );
-        })}
+        {steps.map((label) => (
+          <Step key={label}>
+            <StepLabel>{label}</StepLabel>
+          </Step>
+        ))}
       </Stepper>
       <div>
         {activeStep === steps.length ? (
           <div>
             <Typography className={classes.instructions}>
-              Idea added to the jar!
+              Idea added to the jar
             </Typography>
-            <Button onClick={handleClose} className={classes.button}>
-              Close
-            </Button>
+            <Button onClick={handleReset}>Reset</Button>
           </div>
         ) : (
           <div>
             <Typography className={classes.instructions}>
-              {getStepContent(activeStep)}
+              {getStepContent(activeStep, ideaForm, setIdeaForm)}
             </Typography>
             <div>
               <Button
                 disabled={activeStep === 0}
                 onClick={handleBack}
-                className={classes.button}
+                className={classes.backButton}
               >
                 Back
               </Button>
-              {isStepOptional(activeStep) && (
+
+              {activeStep === steps.length - 1 ? (
                 <Button
                   variant='contained'
                   color='primary'
-                  onClick={handleSkip}
-                  className={classes.button}
+                  onClick={handleSaveIdea}
                 >
-                  Skip
+                  Save
                 </Button>
+              ) : (
+                renderButton()
               )}
-
-              <Button
-                variant='contained'
-                color='primary'
-                onClick={handleNext}
-                className={classes.button}
-              >
-                {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-              </Button>
             </div>
           </div>
         )}
