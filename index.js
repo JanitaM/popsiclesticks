@@ -284,7 +284,7 @@ app.post('/idea', authorizeUser, async (request, response, next) => {
         request.body.url ? request.body.url : null,
         request.body.picture ? request.body.picture : null,
         request.body.weather ? request.body.weather : null,
-        request.body.isCompleted ? request.body.isCompleted : null
+        request.body.isCompleted
       ]
     );
     con.release();

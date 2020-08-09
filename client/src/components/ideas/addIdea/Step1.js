@@ -1,9 +1,25 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { makeStyles, TextField } from '@material-ui/core';
 
 const Step1 = ({ ideaForm, setIdeaForm }) => {
   const classes = useStyles();
   console.log('ideaForm', ideaForm);
+
+  useEffect(() => {
+    setIdeaForm({
+      title: '',
+      location: '',
+      description: '',
+      cost: '',
+      indoorOutdoor: '',
+      category: '',
+      url: '',
+      picture: undefined,
+      convertIdeaPic: '',
+      weather: '',
+      isCompleted: false
+    });
+  }, []);
 
   return (
     <div className={classes.container}>

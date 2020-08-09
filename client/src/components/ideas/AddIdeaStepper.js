@@ -70,9 +70,8 @@ const AddIdeaStepper = ({ ideaForm, setIdeaForm, handleClose }) => {
     const username = await fullInfo.username;
 
     async function uploadToSql(myUuid) {
-      console.log('upload to mysql'); //this works
+      console.log('upload to mysql');
 
-      // blocked by CORs or problem with serverless
       return await axios({
         method: 'post',
         // url: 'https://ds7m4gu0n5.execute-api.us-east-2.amazonaws.com/dev/idea',
@@ -89,7 +88,7 @@ const AddIdeaStepper = ({ ideaForm, setIdeaForm, handleClose }) => {
           url: ideaForm.url,
           picture: myUuid,
           weather: ideaForm.weather,
-          isCompleted: ideaForm.isCompleted
+          isCompleted: false
         },
         headers: {
           'Content-Type': 'application/json'
@@ -110,7 +109,7 @@ const AddIdeaStepper = ({ ideaForm, setIdeaForm, handleClose }) => {
           }
         )
           .then((result) => console.log(result))
-          .then(() => uploadToSql(myUuid)) //this works
+          .then(() => uploadToSql(myUuid))
           .then(() => handleClose())
           .catch((error) => console.log(error));
       } else {
