@@ -1,13 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import './UserNavbar.css';
 import { connect } from 'react-redux';
 import { signOut, user } from '../../redux/actions/userActions';
 import { Avatar, makeStyles } from '@material-ui/core';
 
-const UserDesktopNavbar = ({ signOut, user, setProfilePic, profilePic }) => {
+const UserDesktopNavbar = ({ signOut, user, profilePic }) => {
   const classes = useStyles();
+  const history = useHistory();
+
+  const handleOnClick = (e) => {
+    e.preventDefault();
+
+    signOut();
+    history.push('/');
+  };
+
   return (
     <div className={classes.sectionDesktop}>
       <Avatar
@@ -20,7 +29,7 @@ const UserDesktopNavbar = ({ signOut, user, setProfilePic, profilePic }) => {
         Account Settings
       </Link>
       <Link to='/' className={classes.desktopLink}>
-        <button onClick={signOut} className='signOutBtnD signOutBtn'>
+        <button onClick={handleOnClick} className='signOutBtnD signOutBtn'>
           Sign Out
         </button>
       </Link>

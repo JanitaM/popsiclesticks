@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Provider } from 'react-redux';
-import store from './store';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import PrivateRoute from './routes/PrivateRoute';
 import Navbar from './components/layout/Navbar';
@@ -24,21 +22,19 @@ const App = ({ loadUser, user }) => {
   // store.dispatch(loadUser());
 
   return (
-    <Provider store={store}>
-      <Router>
-        <>
-          <Navbar />
-          <Switch>
-            <Route exact path='/' component={Home} />
-            <Route exact path='/register' component={Register} />
-            <Route exact path='/signin' component={SignIn} />
-            {/* <PrivateRoute exact path='/landing' component={Landing} /> */}
-            <Route exact path='/landing' component={Landing} />
-            <Route component={NotFound} />
-          </Switch>
-        </>
-      </Router>
-    </Provider>
+    <Router>
+      <>
+        <Navbar />
+        <Switch>
+          <Route exact path='/' component={Landing} />
+          <Route exact path='/register' component={Register} />
+          <Route exact path='/signin' component={SignIn} />
+          {/* <PrivateRoute exact path='/home' component={Home} /> */}
+          <Route exact path='/home' component={Home} />
+          <Route component={NotFound} />
+        </Switch>
+      </>
+    </Router>
   );
 };
 

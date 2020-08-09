@@ -1,6 +1,6 @@
 import React from 'react';
 import FilterListIcon from '@material-ui/icons/FilterList';
-import { Typography, Fab, makeStyles } from '@material-ui/core';
+import { Fab, makeStyles } from '@material-ui/core';
 import PropTypes from 'prop-types';
 
 const FilterIdeasBtn = () => {

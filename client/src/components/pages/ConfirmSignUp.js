@@ -14,7 +14,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 
-const ConfirmSignUp = ({ signUpForm, setSignUpForm, setIsRegisterPage }) => {
+const ConfirmSignUp = ({ signUpForm, setSignUpForm }) => {
   const classes = useStyles();
   const history = useHistory();
 
@@ -24,13 +24,16 @@ const ConfirmSignUp = ({ signUpForm, setSignUpForm, setIsRegisterPage }) => {
     async function uploadToSql(myUuid) {
       console.log('upload to mysql');
 
+      let data = { email: signUpForm.email };
+      if (myUuid) {
+        data = { ...data, profilepic: myUuid };
+      }
+
       return await axios({
         method: 'post',
-        url: 'https://ds7m4gu0n5.execute-api.us-east-2.amazonaws.com/dev/user',
-        data: {
-          email: signUpForm.email,
-          profilepic: myUuid
-        }
+        // url: 'https://ds7m4gu0n5.execute-api.us-east-2.amazonaws.com/dev/user', //serverless not working, revisit later
+        url: 'http://localhost:4000/user',
+        data: data
       });
     }
 
@@ -40,22 +43,26 @@ const ConfirmSignUp = ({ signUpForm, setSignUpForm, setIsRegisterPage }) => {
         signUpForm.confirmationCode
       );
 
-      // prompt(response);
       if (response === 'SUCCESS') {
         const myUuid = uuidv4();
-        const type = signUpForm.profilepic.type.split('/');
 
-        Storage.put(
-          `${signUpForm.email}/profilepics/${myUuid}.${type[1]}`,
-          signUpForm.profilepic,
-          {
-            contentType: 'image/*'
-          }
-        )
-          .then((result) => console.log(result))
-          .then(() => uploadToSql(myUuid))
-          .then(() => history.push('/signin'))
-          .catch((error) => console.log(error));
+        if (signUpForm.profilepic) {
+          const type = signUpForm.profilepic.type.split('/');
+          Storage.put(
+            `${signUpForm.email}/profilepics/${myUuid}.${type[1]}`,
+            signUpForm.profilepic,
+            {
+              contentType: 'image/*'
+            }
+          )
+            .then((result) => console.log(result))
+            .then(() => uploadToSql(myUuid))
+            .then(() => history.push('/signin'))
+            .catch((error) => console.log(error));
+        } else {
+          uploadToSql();
+          history.push('/signin');
+        }
       }
     } catch (error) {
       console.log(error);

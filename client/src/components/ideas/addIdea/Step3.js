@@ -9,7 +9,7 @@ const Step3 = ({ ideaForm, setIdeaForm }) => {
     setIdeaForm({
       ...ideaForm,
       convertIdeaPic: URL.createObjectURL(e.target.files[0]),
-      ideaPic: e.target.files[0]
+      picture: e.target.files[0]
     });
   };
 
@@ -32,8 +32,8 @@ const Step3 = ({ ideaForm, setIdeaForm }) => {
               id='upload-btn'
               multiple
               type='file'
-              name='ideapic'
-              label='ideapic'
+              name='picture'
+              label='picture'
               onChange={(e) => onChange(e)}
             />
             <label htmlFor='upload-btn'>

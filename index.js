@@ -38,7 +38,7 @@ const pool = mysql.createPool({
 
 // later comes from currentAuthenticatedUser-the one that says token_use: id
 const jwtIdToken =
-  'eyJraWQiOiJtd0J1aTVPR3RsV3Jma2RiUjFcL1p6ZmJYWGNGNlRzTXc3MjA3aFFxbGhPWT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI0ZDIzYzI1My05ZDAyLTRlNWItYmZkMS1mNDc1NzcwYWZhZDYiLCJhdWQiOiI5cjRmcGhqcHB2bWg3dDg0NmFpYTlhYm02IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImV2ZW50X2lkIjoiNjI4ZGVkNzktYTFmMi00MGFiLWIwMTMtNTFkNWI4MTYxNjdhIiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE1OTYxNTY1MzIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTIuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0yX1gzVE1IUWVUbSIsImNvZ25pdG86dXNlcm5hbWUiOiJqdm1zdXJmc0BnbWFpbC5jb20iLCJleHAiOjE1OTYxNjAxMzIsImlhdCI6MTU5NjE1NjUzMiwiZW1haWwiOiJqdm1zdXJmc0BnbWFpbC5jb20ifQ.NmWHeBC1JFbZ_c6oC0l5kFjKgQDFG0kPkmP_iNkCIKgJARvs6Q-QCoF1AXURCqTRPeXS2RV-3bdyaiACNev3hNVfNsuDF_e5nDjd8OHoEP5iKaytQSc3DgrGuayT0AQ-WnQkTqWEvcv78awE1jn0Ul-vKYZNqRaEhfie9345AQTUPmFyLDOXamDdnPWJs1hOEeHXg2zQ7C8c1s69jo89u42vNi25J1GH8BZ6qtuvBnlSkdDTMYe_Ge7v0Z2I3Yt6fmUintvt_D1kswyw7oFqrL4dNBHBzvCgQSDW-1fGm2LyQRg2nQFf9BmGW7pdIvBqtnLWB8tYGr9-fZW3wKabzQ';
+  'eyJraWQiOiJtd0J1aTVPR3RsV3Jma2RiUjFcL1p6ZmJYWGNGNlRzTXc3MjA3aFFxbGhPWT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI1NmYyODI3Mi1kYjMwLTRmNmEtYTMzZS1lMTViOTBlMWQwNjYiLCJhdWQiOiI5cjRmcGhqcHB2bWg3dDg0NmFpYTlhYm02IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImV2ZW50X2lkIjoiMDc0NDg1MzgtZDdkYy00ODQzLWI4ZDYtMzMwMzExNTBlNzNlIiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE1OTY5ODM3MTIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTIuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0yX1gzVE1IUWVUbSIsImNvZ25pdG86dXNlcm5hbWUiOiJqdm1zdXJmc0BnbWFpbC5jb20iLCJleHAiOjE1OTY5ODczMTIsImlhdCI6MTU5Njk4MzcxMiwiZW1haWwiOiJqdm1zdXJmc0BnbWFpbC5jb20ifQ.mqfa_Hif205t6adXVCQTqhcPX-9b2PQp-9qsAt7ttr1HiBgU-DZsfev3e4KY2HF9ZH187sSQiKubJwDZCYb5qnN7bM9E84RvZxIXWGa3LtWGUI1vxmZjklQxzJBe5aVhZqj0wLYy34BUMjwkNEq-3gJZLaVj80yEo04sNalhfk0sw-W_TqwiYv0lVniG20Wc5D3dttCViIDfNSbtDh2CXZNCgZYMleMqnW988YS83sxvBOsmiqaqcWv1yMiaKzDiXLVsYSKFGkKtK9M0L0dCmrATfG00TWDsiaAAxOd-0NGBfzu6Eshz1yuZtOA5GjLU4iY77YwnfOH6JjyclAHzlA';
 
 const jwks = {
   keys: [
@@ -91,12 +91,11 @@ app.get('/users', authorizeUser, async (request, response) => {
 });
 
 // POST User
-app.post('/user', authorizeUser, async (request, response) => {
+app.post('/user', async (request, response) => {
   try {
     console.log('POST USER');
 
-    const email = request.decodedToken.email;
-    if (!email) {
+    if (!request.body.email) {
       response.status(400).send({ message: 'enter all required information' });
     }
 
@@ -104,7 +103,7 @@ app.post('/user', authorizeUser, async (request, response) => {
     const queryResponse = await con.execute(
       'INSERT INTO popsicle_stick.user (email, profilepic, date) VALUES (?, ?, ?)',
       [
-        email,
+        request.body.email,
         request.body.profilepic ? request.body.profilepic : null,
         new Date()
       ]
@@ -159,7 +158,7 @@ app.get('/user/profilepic', authorizeUser, async (request, response) => {
     const s3Response = await s3
       .listObjectsV2({
         Bucket: bucket,
-        Prefix: `public/${email}`
+        Prefix: `public/${email}/profilepics`
       })
       .promise();
 
@@ -262,7 +261,7 @@ app.delete('/user', authorizeUser, async (request, response) => {
 });
 
 // POST Idea
-app.post('/idea', authorizeUser, async (request, response) => {
+app.post('/idea', authorizeUser, async (request, response, next) => {
   try {
     console.log('POST IDEA');
 
@@ -651,3 +650,5 @@ function authorizeUser(request, response, next) {
 }
 
 app.listen(PORT, () => console.log(`server is running on port ${PORT}`));
+
+// Access to XMLHttpRequest at 'https://ds7m4gu0n5.execute-api.us-east-2.amazonaws.com/dev/idea' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.

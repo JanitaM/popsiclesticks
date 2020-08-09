@@ -34,15 +34,15 @@ export default function AddIdeaModal() {
     title: '',
     location: '',
     description: '',
-    url: '',
     cost: '',
     indoorOutdoor: '',
-    weather: '',
-    ideaPic: undefined,
+    category: '',
+    url: '',
+    picture: undefined,
     convertIdeaPic: '',
+    weather: '',
     isCompleted: false
   });
-  console.log('ideaForm', ideaForm);
 
   return (
     <div>
@@ -62,7 +62,11 @@ export default function AddIdeaModal() {
         onClose={handleClose}
         aria-labelledby='responsive-dialog-title'
       >
-        <AddIdeaStepper ideaForm={ideaForm} setIdeaForm={setIdeaForm} />
+        <AddIdeaStepper
+          ideaForm={ideaForm}
+          setIdeaForm={setIdeaForm}
+          handleClose={handleClose}
+        />
       </Dialog>
     </div>
   );

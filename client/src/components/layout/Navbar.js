@@ -108,10 +108,7 @@ const Navbar = ({ props, user }) => {
         onClose={handleDrawerClose}
       >
         {user.user && user.isAuthenticated ? (
-          <UserMobileNavBar
-            setProfilePic={setProfilePic}
-            profilePic={profilePic}
-          />
+          <UserMobileNavBar profilePic={profilePic} />
         ) : (
           <List onClick={handleDrawerClose}>
             <ListItem>
@@ -158,10 +155,7 @@ const Navbar = ({ props, user }) => {
               <div className={classes.grow} />
               {user.user && user.isAuthenticated ? (
                 <div className={classes.sectionDesktop}>
-                  <UserDesktopNavbar
-                    setProfilePic={setProfilePic}
-                    profilePic={profilePic}
-                  />
+                  <UserDesktopNavbar profilePic={profilePic} />
                 </div>
               ) : (
                 <div className={classes.sectionDesktop}>

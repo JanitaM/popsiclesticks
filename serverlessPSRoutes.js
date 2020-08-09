@@ -1,6 +1,7 @@
 require('dotenv').config();
 const serverless = require('serverless-http');
 const express = require('express');
+const { response } = require('express');
 const cors = require('cors');
 const mysql = require('mysql2/promise');
 
@@ -68,12 +69,11 @@ app.get('/users', authorizeUser, async (request, response) => {
 });
 
 // POST User
-app.post('/user', authorizeUser, async (request, response) => {
+app.post('/user', async (request, response) => {
   try {
     console.log('POST USER');
 
-    const email = request.decodedToken.email;
-    if (!email) {
+    if (!request.body.email) {
       response.status(400).send({ message: 'enter all required information' });
     }
 
@@ -81,7 +81,7 @@ app.post('/user', authorizeUser, async (request, response) => {
     const queryResponse = await con.execute(
       'INSERT INTO popsicle_stick.user (email, profilepic, date) VALUES (?, ?, ?)',
       [
-        email,
+        request.body.email,
         request.body.profilepic ? request.body.profilepic : null,
         new Date()
       ]
@@ -190,7 +190,7 @@ app.delete('/user', authorizeUser, async (request, response) => {
 });
 
 // POST Idea
-app.post('/idea', authorizeUser, async (request, response) => {
+app.post('/idea', authorizeUser, async (request, response, next) => {
   try {
     console.log('POST IDEA');
 
@@ -213,7 +213,8 @@ app.post('/idea', authorizeUser, async (request, response) => {
         request.body.url ? request.body.url : null,
         request.body.picture ? request.body.picture : null,
         request.body.weather ? request.body.weather : null,
-        request.body.isCompleted ? request.body.isCompleted : null
+        // request.body.isCompleted ? request.body.isCompleted : null
+        request.body.isCompleted //false by default
       ]
     );
     con.release();

@@ -1,18 +1,29 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import './UserNavbar.css';
 import { connect } from 'react-redux';
 import { signOut, user } from '../../redux/actions/userActions';
 import { Avatar, makeStyles, Divider, List, ListItem } from '@material-ui/core';
 
-const UserMobileNavbar = ({ user, signOut, setProfilePic, profilePic }) => {
+const UserMobileNavbar = ({ user, signOut, profilePic }) => {
+  const classes = useStyles();
+  const history = useHistory();
+
   const [open, setOpen] = useState(false);
   const handleDrawerClose = () => {
     setOpen(false);
   };
 
-  const classes = useStyles();
+  console.log(profilePic);
+
+  const handleOnClick = (e) => {
+    e.preventDefault();
+
+    signOut();
+    history.push('/');
+  };
+
   return (
     <List onClick={handleDrawerClose}>
       <ListItem
@@ -37,7 +48,7 @@ const UserMobileNavbar = ({ user, signOut, setProfilePic, profilePic }) => {
       </ListItem>
       <Divider />
       <ListItem>
-        <button onClick={signOut} className='signOutBtnM signOutBtn'>
+        <button onClick={handleOnClick} className='signOutBtnM signOutBtn'>
           Sign Out
         </button>
       </ListItem>

@@ -22,8 +22,7 @@ const SignIn = ({ signIn }) => {
     e.preventDefault();
 
     signIn(currentUser);
-    // .then(() => history.push('/landing'));
-    history.push('/landing');
+    history.push('/home');
   };
 
   return (

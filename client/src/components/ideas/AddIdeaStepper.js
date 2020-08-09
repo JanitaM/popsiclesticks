@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { Auth, Storage } from 'aws-amplify';
+import { v4 as uuidv4 } from 'uuid';
+import axios from 'axios';
 import { makeStyles } from '@material-ui/core/styles';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
@@ -26,7 +29,7 @@ function getStepContent(step, ideaForm, setIdeaForm) {
   }
 }
 
-const AddIdeaStepper = ({ ideaForm, setIdeaForm }) => {
+const AddIdeaStepper = ({ ideaForm, setIdeaForm, handleClose }) => {
   const classes = useStyles();
   console.log('ideaForm', ideaForm);
 
@@ -59,7 +62,67 @@ const AddIdeaStepper = ({ ideaForm, setIdeaForm }) => {
     }
   };
 
-  const handleSaveIdea = () => console.log('save idea');
+  const handleSaveIdea = async (e) => {
+    e.preventDefault();
+
+    const fullInfo = await Auth.currentAuthenticatedUser();
+    const token = await fullInfo.signInUserSession.idToken.jwtToken;
+    const username = await fullInfo.username;
+
+    async function uploadToSql(myUuid) {
+      console.log('upload to mysql'); //this works
+
+      // blocked by CORs or problem with serverless
+      return await axios({
+        method: 'post',
+        // url: 'https://ds7m4gu0n5.execute-api.us-east-2.amazonaws.com/dev/idea',
+        url: `http://localhost:4000/idea`,
+        data: {
+          email: username,
+          token: token,
+          title: ideaForm.title,
+          location: ideaForm.location,
+          description: ideaForm.description,
+          cost: ideaForm.cost,
+          indoor_outdoor: ideaForm.indoorOutdoor,
+          category: ideaForm.category,
+          url: ideaForm.url,
+          picture: myUuid,
+          weather: ideaForm.weather,
+          isCompleted: ideaForm.isCompleted
+        },
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+    }
+
+    try {
+      if (fullInfo && ideaForm.picture) {
+        const myUuid = uuidv4();
+        const type = ideaForm.picture.type.split('/');
+
+        Storage.put(
+          `${username}/ideaPictures/${myUuid}.${type[1]}`,
+          ideaForm.picture,
+          {
+            contentType: 'image/*'
+          }
+        )
+          .then((result) => console.log(result))
+          .then(() => uploadToSql(myUuid)) //this works
+          .then(() => handleClose())
+          .catch((error) => console.log(error));
+      } else {
+        if (fullInfo) {
+          uploadToSql();
+          handleClose();
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className={classes.root}>
