@@ -38,7 +38,7 @@ const pool = mysql.createPool({
 
 // later comes from currentAuthenticatedUser-the one that says token_use: id
 const jwtIdToken =
-  'eyJraWQiOiJtd0J1aTVPR3RsV3Jma2RiUjFcL1p6ZmJYWGNGNlRzTXc3MjA3aFFxbGhPWT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI1NmYyODI3Mi1kYjMwLTRmNmEtYTMzZS1lMTViOTBlMWQwNjYiLCJhdWQiOiI5cjRmcGhqcHB2bWg3dDg0NmFpYTlhYm02IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImV2ZW50X2lkIjoiMDc0NDg1MzgtZDdkYy00ODQzLWI4ZDYtMzMwMzExNTBlNzNlIiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE1OTY5ODM3MTIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTIuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0yX1gzVE1IUWVUbSIsImNvZ25pdG86dXNlcm5hbWUiOiJqdm1zdXJmc0BnbWFpbC5jb20iLCJleHAiOjE1OTY5ODczMTIsImlhdCI6MTU5Njk4MzcxMiwiZW1haWwiOiJqdm1zdXJmc0BnbWFpbC5jb20ifQ.mqfa_Hif205t6adXVCQTqhcPX-9b2PQp-9qsAt7ttr1HiBgU-DZsfev3e4KY2HF9ZH187sSQiKubJwDZCYb5qnN7bM9E84RvZxIXWGa3LtWGUI1vxmZjklQxzJBe5aVhZqj0wLYy34BUMjwkNEq-3gJZLaVj80yEo04sNalhfk0sw-W_TqwiYv0lVniG20Wc5D3dttCViIDfNSbtDh2CXZNCgZYMleMqnW988YS83sxvBOsmiqaqcWv1yMiaKzDiXLVsYSKFGkKtK9M0L0dCmrATfG00TWDsiaAAxOd-0NGBfzu6Eshz1yuZtOA5GjLU4iY77YwnfOH6JjyclAHzlA';
+  'eyJraWQiOiJtd0J1aTVPR3RsV3Jma2RiUjFcL1p6ZmJYWGNGNlRzTXc3MjA3aFFxbGhPWT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI1NmYyODI3Mi1kYjMwLTRmNmEtYTMzZS1lMTViOTBlMWQwNjYiLCJhdWQiOiI5cjRmcGhqcHB2bWg3dDg0NmFpYTlhYm02IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImV2ZW50X2lkIjoiOWI4ZDgxMjQtZDc5OC00ZTYyLTg5MzEtYzc0MDg3Mzc2NDdlIiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE1OTY5OTkyOTAsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTIuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0yX1gzVE1IUWVUbSIsImNvZ25pdG86dXNlcm5hbWUiOiJqdm1zdXJmc0BnbWFpbC5jb20iLCJleHAiOjE1OTcwMDI4OTAsImlhdCI6MTU5Njk5OTI5MCwiZW1haWwiOiJqdm1zdXJmc0BnbWFpbC5jb20ifQ.KdjHbpPmhbjSLBqa7F3f0XEMN5_dwHJqo8YivnK9oSKkhNhYQ8rruyBf8mKz3EQJ-Uvs9bGqFGWpEZew3UDRCzTO7GsLdoficDvq8oKb3Lom8mlL9iBhCZT49tnWc0v2DzTCHxSroh-4cbCRrHiXU7jtNlUH9SOAkMCDCFE1fzKi08aMFwl-_YopTKJd4K_d1yGwkZaMSFvt3WvJPymK5VYL9nxeMtBhVNdkY7XSdxPku5OvNS6viCYWjUYRjeS5TLPPp2D1I8zTEiz0Q6bELh12T2cTEOslNY_DrOup72zLwKbxNjz7VtGIeMnln9K_xfCWmzWX5BRzzZSbTOdmOA';
 
 const jwks = {
   keys: [
@@ -90,7 +90,7 @@ app.get('/users', authorizeUser, async (request, response) => {
   }
 });
 
-// POST User
+// POST User - Done
 app.post('/user', async (request, response) => {
   try {
     console.log('POST USER');
@@ -145,7 +145,7 @@ app.get('/user', authorizeUser, async (request, response) => {
   }
 });
 
-// GET User Profile Pic
+// GET User Profile Pic - Done
 app.get('/user/profilepic', authorizeUser, async (request, response) => {
   console.log('GET USER PROFILE PIC');
 
@@ -260,8 +260,8 @@ app.delete('/user', authorizeUser, async (request, response) => {
   }
 });
 
-// POST Idea
-app.post('/idea', authorizeUser, async (request, response, next) => {
+// POST Idea - Done
+app.post('/idea', authorizeUser, async (request, response) => {
   try {
     console.log('POST IDEA');
 
@@ -298,8 +298,8 @@ app.post('/idea', authorizeUser, async (request, response, next) => {
   }
 });
 
-// GET ALL Ideas
-app.get('/ideas', authorizeUser, async (request, response) => {
+// GET ALL Ideas by User
+app.get('/user/ideas', authorizeUser, async (request, response) => {
   try {
     console.log('GET ALL IDEAS');
 
@@ -309,7 +309,10 @@ app.get('/ideas', authorizeUser, async (request, response) => {
     }
 
     const con = await pool.getConnection();
-    const recordset = await con.query('SELECT * FROM popsicle_stick.idea');
+    const recordset = await con.query(
+      'SELECT * FROM popsicle_stick.idea WHERE email = ?',
+      [email]
+    );
     con.release();
 
     console.log(recordset[0]);
@@ -628,6 +631,7 @@ app.get('/everythingbyuser', authorizeUser, async (request, response) => {
   }
 });
 
+// Authorize User
 function authorizeUser(request, response, next) {
   if (request.query.token) request.body.token = request.query.token;
   const tokenFromRequestBody = request.body.token;
@@ -650,5 +654,3 @@ function authorizeUser(request, response, next) {
 }
 
 app.listen(PORT, () => console.log(`server is running on port ${PORT}`));
-
-// Access to XMLHttpRequest at 'https://ds7m4gu0n5.execute-api.us-east-2.amazonaws.com/dev/idea' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
