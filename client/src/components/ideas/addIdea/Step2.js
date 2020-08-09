@@ -5,7 +5,7 @@ import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 
 const Step2 = ({ ideaForm, setIdeaForm }) => {
   const classes = useStyles();
-  console.log('ideaForm', ideaForm);
+  // console.log('ideaForm', ideaForm);
 
   const [cost, setCost] = useState('');
   const handleCost = (e, newCost) => {

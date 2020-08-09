@@ -55,16 +55,10 @@ const Navbar = ({ props, user }) => {
       const token = await fullInfo.signInUserSession.idToken.jwtToken;
       const username = await fullInfo.username;
 
-      // needs to call s3 bucket
       const res = await axios.get(
-        `http://localhost:4000/user/profilepic?email=${username}&token=${token}`,
-        {
-          data: {
-            email: username,
-            token: token
-          }
-        }
+        `http://localhost:4000/user/profilepic?email=${username}&token=${token}`
       );
+
       // console.log(res.data.Body.data);
       setProfilePic(convertImg(res.data.Body.data));
       // setProfilePic(res.data.map((item) => convertImg(item.Body.data)));

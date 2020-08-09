@@ -3,7 +3,7 @@ import { makeStyles, TextField } from '@material-ui/core';
 
 const Step1 = ({ ideaForm, setIdeaForm }) => {
   const classes = useStyles();
-  console.log('ideaForm', ideaForm);
+  // console.log('ideaForm', ideaForm);
 
   useEffect(() => {
     setIdeaForm({

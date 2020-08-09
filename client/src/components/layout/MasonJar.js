@@ -1,14 +1,36 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import masonJar from '../../assets/masonJar.png';
 import './MasonJar.css';
 import DisplayRandomIdea from '../ideas/DisplayRandomIdea';
 import EditIdeaModal from '../ideas/EditIdeaModal';
+import axios from 'axios';
+import { Auth } from 'aws-amplify';
 
 const MasonJar = () => {
-  const getRandomIdea = () => {
-    // console.log('random idea');
-    // return <DisplayRandomIdea />;
-    return <EditIdeaModal />;
+  const getRandomIdea = async (e) => {
+    e.preventDefault();
+    console.log('random idea');
+
+    const fullInfo = await Auth.currentAuthenticatedUser();
+    const token = await fullInfo.signInUserSession.idToken.jwtToken;
+    const username = await fullInfo.username;
+
+    console.log(fullInfo);
+    try {
+      if (fullInfo) {
+        const res = await axios({
+          method: 'get',
+          url: `http://localhost:4000/ideas`,
+          params: {
+            email: username,
+            token: token
+          }
+        });
+        console.log(res.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
