@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import AddIdeaModal from '../ideas/AddIdeaModal';
 import EditIdeaModal from '../ideas/EditIdeaModal';
-import PropTypes from 'prop-types';
 
 const AddEditIdeaBtns = () => {
   const classes = useStyles();
@@ -15,7 +14,7 @@ const AddEditIdeaBtns = () => {
   );
 };
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   container: {
     display: 'flex',
     flexDirection: 'column',
@@ -24,7 +23,5 @@ const useStyles = makeStyles((theme) => ({
     marginTop: '14rem'
   }
 }));
-
-AddEditIdeaBtns.propTypes = {};
 
 export default AddEditIdeaBtns;

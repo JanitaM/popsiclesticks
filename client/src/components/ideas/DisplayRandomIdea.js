@@ -1,70 +1,76 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Modal from '@material-ui/core/Modal';
+import {
+  Card,
+  CardHeader,
+  CardMedia,
+  CardContent,
+  CardActions,
+  Typography,
+  Button
+} from '@material-ui/core';
 
-function rand() {
-  return Math.round(Math.random() * 20) - 10;
-}
+const DisplayRandomIdea = ({ randomIdea, handleClose }) => {
+  const classes = useStyles();
 
-function getModalStyle() {
-  const top = 50 + rand();
-  const left = 50 + rand();
-
-  return {
-    top: `${top}%`,
-    left: `${left}%`,
-    transform: `translate(-${top}%, -${left}%)`
+  const handleAccept = (e) => {
+    e.preventDefault();
+    handleClose();
+    alert('Go have fun!');
   };
-}
+
+  const handleDecline = (e) => {
+    e.preventDefault();
+    handleClose();
+    alert('Pick another stick!');
+  };
+
+  return (
+    <Card className={classes.root}>
+      <CardHeader title={randomIdea.title} subheader={randomIdea.location} />
+      <CardMedia
+        className={classes.media}
+        image='/static/images/cards/paella.jpg'
+        title='Paella dish'
+      />
+      <CardContent>
+        <Typography variant='body2' color='textSecondary' component='p'>
+          {randomIdea.title}
+        </Typography>
+      </CardContent>
+      <CardActions disableSpacing>
+        <Button onClick={handleAccept} variant='contained' color='primary'>
+          Yes
+        </Button>
+        <Button onClick={handleDecline} variant='contained' color='default'>
+          No
+        </Button>
+        <Button variant='contained' color='secondary'>
+          Delete
+        </Button>
+      </CardActions>
+    </Card>
+  );
+};
 
 const useStyles = makeStyles((theme) => ({
-  paper: {
-    position: 'absolute',
-    width: 400,
-    backgroundColor: theme.palette.background.paper,
-    border: '2px solid #000',
-    boxShadow: theme.shadows[5],
-    padding: theme.spacing(2, 4, 3)
+  root: {
+    maxWidth: 345
+  },
+  media: {
+    height: 0,
+    paddingTop: '56.25%' // 16:9
+  },
+  expand: {
+    transform: 'rotate(0deg)',
+    marginLeft: 'auto',
+    transition: theme.transitions.create('transform', {
+      duration: theme.transitions.duration.shortest
+    })
+  },
+  expandOpen: {
+    transform: 'rotate(180deg)'
   }
 }));
 
-export default function DisplayRandomIdea() {
-  const classes = useStyles();
-  // getModalStyle is not a pure function, we roll the style only on the first render
-  const [modalStyle] = React.useState(getModalStyle);
-  const [open, setOpen] = React.useState(false);
-
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const body = (
-    <div style={modalStyle} className={classes.paper}>
-      <h2 id='simple-modal-title'>Text in a modal</h2>
-      <p id='simple-modal-description'>
-        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-      </p>
-      {/* <SimpleModal /> */}
-    </div>
-  );
-
-  return (
-    <div>
-      <button type='button' onClick={handleOpen}>
-        Open Modal
-      </button>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby='simple-modal-title'
-        aria-describedby='simple-modal-description'
-      >
-        {body}
-      </Modal>
-    </div>
-  );
-}
+export default DisplayRandomIdea;

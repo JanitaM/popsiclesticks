@@ -41,10 +41,6 @@ const AddIdeaStepper = ({ ideaForm, setIdeaForm, handleClose }) => {
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
-  // change to handleClose
-  const handleReset = () => {
-    setActiveStep(0);
-  };
 
   const renderButton = () => {
     if (activeStep === steps.length - 1) {
@@ -65,61 +61,63 @@ const AddIdeaStepper = ({ ideaForm, setIdeaForm, handleClose }) => {
   const handleSaveIdea = async (e) => {
     e.preventDefault();
 
-    const fullInfo = await Auth.currentAuthenticatedUser();
-    const token = await fullInfo.signInUserSession.idToken.jwtToken;
-    const username = await fullInfo.username;
+    if (ideaForm.title) {
+      const fullInfo = await Auth.currentAuthenticatedUser();
+      const token = await fullInfo.signInUserSession.idToken.jwtToken;
+      const username = await fullInfo.username;
 
-    async function uploadToSql(myUuid) {
-      console.log('upload to mysql');
-
-      return await axios({
-        method: 'post',
-        // url: 'https://ds7m4gu0n5.execute-api.us-east-2.amazonaws.com/dev/idea',
-        url: `http://localhost:4000/idea`,
-        data: {
-          email: username,
-          token: token,
-          title: ideaForm.title,
-          location: ideaForm.location,
-          description: ideaForm.description,
-          cost: ideaForm.cost,
-          indoor_outdoor: ideaForm.indoorOutdoor,
-          category: ideaForm.category,
-          url: ideaForm.url,
-          picture: myUuid,
-          weather: ideaForm.weather,
-          isCompleted: false
-        },
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-    }
-
-    try {
-      if (fullInfo && ideaForm.picture) {
-        const myUuid = uuidv4();
-        const type = ideaForm.picture.type.split('/');
-
-        Storage.put(
-          `${username}/ideaPictures/${myUuid}.${type[1]}`,
-          ideaForm.picture,
-          {
-            contentType: 'image/*'
+      async function uploadToSql(myUuid) {
+        return await axios({
+          method: 'post',
+          // url: 'https://ds7m4gu0n5.execute-api.us-east-2.amazonaws.com/dev/idea',
+          url: `http://localhost:4000/idea`,
+          data: {
+            email: username,
+            token: token,
+            title: ideaForm.title,
+            location: ideaForm.location,
+            description: ideaForm.description,
+            cost: ideaForm.cost,
+            indoor_outdoor: ideaForm.indoorOutdoor,
+            category: ideaForm.category,
+            url: ideaForm.url,
+            picture: myUuid,
+            weather: ideaForm.weather,
+            isCompleted: false
+          },
+          headers: {
+            'Content-Type': 'application/json'
           }
-        )
-          .then((result) => console.log(result))
-          .then(() => uploadToSql(myUuid))
-          .then(() => handleClose())
-          .catch((error) => console.log(error));
-      } else {
-        if (fullInfo) {
-          uploadToSql();
-          handleClose();
-        }
+        });
       }
-    } catch (error) {
-      console.log(error);
+
+      try {
+        if (fullInfo && ideaForm.picture) {
+          const myUuid = uuidv4();
+          const type = ideaForm.picture.type.split('/');
+
+          Storage.put(
+            `${username}/ideaPictures/${myUuid}.${type[1]}`,
+            ideaForm.picture,
+            {
+              contentType: 'image/*'
+            }
+          )
+            .then((result) => console.log(result))
+            .then(() => uploadToSql(myUuid))
+            .then(() => handleClose())
+            .catch((error) => console.log(error));
+        } else {
+          if (fullInfo) {
+            uploadToSql();
+            handleClose();
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      alert('A title is required');
     }
   };
 
@@ -133,41 +131,30 @@ const AddIdeaStepper = ({ ideaForm, setIdeaForm, handleClose }) => {
         ))}
       </Stepper>
       <div>
-        {activeStep === steps.length ? (
-          <div>
-            <Typography className={classes.instructions}>
-              Idea added to the jar
-            </Typography>
-            <Button onClick={handleReset}>Reset</Button>
-          </div>
-        ) : (
-          <div>
-            <Typography className={classes.instructions}>
-              {getStepContent(activeStep, ideaForm, setIdeaForm)}
-            </Typography>
-            <div>
-              <Button
-                disabled={activeStep === 0}
-                onClick={handleBack}
-                className={classes.backButton}
-              >
-                Back
-              </Button>
+        <Typography className={classes.instructions}>
+          {getStepContent(activeStep, ideaForm, setIdeaForm)}
+        </Typography>
+        <div>
+          <Button
+            disabled={activeStep === 0}
+            onClick={handleBack}
+            className={classes.backButton}
+          >
+            Back
+          </Button>
 
-              {activeStep === steps.length - 1 ? (
-                <Button
-                  variant='contained'
-                  color='primary'
-                  onClick={handleSaveIdea}
-                >
-                  Save
-                </Button>
-              ) : (
-                renderButton()
-              )}
-            </div>
-          </div>
-        )}
+          {activeStep === steps.length - 1 ? (
+            <Button
+              variant='contained'
+              color='primary'
+              onClick={handleSaveIdea}
+            >
+              Save
+            </Button>
+          ) : (
+            renderButton()
+          )}
+        </div>
       </div>
     </div>
   );
