@@ -7,35 +7,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
 import { Auth } from 'aws-amplify';
 
-function rand() {
-  return Math.round(Math.random() * 20) - 10;
-}
-
-function getModalStyle() {
-  const top = 50 + rand();
-  const left = 50 + rand();
-
-  return {
-    top: `${top}%`,
-    left: `${left}%`,
-    transform: `translate(-${top}%, -${left}%)`
-  };
-}
-
-const useStyles = makeStyles((theme) => ({
-  paper: {
-    position: 'absolute',
-    width: 400,
-    backgroundColor: theme.palette.background.paper,
-    border: '2px solid #000',
-    boxShadow: theme.shadows[5],
-    padding: theme.spacing(2, 4, 3)
-  }
-}));
-
 const MasonJar = () => {
   const classes = useStyles();
-  const [modalStyle] = useState(getModalStyle);
+  const [token, setToken] = useState('');
   const [randomIdea, setRandomIdea] = useState({});
   const [open, setOpen] = useState(false);
 
@@ -48,6 +22,8 @@ const MasonJar = () => {
 
     try {
       if (fullInfo) {
+        setToken(token);
+
         const res = await axios({
           method: 'get',
           url: `http://localhost:4000/user/ideas`,
@@ -57,7 +33,8 @@ const MasonJar = () => {
           }
         });
         // console.log(res.data.message);
-        getRandomIdea(res.data.message);
+        const ideaArr = res.data.message;
+        getRandomIdea(ideaArr);
       }
     } catch (error) {
       console.log(error);
@@ -103,11 +80,24 @@ const MasonJar = () => {
         onClose={handleClose}
         aria-labelledby='simple-modal-title'
         aria-describedby='simple-modal-description'
+        className={classes.modal}
       >
-        <DisplayRandomIdea randomIdea={randomIdea} handleClose={handleClose} />
+        <DisplayRandomIdea
+          token={token}
+          handleClose={handleClose}
+          randomIdea={randomIdea}
+        />
       </Modal>
     </div>
   );
 };
+
+const useStyles = makeStyles((theme) => ({
+  modal: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  }
+}));
 
 export default MasonJar;

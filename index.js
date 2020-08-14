@@ -38,7 +38,7 @@ const pool = mysql.createPool({
 
 // later comes from currentAuthenticatedUser-the one that says token_use: id
 const jwtIdToken =
-  'eyJraWQiOiJtd0J1aTVPR3RsV3Jma2RiUjFcL1p6ZmJYWGNGNlRzTXc3MjA3aFFxbGhPWT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI1NmYyODI3Mi1kYjMwLTRmNmEtYTMzZS1lMTViOTBlMWQwNjYiLCJhdWQiOiI5cjRmcGhqcHB2bWg3dDg0NmFpYTlhYm02IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImV2ZW50X2lkIjoiNTg1ZDg4YzQtZjM4My00ODVjLWIxYTEtYmNlZDE1MWRlNjRjIiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE1OTcwMDg5MTAsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTIuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0yX1gzVE1IUWVUbSIsImNvZ25pdG86dXNlcm5hbWUiOiJqdm1zdXJmc0BnbWFpbC5jb20iLCJleHAiOjE1OTcwMTI1MTAsImlhdCI6MTU5NzAwODkxMCwiZW1haWwiOiJqdm1zdXJmc0BnbWFpbC5jb20ifQ.A4QQhWx3SH6-CjTvWjL0Bt-4w96bK6uvS2b7xqI0XSe7Em_Tl7mbQBjAm-ztGhzVUOy0X4LaRuCI6VZOyjCVtthPDyrM0wuOUM0cQJ8bnWMswLgK-Yh8aNR3xeyBfRv8DpClQlTQKtB_UfFoXilW0lKz_f2KQREv-pviyECpDUopn1Msbj57FaA4neMyEqAcQ2hj5QanbOJZRxktlMFuKVf_qza3Ev--aIBxVQorOGc_bVX2ESuD-pFYt0Dcm4PRmtDRLyQrYbNK-TLm0mXSVMAr4WuMq-txgYkfogFFZ5CMfjzd3PRWmCmVS3LCDXCTF8PHwITlrsK37Ef9x52mHA';
+  'eyJraWQiOiJtd0J1aTVPR3RsV3Jma2RiUjFcL1p6ZmJYWGNGNlRzTXc3MjA3aFFxbGhPWT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI1NmYyODI3Mi1kYjMwLTRmNmEtYTMzZS1lMTViOTBlMWQwNjYiLCJhdWQiOiI5cjRmcGhqcHB2bWg3dDg0NmFpYTlhYm02IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImV2ZW50X2lkIjoiOGVjMTc2NWItZTg3Ny00ZTFjLTlmNmMtNzcxODU5NjE5OGM1IiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE1OTczNjI3NDMsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTIuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0yX1gzVE1IUWVUbSIsImNvZ25pdG86dXNlcm5hbWUiOiJqdm1zdXJmc0BnbWFpbC5jb20iLCJleHAiOjE1OTczNjYzNDMsImlhdCI6MTU5NzM2Mjc0MywiZW1haWwiOiJqdm1zdXJmc0BnbWFpbC5jb20ifQ.h65gkKSRe_NUlY71t5xImXQ6Td23GphvwnvLPwBgnVsqBSUdnqLtd6Y7KVNFXNKt8yqqyJyNGmV9Q8TciX1lEE_Fckym3pR3FvT12gwA2-k1JSKmp1iobPdEoaNwHy8fbS4aoaetkg3hrzhaIFd_bdynEnOpI9Vmg3rDYr45-VW_6WykM3SZPb_lkpNI_sJfFHxT1T9YHqfs5NyAM0Y-f12X5IIVu-ZbJcHayPIOzOeEB9n_N1Rzw0LnUauLYTVWuncTGCLidRh3ZECo7Kojm0DJPYot0dj8oYzZy6JqMDnsZay1a9d2IO2jRDn_i-6QIWuo-07u5OlfL4q0hBzh-Q';
 
 const jwks = {
   keys: [
@@ -352,7 +352,7 @@ app.get('/idea', authorizeUser, async (request, response) => {
 });
 
 // UPDATE Idea
-app.put('/idea', authorizeUser, async (request, response) => {
+app.put('/user/ideas', authorizeUser, async (request, response) => {
   try {
     console.log('UPDATE ONE IDEA');
 
@@ -405,7 +405,7 @@ app.put('/idea', authorizeUser, async (request, response) => {
 });
 
 // DELETE Idea
-app.delete('/idea', authorizeUser, async (request, response) => {
+app.delete('/user/idea', authorizeUser, async (request, response) => {
   try {
     console.log('DELETE AN IDEA');
 

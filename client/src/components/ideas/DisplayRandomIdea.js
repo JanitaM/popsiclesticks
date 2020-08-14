@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Card,
@@ -10,8 +11,10 @@ import {
   Button
 } from '@material-ui/core';
 
-const DisplayRandomIdea = ({ randomIdea, handleClose }) => {
+const DisplayRandomIdea = ({ handleClose, randomIdea, token }) => {
   const classes = useStyles();
+  const [idea] = useState(randomIdea);
+  console.log(token);
 
   const handleAccept = (e) => {
     e.preventDefault();
@@ -22,12 +25,37 @@ const DisplayRandomIdea = ({ randomIdea, handleClose }) => {
   const handleDecline = (e) => {
     e.preventDefault();
     handleClose();
-    alert('Pick another stick!');
+    // alert('Pick another stick!');
+  };
+
+  const handleDelete = async (e) => {
+    e.preventDefault();
+    console.log(idea);
+    console.log(token);
+
+    try {
+      const res = await axios({
+        method: 'delete',
+        url: `http://localhost:4000/user/idea`,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        data: {
+          email: idea.email,
+          token: token,
+          id: idea.id
+        }
+      });
+      handleClose();
+      alert('Idea deleted');
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
-    <Card className={classes.root}>
-      <CardHeader title={randomIdea.title} subheader={randomIdea.location} />
+    <Card className={classes.paper}>
+      <CardHeader title={idea.title} subheader={idea.location} />
       <CardMedia
         className={classes.media}
         image='/static/images/cards/paella.jpg'
@@ -35,17 +63,32 @@ const DisplayRandomIdea = ({ randomIdea, handleClose }) => {
       />
       <CardContent>
         <Typography variant='body2' color='textSecondary' component='p'>
-          {randomIdea.title}
+          {idea.title}
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <Button onClick={handleAccept} variant='contained' color='primary'>
+        <Button
+          className={classes.m1}
+          onClick={handleAccept}
+          variant='contained'
+          color='primary'
+        >
           Yes
         </Button>
-        <Button onClick={handleDecline} variant='contained' color='default'>
+        <Button
+          className={classes.m1}
+          onClick={handleDecline}
+          variant='contained'
+          color='default'
+        >
           No
         </Button>
-        <Button variant='contained' color='secondary'>
+        <Button
+          className={classes.m1}
+          onClick={handleDelete}
+          variant='contained'
+          color='secondary'
+        >
           Delete
         </Button>
       </CardActions>
@@ -54,23 +97,20 @@ const DisplayRandomIdea = ({ randomIdea, handleClose }) => {
 };
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    maxWidth: 345
-  },
   media: {
-    height: 0,
-    paddingTop: '56.25%' // 16:9
+    height: '20vh',
+    width: '20vw'
   },
-  expand: {
-    transform: 'rotate(0deg)',
-    marginLeft: 'auto',
-    transition: theme.transitions.create('transform', {
-      duration: theme.transitions.duration.shortest
-    })
+  paper: {
+    position: 'absolute',
+    width: '80vw',
+    height: '80vh',
+    overflow: 'hidden',
+    backgroundColor: theme.palette.background.paper,
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(2, 4, 3)
   },
-  expandOpen: {
-    transform: 'rotate(180deg)'
-  }
+  m1: { margin: '1rem' }
 }));
 
 export default DisplayRandomIdea;

@@ -19,6 +19,7 @@ const useStyles = makeStyles({
     alignItems: 'center'
   },
   circle: {
+    margin: '5rem',
     color: 'red'
   }
 });
