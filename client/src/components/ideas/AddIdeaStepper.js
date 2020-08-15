@@ -70,7 +70,7 @@ const AddIdeaStepper = ({ ideaForm, setIdeaForm, handleClose }) => {
         return await axios({
           method: 'post',
           // url: 'https://ds7m4gu0n5.execute-api.us-east-2.amazonaws.com/dev/idea',
-          url: `http://localhost:4000/idea`,
+          url: `http://localhost:4000/user/idea`,
           data: {
             email: username,
             token: token,

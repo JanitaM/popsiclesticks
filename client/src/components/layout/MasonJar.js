@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import masonJar from '../../assets/masonJar.png';
 import './MasonJar.css';
 import DisplayRandomIdea from '../ideas/DisplayRandomIdea';
@@ -7,34 +7,61 @@ import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
 import { Auth } from 'aws-amplify';
 
+function convertImg(binArr) {
+  let arrayBufferView = new Uint8Array(binArr);
+  let blob = new Blob([arrayBufferView], { type: 'image/*' });
+  let urlCreator = window.url || window.webkitURL;
+  let imgUrl = urlCreator.createObjectURL(blob);
+  return imgUrl;
+}
+
 const MasonJar = () => {
   const classes = useStyles();
-  const [token, setToken] = useState('');
-  const [randomIdea, setRandomIdea] = useState({});
+
+  const [signedInUser, setSignedInUser] = useState({
+    email: '',
+    token: ''
+  });
+
+  const [randomIdea, setRandomIdea] = useState({
+    idea: {},
+    ideaPic: []
+  });
+
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const fullInfo = await Auth.currentAuthenticatedUser();
+      const token = await fullInfo.signInUserSession.idToken.jwtToken;
+      const email = await fullInfo.username;
+      setSignedInUser({ ...signedInUser, token, email });
+    })();
+  }, []);
 
   const getUserIdeas = async (e) => {
     e.preventDefault();
 
-    const fullInfo = await Auth.currentAuthenticatedUser();
-    const token = await fullInfo.signInUserSession.idToken.jwtToken;
-    const username = await fullInfo.username;
-
     try {
-      if (fullInfo) {
-        setToken(token);
-
+      if (signedInUser.token) {
+        // GET all of the user's ideas
         const res = await axios({
           method: 'get',
           url: `http://localhost:4000/user/ideas`,
           params: {
-            email: username,
-            token: token
+            email: signedInUser.email,
+            token: signedInUser.token
           }
         });
         // console.log(res.data.message);
         const ideaArr = res.data.message;
-        getRandomIdea(ideaArr);
+
+        if (ideaArr.length > 0) {
+          getRandomIdea(ideaArr);
+        } else {
+          console.log('no ideas in the db');
+          return;
+        }
       }
     } catch (error) {
       console.log(error);
@@ -42,16 +69,40 @@ const MasonJar = () => {
   };
 
   const getRandomIdea = (ideaArr) => {
-    console.log(ideaArr);
-    if (ideaArr.length < 0) {
-      return alert('no ideas in the database');
-    }
-
     let randomIndex = Math.floor(Math.random() * ideaArr.length);
-
-    console.log(ideaArr[randomIndex]);
-    setRandomIdea(ideaArr[randomIndex]);
+    checkForIdeaPicture(ideaArr[randomIndex]);
     handleOpen();
+  };
+
+  const checkForIdeaPicture = async (idea) => {
+    if (!idea.picture) {
+      setRandomIdea({ ...randomIdea, idea: idea, ideaPic: null });
+    } else {
+      getIdeaPic(idea);
+    }
+  };
+
+  const getIdeaPic = async (idea) => {
+    // console.log(idea);
+
+    const res = await axios({
+      method: 'post',
+      url: 'http://localhost:4000/idea/pic',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      data: {
+        email: signedInUser.email,
+        token: signedInUser.token,
+        picUuid: idea.picture
+      }
+    });
+    // console.log(await res.data[0].Body.data);
+    setRandomIdea({
+      ...randomIdea,
+      idea: idea,
+      ideaPic: convertImg(res.data[0].Body.data)
+    });
   };
 
   const handleOpen = () => {
@@ -83,7 +134,7 @@ const MasonJar = () => {
         className={classes.modal}
       >
         <DisplayRandomIdea
-          token={token}
+          signedInUser={signedInUser}
           handleClose={handleClose}
           randomIdea={randomIdea}
         />

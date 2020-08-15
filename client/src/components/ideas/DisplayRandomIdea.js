@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -10,11 +10,10 @@ import {
   Typography,
   Button
 } from '@material-ui/core';
+import Preloader from '../layout/Preloader';
 
-const DisplayRandomIdea = ({ handleClose, randomIdea, token }) => {
+const DisplayRandomIdea = ({ handleClose, randomIdea, signedInUser }) => {
   const classes = useStyles();
-  const [idea] = useState(randomIdea);
-  console.log(token);
 
   const handleAccept = (e) => {
     e.preventDefault();
@@ -25,13 +24,12 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, token }) => {
   const handleDecline = (e) => {
     e.preventDefault();
     handleClose();
-    // alert('Pick another stick!');
   };
 
   const handleDelete = async (e) => {
     e.preventDefault();
-    console.log(idea);
-    console.log(token);
+    // console.log(randomIdea.idea);
+    // console.log(signedInUser.token);
 
     try {
       const res = await axios({
@@ -41,9 +39,9 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, token }) => {
           'Content-Type': 'application/json'
         },
         data: {
-          email: idea.email,
-          token: token,
-          id: idea.id
+          email: signedInUser.email,
+          token: signedInUser.token,
+          id: randomIdea.idea.id
         }
       });
       handleClose();
@@ -55,15 +53,14 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, token }) => {
 
   return (
     <Card className={classes.paper}>
-      <CardHeader title={idea.title} subheader={idea.location} />
-      <CardMedia
-        className={classes.media}
-        image='/static/images/cards/paella.jpg'
-        title='Paella dish'
+      <CardHeader
+        title={randomIdea.idea.title}
+        subheader={randomIdea.idea.location}
       />
+      <CardMedia className={classes.media} image={randomIdea.ideaPic} />
       <CardContent>
         <Typography variant='body2' color='textSecondary' component='p'>
-          {idea.title}
+          {randomIdea.idea.title}
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
@@ -98,8 +95,8 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, token }) => {
 
 const useStyles = makeStyles((theme) => ({
   media: {
-    height: '20vh',
-    width: '20vw'
+    height: '30vh',
+    width: '30vw'
   },
   paper: {
     position: 'absolute',

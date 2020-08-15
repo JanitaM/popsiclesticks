@@ -182,7 +182,7 @@ app.get('/user/profilepic', authorizeUser, async (request, response) => {
         return a.LastModified - b.LastModified;
       });
       const currentPic = sortedResolvedFiles[sortedResolvedFiles.length - 1];
-      console.log(currentPic);
+      // console.log(currentPic);
 
       // response.status(200).send(resolvedFiles);
       response.status(200).send(currentPic);
@@ -261,7 +261,7 @@ app.delete('/user', authorizeUser, async (request, response) => {
 });
 
 // POST Idea - Done
-app.post('/idea', authorizeUser, async (request, response) => {
+app.post('/user/idea', authorizeUser, async (request, response) => {
   try {
     console.log('POST IDEA');
 
@@ -298,7 +298,7 @@ app.post('/idea', authorizeUser, async (request, response) => {
   }
 });
 
-// GET ALL Ideas by User
+// GET ALL Ideas by User - Done
 app.get('/user/ideas', authorizeUser, async (request, response) => {
   try {
     console.log('GET ALL IDEAS');
@@ -324,8 +324,57 @@ app.get('/user/ideas', authorizeUser, async (request, response) => {
   }
 });
 
+// GET The Random Idea Pic - Needs to be POST to get uuid in
+app.post('/idea/pic', authorizeUser, async (request, response) => {
+  console.log('GET RANDOM IDEA PIC');
+  // console.log(request.body.picUuid);
+
+  const email = request.decodedToken.email;
+  if (!email) {
+    response.status(400).send({ message: 'access denied' });
+  }
+
+  async function getS3Data() {
+    const s3Response = await s3
+      .listObjectsV2({
+        Bucket: bucket,
+        Prefix: `public/${email}/ideaPictures`
+      })
+      .promise();
+    // console.log(s3Response.Contents);
+
+    const matchingFile = [];
+    s3Response.Contents.map((file) => {
+      if (file.Key.includes(request.body.picUuid)) {
+        return matchingFile.push(file);
+      }
+    });
+    // console.log('matchingfile', matchingFile);
+
+    try {
+      const resolvedFile = await asyncMap(
+        matchingFile.map((file) =>
+          s3
+            .getObject({
+              Bucket: bucket,
+              Key: file.Key
+            })
+            .promise()
+        )
+      );
+      // console.log('resolvedFile', resolvedFile);
+
+      response.status(200).send(resolvedFile);
+    } catch (error) {
+      console.log(error);
+      response.status(500).send(error);
+    }
+  }
+  getS3Data();
+});
+
 // GET One Idea
-app.get('/idea', authorizeUser, async (request, response) => {
+app.get('/user/idea', authorizeUser, async (request, response) => {
   try {
     console.log('GET ONE IDEA');
 
@@ -352,7 +401,7 @@ app.get('/idea', authorizeUser, async (request, response) => {
 });
 
 // UPDATE Idea
-app.put('/user/ideas', authorizeUser, async (request, response) => {
+app.put('/user/idea', authorizeUser, async (request, response) => {
   try {
     console.log('UPDATE ONE IDEA');
 
@@ -487,30 +536,30 @@ app.get('/pics', authorizeUser, async (request, response) => {
 });
 
 // GET One Idea Pic
-app.get('/pic', authorizeUser, async (request, response) => {
-  try {
-    console.log('GET ONE PIC');
+// app.get('/pic', authorizeUser, async (request, response) => {
+//   try {
+//     console.log('GET ONE PIC');
 
-    const email = request.decodedToken.email;
-    if (!email) {
-      response.status(400).send({ message: 'access denied' });
-    }
+//     const email = request.decodedToken.email;
+//     if (!email) {
+//       response.status(400).send({ message: 'access denied' });
+//     }
 
-    const con = await pool.getConnection();
-    const recordset = await con.execute(
-      'SELECT * FROM popsicle_stick.ideapic WHERE s3uuid = ? AND idea = ?',
-      [request.body.s3uuid, request.body.idea]
-    );
-    con.release();
+//     const con = await pool.getConnection();
+//     const recordset = await con.execute(
+//       'SELECT * FROM popsicle_stick.ideapic WHERE s3uuid = ? AND idea = ?',
+//       [request.body.s3uuid, request.body.idea]
+//     );
+//     con.release();
 
-    console.log(recordset[0]);
+//     console.log(recordset[0]);
 
-    response.status(200).send({ message: recordset[0] });
-  } catch (error) {
-    console.log(error);
-    response.status(500).send({ error: error.message, message: error });
-  }
-});
+//     response.status(200).send({ message: recordset[0] });
+//   } catch (error) {
+//     console.log(error);
+//     response.status(500).send({ error: error.message, message: error });
+//   }
+// });
 
 // UPDATE Idea Pic
 app.put('/pic', authorizeUser, async (request, response) => {
@@ -633,6 +682,8 @@ app.get('/everythingbyuser', authorizeUser, async (request, response) => {
 
 // Authorize User
 function authorizeUser(request, response, next) {
+  console.log('AuthroizeUser');
+
   if (request.query.token) request.body.token = request.query.token;
   const tokenFromRequestBody = request.body.token;
 
