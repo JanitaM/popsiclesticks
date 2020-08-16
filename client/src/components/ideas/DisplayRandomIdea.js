@@ -52,44 +52,50 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, signedInUser }) => {
   };
 
   return (
-    <Card className={classes.paper}>
-      <CardHeader
-        title={randomIdea.idea.title}
-        subheader={randomIdea.idea.location}
-      />
-      <CardMedia className={classes.media} image={randomIdea.ideaPic} />
-      <CardContent>
-        <Typography variant='body2' color='textSecondary' component='p'>
-          {randomIdea.idea.title}
-        </Typography>
-      </CardContent>
-      <CardActions disableSpacing>
-        <Button
-          className={classes.m1}
-          onClick={handleAccept}
-          variant='contained'
-          color='primary'
-        >
-          Yes
-        </Button>
-        <Button
-          className={classes.m1}
-          onClick={handleDecline}
-          variant='contained'
-          color='default'
-        >
-          No
-        </Button>
-        <Button
-          className={classes.m1}
-          onClick={handleDelete}
-          variant='contained'
-          color='secondary'
-        >
-          Delete
-        </Button>
-      </CardActions>
-    </Card>
+    <>
+      {!randomIdea.ideaPic ? (
+        <Preloader />
+      ) : (
+        <Card className={classes.paper}>
+          <CardHeader
+            title={randomIdea.idea.title}
+            subheader={randomIdea.idea.location}
+          />
+          <CardMedia className={classes.media} image={randomIdea.ideaPic} />
+          <CardContent>
+            <Typography variant='body2' color='textSecondary' component='p'>
+              {randomIdea.idea.title}
+            </Typography>
+          </CardContent>
+          <CardActions disableSpacing>
+            <Button
+              className={classes.m1}
+              onClick={handleAccept}
+              variant='contained'
+              color='primary'
+            >
+              Yes
+            </Button>
+            <Button
+              className={classes.m1}
+              onClick={handleDecline}
+              variant='contained'
+              color='default'
+            >
+              No
+            </Button>
+            <Button
+              className={classes.m1}
+              onClick={handleDelete}
+              variant='contained'
+              color='secondary'
+            >
+              Delete
+            </Button>
+          </CardActions>
+        </Card>
+      )}
+    </>
   );
 };
 

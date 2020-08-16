@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { user } from '../../redux/actions/userActions';
 import { Grid } from '@material-ui/core';
@@ -8,9 +8,23 @@ import MasonJar from '../layout/MasonJar';
 import FilterIdeas from '../ideas/FilterIdeasBtn';
 import AddEditIdeaBtns from '../ideas/AddEditIdeaBtns';
 import { connect } from 'react-redux';
+import { Auth } from 'aws-amplify';
 
 const Home = ({ user }) => {
   const classes = useStyles();
+
+  const [signedInUser, setSignedInUser] = useState({
+    email: '',
+    token: ''
+  });
+  useEffect(() => {
+    (async () => {
+      const fullInfo = await Auth.currentAuthenticatedUser();
+      const token = await fullInfo.signInUserSession.idToken.jwtToken;
+      const email = await fullInfo.username;
+      setSignedInUser({ ...signedInUser, token, email });
+    })();
+  }, []);
 
   return (
     <>
@@ -39,10 +53,13 @@ const Home = ({ user }) => {
               alignItems='flex-end'
             >
               <Grid item xs={12} sm={9}>
-                <MasonJar />
+                <MasonJar signedInUser={signedInUser} />
               </Grid>
               <Grid item xs={12} sm={3}>
-                <AddEditIdeaBtns className={classes.addEdit} />
+                <AddEditIdeaBtns
+                  signedInUser={signedInUser}
+                  className={classes.addEdit}
+                />
               </Grid>
             </Grid>
           </Grid>

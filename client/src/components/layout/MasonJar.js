@@ -15,13 +15,8 @@ function convertImg(binArr) {
   return imgUrl;
 }
 
-const MasonJar = () => {
+const MasonJar = ({ signedInUser }) => {
   const classes = useStyles();
-
-  const [signedInUser, setSignedInUser] = useState({
-    email: '',
-    token: ''
-  });
 
   const [randomIdea, setRandomIdea] = useState({
     idea: {},
@@ -29,15 +24,6 @@ const MasonJar = () => {
   });
 
   const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    (async () => {
-      const fullInfo = await Auth.currentAuthenticatedUser();
-      const token = await fullInfo.signInUserSession.idToken.jwtToken;
-      const email = await fullInfo.username;
-      setSignedInUser({ ...signedInUser, token, email });
-    })();
-  }, []);
 
   const getUserIdeas = async (e) => {
     e.preventDefault();

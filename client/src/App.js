@@ -6,6 +6,8 @@ import Home from './components/pages/Home';
 import Register from './components/pages/Register';
 import SignIn from './components/pages/SignIn';
 import Landing from './components/pages/Landing';
+import Dashboard from './components/pages/Dashboard';
+import AccountSettings from './components/pages/AccountSettings';
 import NotFound from './components/pages/NotFound';
 import './App.css';
 
@@ -18,8 +20,14 @@ const App = () => {
           <Route exact path='/' component={Landing} />
           <Route exact path='/register' component={Register} />
           <Route exact path='/signin' component={SignIn} />
-          <PrivateRoute exact path='/home' component={Home} />
-          {/* <Route exact path='/home' component={Home} /> */}
+
+          {/* <PrivateRoute exact path='/home' component={Home} /> */}
+          <Route exact path='/home' component={Home} />
+
+          <Route exact path='/dashboard' component={Dashboard} />
+          {/* <PrivateRoute exact path='/dashboard' component={Dashboard} /> */}
+
+          <PrivateRoute exact path='/account' component={AccountSettings} />
           <Route component={NotFound} />
         </Switch>
       </>
