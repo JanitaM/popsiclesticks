@@ -4,22 +4,26 @@ import { Auth } from 'aws-amplify';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
-import TableSortLabel from '@material-ui/core/TableSortLabel';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
-import Checkbox from '@material-ui/core/Checkbox';
-import IconButton from '@material-ui/core/IconButton';
-import Tooltip from '@material-ui/core/Tooltip';
+import {
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+  TableSortLabel,
+  Toolbar,
+  Typography,
+  Paper,
+  Checkbox,
+  IconButton,
+  Tooltip
+} from '@material-ui/core/';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
+import { Link } from 'react-router-dom';
 
 function createData(
   title,
@@ -73,7 +77,7 @@ const headCells = [
   {
     id: 'title',
     numeric: false,
-    disablePadding: false,
+    disablePadding: true,
     label: 'Title'
   },
   { id: 'location', numeric: false, disablePadding: false, label: 'Location' },
@@ -195,25 +199,40 @@ const EnhancedTableToolbar = (props) => {
   const classes = useToolbarStyles();
   const { numSelected } = props;
 
-  let renderButton = () => {
-    if (numSelected === 1) {
-      return (
-        <>
-          <Tooltip title='Edit list'>
-            <IconButton aria-label='edit list'>
-              <EditIcon />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title='Delete'>
-            <IconButton aria-label='delete'>
-              <DeleteIcon />
-            </IconButton>
-          </Tooltip>
-        </>
-      );
-    } else {
-      return null;
-    }
+  const [signedInUser, setSignedInUser] = useState({
+    email: '',
+    token: ''
+  });
+  // console.log(signedInUser);
+
+  const handleDeleteIdea = (e) => {
+    e.preventDefault();
+    console.log('delete idea');
+
+    // const fullInfo = await Auth.currentAuthenticatedUser();
+    // const token = await fullInfo.signInUserSession.idToken.jwtToken;
+    // const email = await fullInfo.username;
+
+    // if(token) {
+    //   try {
+    //     const res = await axios({
+    //       method: 'delete',
+    //       url: `http://localhost:4000/user/idea`,
+    //       headers: {
+    //         'Content-Type': 'application/json'
+    //       },
+    //       data: {
+    //         email: signedInUser.email,
+    //         token: signedInUser.token,
+    //         id: randomIdea.idea.id
+    //       }
+    //     });
+    //     handleClose();
+    //     alert('Idea deleted');
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // }
   };
 
   return (
@@ -232,24 +251,45 @@ const EnhancedTableToolbar = (props) => {
           {numSelected} selected
         </Typography>
       ) : (
-        <Typography
-          className={classes.title}
-          variant='h6'
-          id='tableTitle'
-          component='div'
-        >
-          Edit your ideas
-        </Typography>
+        <div>
+          <Typography
+            className={classes.title}
+            variant='h6'
+            id='tableTitle'
+            component='div'
+          >
+            Edit your ideas
+          </Typography>
+          <Button>
+            <Link to='/home' variant='contained' color='primary'>
+              Home
+            </Link>
+          </Button>
+        </div>
       )}
 
       {numSelected > 1 ? (
-        <Tooltip title='Delete'>
-          <IconButton aria-label='delete'>
+        <Tooltip title='Delete Multiple Ideas'>
+          <IconButton
+            aria-label='delete multiple Ideas'
+            onClick={handleDeleteIdea}
+          >
             <DeleteIcon />
           </IconButton>
         </Tooltip>
       ) : (
-        renderButton()
+        <>
+          <Tooltip title='Edit Idea'>
+            <IconButton aria-label='edit Idea'>
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title='Delete Idea'>
+            <IconButton aria-label='delete idea' onClick={handleDeleteIdea}>
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </>
       )}
     </Toolbar>
   );
@@ -264,11 +304,11 @@ const Dashboard = () => {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('title');
   const [selected, setSelected] = useState([]);
+  // console.log('selected', selected);
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
   const [rows, setRows] = useState([]);
-  // console.log(randomIdea);
 
   useEffect(() => {
     (async () => {
@@ -302,35 +342,7 @@ const Dashboard = () => {
     })();
   }, []);
 
-  console.log(rows); //this works
-  // const mapData = async (arr) => {
-  //   if (rows) {
-  //     rows.map((idea) => {
-  //       console.log(idea);
-  //       // createData(
-  //       //   idea.title,
-  //       //   idea.location,
-  //       //   idea.description,
-  //       //   idea.cost,
-  //       //   idea.indoor_outdoor,
-  //       //   idea.category,
-  //       //   idea.weather,
-  //       //   idea.url
-  //       // );
-  //     });
-  //   }
-  // };
-  // mapData();
-  // createData(
-  //     'Oreo',
-  //     '437',
-  //     '18.0',
-  //     'cheap',
-  //     'outdoor',
-  //     'travel',
-  //     'rain',
-  //     'http'
-  //   )
+  // console.log(rows); //this works
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -338,32 +350,52 @@ const Dashboard = () => {
     setOrderBy(property);
   };
 
+  const [selectedId, setSelectedId] = useState([]);
+  console.log(selectedId); //this works
+
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = rows.map((n) => n.name);
+      // console.log(rows);
+
+      const newSelecteds = rows.map((n) => n.title);
+      const newSelectedIds = rows.map((n) => n.id);
+      setSelectedId(newSelectedIds);
       setSelected(newSelecteds);
       return;
     }
+    setSelectedId([]);
     setSelected([]);
   };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
+  const handleClick = (event, row) => {
+    const selectedIndex = selected.indexOf(row.title);
     let newSelected = [];
+    let newSelectedId = [];
+
+    console.log(row);
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, row.title);
+      newSelectedId = newSelectedId.concat(selectedId, row.id);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
+      newSelectedId = newSelectedId.concat(selectedId.slice(1));
     } else if (selectedIndex === selected.length - 1) {
       newSelected = newSelected.concat(selected.slice(0, -1));
+      newSelectedId = newSelectedId.concat(selectedId.slice(0, -1));
     } else if (selectedIndex > 0) {
       newSelected = newSelected.concat(
         selected.slice(0, selectedIndex),
         selected.slice(selectedIndex + 1)
       );
+      newSelectedId = newSelectedId.concat(
+        selectedId.slice(0, selectedIndex),
+        selectedId.slice(selectedIndex + 1)
+      );
     }
-
+    console.log('newSelected', newSelected);
+    console.log('newSelectedId', newSelectedId); //this works
+    setSelectedId(newSelectedId);
     setSelected(newSelected);
   };
 
@@ -376,7 +408,7 @@ const Dashboard = () => {
     setPage(0);
   };
 
-  const isSelected = (name) => selected.indexOf(name) !== -1;
+  const isSelected = (title) => selected.indexOf(title) !== -1;
 
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
@@ -405,17 +437,17 @@ const Dashboard = () => {
               {stableSort(rows, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row.name);
+                  const isItemSelected = isSelected(row.title);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row.name)}
+                      onClick={(event) => handleClick(event, row)}
                       role='checkbox'
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.name}
+                      key={row.title}
                       selected={isItemSelected}
                     >
                       <TableCell padding='checkbox'>

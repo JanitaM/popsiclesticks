@@ -53,7 +53,10 @@ const Home = ({ user }) => {
               alignItems='flex-end'
             >
               <Grid item xs={12} sm={9}>
-                <MasonJar signedInUser={signedInUser} />
+                <MasonJar
+                  signedInUser={signedInUser}
+                  setSignedInUser={setSignedInUser}
+                />
               </Grid>
               <Grid item xs={12} sm={3}>
                 <AddEditIdeaBtns

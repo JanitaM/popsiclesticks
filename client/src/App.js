@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { Auth } from 'aws-amplify';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import PrivateRoute from './routes/PrivateRoute';
 import Navbar from './components/layout/Navbar';
@@ -12,6 +13,19 @@ import NotFound from './components/pages/NotFound';
 import './App.css';
 
 const App = () => {
+  const [signedInUser, setSignedInUser] = useState({
+    email: '',
+    token: ''
+  });
+  useEffect(() => {
+    (async () => {
+      const fullInfo = await Auth.currentAuthenticatedUser();
+      const token = await fullInfo.signInUserSession.idToken.jwtToken;
+      const email = await fullInfo.username;
+      setSignedInUser({ ...signedInUser, token, email });
+    })();
+  }, []);
+
   return (
     <Router>
       <>
@@ -21,8 +35,8 @@ const App = () => {
           <Route exact path='/register' component={Register} />
           <Route exact path='/signin' component={SignIn} />
 
-          {/* <PrivateRoute exact path='/home' component={Home} /> */}
-          <Route exact path='/home' component={Home} />
+          <PrivateRoute exact path='/home' component={Home} />
+          {/* <Route exact path='/home' component={Home} /> */}
 
           <Route exact path='/dashboard' component={Dashboard} />
           {/* <PrivateRoute exact path='/dashboard' component={Dashboard} /> */}

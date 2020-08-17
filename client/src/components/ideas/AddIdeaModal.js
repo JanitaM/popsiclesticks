@@ -52,6 +52,7 @@ export default function AddIdeaModal() {
         className={classes.btn}
         onClick={handleClickOpen}
         open={open}
+        title='Add Idea'
       >
         <AddIcon />
       </Fab>

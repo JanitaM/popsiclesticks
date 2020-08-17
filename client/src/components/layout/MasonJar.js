@@ -15,7 +15,7 @@ function convertImg(binArr) {
   return imgUrl;
 }
 
-const MasonJar = ({ signedInUser }) => {
+const MasonJar = ({ signedInUser, setSignedInUser }) => {
   const classes = useStyles();
 
   const [randomIdea, setRandomIdea] = useState({
@@ -96,6 +96,7 @@ const MasonJar = ({ signedInUser }) => {
   };
   const handleClose = () => {
     setOpen(false);
+    setRandomIdea({});
   };
 
   return (

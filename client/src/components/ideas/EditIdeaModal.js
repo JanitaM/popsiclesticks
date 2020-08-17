@@ -19,7 +19,12 @@ export default function EditIdeaModal() {
 
   return (
     <div>
-      <Fab color='primary' aria-label='add' className={classes.btn}>
+      <Fab
+        title='Edit Ideas'
+        color='primary'
+        aria-label='add'
+        className={classes.btn}
+      >
         <Link to='/dashboard'>
           <EditIcon className={classes.icon} />
         </Link>

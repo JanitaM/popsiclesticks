@@ -8,7 +8,12 @@ const FilterIdeasBtn = () => {
 
   return (
     <div className={classes.container}>
-      <Fab color='primary' aria-label='add' className={classes.btn}>
+      <Fab
+        title='Filter Ideas'
+        color='primary'
+        aria-label='add'
+        className={classes.btn}
+      >
         <FilterListIcon />
       </Fab>
     </div>
