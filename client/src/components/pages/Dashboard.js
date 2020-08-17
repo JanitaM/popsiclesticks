@@ -197,42 +197,38 @@ const useToolbarStyles = makeStyles((theme) => ({
 
 const EnhancedTableToolbar = (props) => {
   const classes = useToolbarStyles();
-  const { numSelected } = props;
+  const { numSelected, signedInUser, selectedId } = props;
+  console.log(props);
+  console.log(selectedId);
 
-  const [signedInUser, setSignedInUser] = useState({
-    email: '',
-    token: ''
-  });
-  // console.log(signedInUser);
-
-  const handleDeleteIdea = (e) => {
+  const handleDeleteIdea = async (e) => {
     e.preventDefault();
     console.log('delete idea');
 
-    // const fullInfo = await Auth.currentAuthenticatedUser();
-    // const token = await fullInfo.signInUserSession.idToken.jwtToken;
-    // const email = await fullInfo.username;
+    // console.log(signedInUser.email);
+    // console.log(signedInUser.token);
+    // console.log(selectedId);
 
-    // if(token) {
-    //   try {
-    //     const res = await axios({
-    //       method: 'delete',
-    //       url: `http://localhost:4000/user/idea`,
-    //       headers: {
-    //         'Content-Type': 'application/json'
-    //       },
-    //       data: {
-    //         email: signedInUser.email,
-    //         token: signedInUser.token,
-    //         id: randomIdea.idea.id
-    //       }
-    //     });
-    //     handleClose();
-    //     alert('Idea deleted');
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    // }
+    if (signedInUser.token) {
+      try {
+        const res = await axios({
+          method: 'delete',
+          url: `http://localhost:4000/user/idea`,
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          data: {
+            email: signedInUser.email,
+            token: signedInUser.token,
+            id: selectedId
+          }
+        });
+
+        alert('Idea deleted');
+      } catch (error) {
+        console.log(error);
+      }
+    }
   };
 
   return (
@@ -304,18 +300,23 @@ const Dashboard = () => {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('title');
   const [selected, setSelected] = useState([]);
-  // console.log('selected', selected);
-
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [signedInUser, setSignedInUser] = useState({
+    token: '',
+    email: ''
+  });
+  // console.log(signedInUser);
   const [rows, setRows] = useState([]);
+  const [selectedId, setSelectedId] = useState([]);
+  // console.log(selectedId); //this works
 
   useEffect(() => {
     (async () => {
       const fullInfo = await Auth.currentAuthenticatedUser();
       const token = await fullInfo.signInUserSession.idToken.jwtToken;
       const email = await fullInfo.username;
-
+      setSignedInUser({ token, email });
       try {
         if (token) {
           // GET all of the user's ideas
@@ -342,16 +343,11 @@ const Dashboard = () => {
     })();
   }, []);
 
-  // console.log(rows); //this works
-
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
-
-  const [selectedId, setSelectedId] = useState([]);
-  console.log(selectedId); //this works
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
@@ -393,8 +389,8 @@ const Dashboard = () => {
         selectedId.slice(selectedIndex + 1)
       );
     }
-    console.log('newSelected', newSelected);
-    console.log('newSelectedId', newSelectedId); //this works
+    // console.log('newSelected', newSelected);
+    // console.log('newSelectedId', newSelectedId); //this works
     setSelectedId(newSelectedId);
     setSelected(newSelected);
   };
@@ -416,7 +412,11 @@ const Dashboard = () => {
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <EnhancedTableToolbar
+          numSelected={selected.length}
+          signedInUser={signedInUser}
+          selectedId={selectedId}
+        />
         <TableContainer>
           <Table
             className={classes.table}

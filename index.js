@@ -457,6 +457,7 @@ app.put('/user/idea', authorizeUser, async (request, response) => {
 app.delete('/user/idea', authorizeUser, async (request, response) => {
   try {
     console.log('DELETE AN IDEA');
+    console.log(request.body.id);
 
     const email = request.decodedToken.email;
     if (!email) {
@@ -464,15 +465,18 @@ app.delete('/user/idea', authorizeUser, async (request, response) => {
     }
 
     const con = await pool.getConnection();
-    const recordset = await con.execute(
-      'DELETE FROM popsicle_stick.idea WHERE id = ? AND email = ?',
-      [request.body.id, email]
-    );
+
+    request.body.id.forEach((id) => {
+      const recordset = [];
+      con.execute(
+        'DELETE FROM popsicle_stick.idea WHERE id = ? AND email = ?',
+        [id, email]
+      );
+    });
+
     con.release();
 
-    console.log(recordset[0]);
-
-    response.status(200).send({ message: recordset[0] });
+    response.status(200).send('success');
   } catch (error) {
     console.log(error);
     response.status(500).send({ error: error.message, message: error });
