@@ -31,7 +31,7 @@ function getStepContent(step, ideaForm, setIdeaForm) {
 
 const AddIdeaStepper = ({ ideaForm, setIdeaForm, handleClose }) => {
   const classes = useStyles();
-  console.log('ideaForm', ideaForm);
+  // console.log('ideaForm', ideaForm);
 
   const [activeStep, setActiveStep] = useState(0);
   const steps = getSteps();

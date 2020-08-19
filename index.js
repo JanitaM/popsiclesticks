@@ -466,8 +466,13 @@ app.delete('/user/idea', authorizeUser, async (request, response) => {
 
     const con = await pool.getConnection();
 
-    request.body.id.forEach((id) => {
-      const recordset = [];
+    // request.body.id.forEach((id) => {
+    //   con.execute(
+    //     'DELETE FROM popsicle_stick.idea WHERE id = ? AND email = ?',
+    //     [id, email]
+    //   );
+    // });
+    request.body.id.map((id) => {
       con.execute(
         'DELETE FROM popsicle_stick.idea WHERE id = ? AND email = ?',
         [id, email]

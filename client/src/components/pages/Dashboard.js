@@ -25,30 +25,9 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import { Link } from 'react-router-dom';
 
-function createData(
-  title,
-  location,
-  description,
-  cost,
-  indoor_outdoor,
-  category,
-  weather,
-  url
-) {
-  return {
-    title,
-    location,
-    description,
-    cost,
-    indoor_outdoor,
-    category,
-    weather,
-    url
-  };
-}
-
 function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
+  console.log(a[orderBy].toLowerCase(), b[orderBy].toLowerCase(), orderBy);
+  if (b[orderBy].toLowerCase() < a[orderBy].toLowerCase()) {
     return -1;
   }
   if (b[orderBy] > a[orderBy]) {
@@ -197,9 +176,9 @@ const useToolbarStyles = makeStyles((theme) => ({
 
 const EnhancedTableToolbar = (props) => {
   const classes = useToolbarStyles();
-  const { numSelected, signedInUser, selectedId } = props;
-  console.log(props);
-  console.log(selectedId);
+  const { numSelected, signedInUser, selectedId, setSelected, getData } = props;
+  // console.log(props);
+  // console.log(selectedId);
 
   const handleDeleteIdea = async (e) => {
     e.preventDefault();
@@ -223,11 +202,33 @@ const EnhancedTableToolbar = (props) => {
             id: selectedId
           }
         });
-
         alert('Idea deleted');
+        getData(signedInUser.email, signedInUser.token);
+        setSelected([]);
       } catch (error) {
         console.log(error);
       }
+    }
+  };
+
+  const renderButton = () => {
+    if (numSelected === 1) {
+      return (
+        <>
+          <Tooltip title='Edit list'>
+            <IconButton aria-label='edit list'>
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title='Delete'>
+            <IconButton aria-label='delete' onClick={handleDeleteIdea}>
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </>
+      );
+    } else {
+      return null;
     }
   };
 
@@ -265,27 +266,13 @@ const EnhancedTableToolbar = (props) => {
       )}
 
       {numSelected > 1 ? (
-        <Tooltip title='Delete Multiple Ideas'>
-          <IconButton
-            aria-label='delete multiple Ideas'
-            onClick={handleDeleteIdea}
-          >
+        <Tooltip title='Delete Idea'>
+          <IconButton aria-label='delete Idea' onClick={handleDeleteIdea}>
             <DeleteIcon />
           </IconButton>
         </Tooltip>
       ) : (
-        <>
-          <Tooltip title='Edit Idea'>
-            <IconButton aria-label='edit Idea'>
-              <EditIcon />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title='Delete Idea'>
-            <IconButton aria-label='delete idea' onClick={handleDeleteIdea}>
-              <DeleteIcon />
-            </IconButton>
-          </Tooltip>
-        </>
+        renderButton()
       )}
     </Toolbar>
   );
@@ -311,35 +298,38 @@ const Dashboard = () => {
   const [selectedId, setSelectedId] = useState([]);
   // console.log(selectedId); //this works
 
+  const getData = async (email, token) => {
+    try {
+      // GET all of the user's ideas
+      const res = await axios({
+        method: 'get',
+        url: `http://localhost:4000/user/ideas`,
+        params: {
+          email: email,
+          token: token
+        }
+      });
+      // console.log(res.data.message);
+      const ideaArr = res.data.message;
+      if (ideaArr.length > 0) {
+        setRows(ideaArr);
+      } else {
+        console.log('no ideas in the db');
+        return;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     (async () => {
       const fullInfo = await Auth.currentAuthenticatedUser();
       const token = await fullInfo.signInUserSession.idToken.jwtToken;
       const email = await fullInfo.username;
       setSignedInUser({ token, email });
-      try {
-        if (token) {
-          // GET all of the user's ideas
-          const res = await axios({
-            method: 'get',
-            url: `http://localhost:4000/user/ideas`,
-            params: {
-              email: email,
-              token: token
-            }
-          });
-          // console.log(res.data.message);
-          const ideaArr = res.data.message;
-          if (ideaArr.length > 0) {
-            setRows(ideaArr);
-          } else {
-            console.log('no ideas in the db');
-            return;
-          }
-        }
-      } catch (error) {
-        console.log(error);
-      }
+
+      if (token) getData(email, token);
     })();
   }, []);
 
@@ -416,6 +406,8 @@ const Dashboard = () => {
           numSelected={selected.length}
           signedInUser={signedInUser}
           selectedId={selectedId}
+          setSelected={setSelected}
+          getData={getData}
         />
         <TableContainer>
           <Table
