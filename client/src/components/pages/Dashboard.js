@@ -19,21 +19,24 @@ import {
   Paper,
   Checkbox,
   IconButton,
-  Tooltip
+  Tooltip,
+  Dialog,
+  useMediaQuery,
+  useTheme
 } from '@material-ui/core/';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import { Link } from 'react-router-dom';
+import AddIdeaStepper from '../ideas/AddIdeaStepper';
 
 function descendingComparator(a, b, orderBy) {
-  console.log(a[orderBy].toLowerCase(), b[orderBy].toLowerCase(), orderBy);
-  if (b[orderBy].toLowerCase() < a[orderBy].toLowerCase()) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
+  let value = 0;
+  if (a[orderBy] === null || b[orderBy === null]) {
     return 1;
+  } else {
+    value = a[orderBy].localeCompare(b[orderBy], 'en', { numeric: true });
+    return value;
   }
-  return 0;
 }
 
 function getComparator(order, orderBy) {
@@ -179,6 +182,24 @@ const EnhancedTableToolbar = (props) => {
   const { numSelected, signedInUser, selectedId, setSelected, getData } = props;
   // console.log(props);
   // console.log(selectedId);
+  const theme = useTheme();
+  const [open, setOpen] = useState(false);
+  const fullScreen = useMediaQuery(theme.breakpoints.down('xs'));
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  //onclick opens a modal with the idea filled in,
+  const handleEditIdea = async (e) => {
+    e.preventDefault();
+    console.log('edit idea');
+
+    handleClickOpen();
+  };
 
   const handleDeleteIdea = async (e) => {
     e.preventDefault();
@@ -216,10 +237,15 @@ const EnhancedTableToolbar = (props) => {
       return (
         <>
           <Tooltip title='Edit list'>
-            <IconButton aria-label='edit list'>
+            <IconButton
+              aria-label='edit list'
+              onClick={handleClickOpen}
+              open={open}
+            >
               <EditIcon />
             </IconButton>
           </Tooltip>
+
           <Tooltip title='Delete'>
             <IconButton aria-label='delete' onClick={handleDeleteIdea}>
               <DeleteIcon />
@@ -296,7 +322,6 @@ const Dashboard = () => {
   // console.log(signedInUser);
   const [rows, setRows] = useState([]);
   const [selectedId, setSelectedId] = useState([]);
-  // console.log(selectedId); //this works
 
   const getData = async (email, token) => {
     try {
@@ -311,12 +336,7 @@ const Dashboard = () => {
       });
       // console.log(res.data.message);
       const ideaArr = res.data.message;
-      if (ideaArr.length > 0) {
-        setRows(ideaArr);
-      } else {
-        console.log('no ideas in the db');
-        return;
-      }
+      setRows(ideaArr);
     } catch (error) {
       console.log(error);
     }

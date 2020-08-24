@@ -53,15 +53,23 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, signedInUser }) => {
 
   return (
     <>
-      {!randomIdea.ideaPic ? (
+      {!randomIdea.idea ? (
         <Preloader />
       ) : (
         <Card className={classes.paper}>
           <CardHeader
-            title={randomIdea.idea.title}
+            title={randomIdea && randomIdea.idea.title}
             subheader={randomIdea.idea.location}
           />
-          <CardMedia className={classes.media} image={randomIdea.ideaPic} />
+          <img
+            src={
+              randomIdea.ideaPic
+                ? randomIdea.ideaPic
+                : 'https://pagehardware.files.wordpress.com/2018/07/popsicle.jpg'
+            }
+            alt={randomIdea.idea.title}
+            className={classes.media}
+          />
           <CardContent>
             <Typography variant='body2' color='textSecondary' component='p'>
               {randomIdea.idea.title}
@@ -101,8 +109,7 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, signedInUser }) => {
 
 const useStyles = makeStyles((theme) => ({
   media: {
-    height: '30vh',
-    width: '30vw'
+    height: '250px'
   },
   paper: {
     position: 'absolute',

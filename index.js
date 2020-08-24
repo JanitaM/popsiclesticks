@@ -466,18 +466,19 @@ app.delete('/user/idea', authorizeUser, async (request, response) => {
 
     const con = await pool.getConnection();
 
-    // request.body.id.forEach((id) => {
-    //   con.execute(
-    //     'DELETE FROM popsicle_stick.idea WHERE id = ? AND email = ?',
-    //     [id, email]
-    //   );
-    // });
-    request.body.id.map((id) => {
+    if (typeof request.body.id === 'number') {
       con.execute(
         'DELETE FROM popsicle_stick.idea WHERE id = ? AND email = ?',
-        [id, email]
+        [request.body.id, email]
       );
-    });
+    } else {
+      request.body.id.map((id) => {
+        con.execute(
+          'DELETE FROM popsicle_stick.idea WHERE id = ? AND email = ?',
+          [id, email]
+        );
+      });
+    }
 
     con.release();
 
