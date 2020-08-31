@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AddIdeaModal from '../ideas/AddIdeaModal';
-import EditIdeaModal from '../ideas/EditIdeaModal';
+import EditIdeas from '../ideas/EditIdeas';
 
 const AddEditIdeaBtns = () => {
   const classes = useStyles();
@@ -9,7 +9,7 @@ const AddEditIdeaBtns = () => {
   return (
     <div className={classes.container}>
       <AddIdeaModal />
-      <EditIdeaModal />
+      <EditIdeas />
     </div>
   );
 };

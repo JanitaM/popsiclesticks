@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Auth } from 'aws-amplify';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect
+} from 'react-router-dom';
 import PrivateRoute from './routes/PrivateRoute';
 import Navbar from './components/layout/Navbar';
 import Home from './components/pages/Home';
@@ -10,6 +15,7 @@ import Landing from './components/pages/Landing';
 import Dashboard from './components/pages/Dashboard';
 import AccountSettings from './components/pages/AccountSettings';
 import NotFound from './components/pages/NotFound';
+import SnackbarAlert from './components/snackbar/SnackbarAlert';
 import './App.css';
 
 const App = () => {
@@ -30,6 +36,7 @@ const App = () => {
     <Router>
       <>
         <Navbar />
+        <SnackbarAlert />
         <Switch>
           <Route exact path='/' component={Landing} />
           <Route exact path='/register' component={Register} />

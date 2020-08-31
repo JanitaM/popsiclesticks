@@ -24,6 +24,7 @@ const Register = () => {
     confirmationCode: ''
   });
 
+  console.log(signUpForm);
   const [signUpUser, setSignUpUser] = useState(undefined);
 
   if (!isRegisterPage) {
@@ -153,8 +154,8 @@ const Register = () => {
 const useStyles = makeStyles({
   container: {
     textAlign: 'center',
-    backgroundColor: '#ccc',
-    border: '1px solid #333',
+    backgroundColor: '#fff',
+    border: '2px solid #E75734',
     borderRadius: '.5rem',
     maxWidth: '350px',
     margin: '2rem auto'
@@ -176,11 +177,11 @@ const useStyles = makeStyles({
     display: 'none'
   },
   uploadBtn: {
-    backgroundColor: 'red',
+    backgroundColor: '#A6C1C1',
     marginLeft: '1rem'
   },
   registerBtn: {
-    backgroundColor: 'orange',
+    backgroundColor: '#EC795D',
     margin: '1rem'
   },
   image: {

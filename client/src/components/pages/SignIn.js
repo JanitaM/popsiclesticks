@@ -69,8 +69,8 @@ const SignIn = ({ signIn }) => {
 const useStyles = makeStyles({
   container: {
     textAlign: 'center',
-    backgroundColor: 'pink',
-    border: '1px solid #333',
+    backgroundColor: '#fff',
+    border: '2px solid #E75734',
     borderRadius: '.5rem',
     maxWidth: '350px',
     margin: '2rem auto'
@@ -83,11 +83,11 @@ const useStyles = makeStyles({
     margin: '1rem'
   },
   registerBtn: {
-    backgroundColor: 'orange',
+    backgroundColor: '#EC795D',
     margin: '1rem'
   },
   forgotPasswordBtn: {
-    border: '1px solid blue',
+    backgroundColor: '#A6C1C1',
     margin: '1rem'
   }
 });

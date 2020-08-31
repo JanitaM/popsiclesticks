@@ -32,7 +32,6 @@ const Home = ({ user }) => {
         <Preloader />
       ) : (
         <div className={classes.mainContainer}>
-          <h1>Pick a stick</h1>
           <Grid
             container
             spacing={2}

@@ -61,7 +61,7 @@ export default function AddIdeaModal() {
         fullScreen={fullScreen}
         open={open}
         onClose={handleClose}
-        aria-labelledby='responsive-dialog-title'
+        aria-labelledby='add-idea-to-database'
       >
         <AddIdeaStepper
           ideaForm={ideaForm}

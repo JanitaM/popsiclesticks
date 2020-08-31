@@ -15,41 +15,39 @@ const Step3 = ({ ideaForm, setIdeaForm }) => {
 
   return (
     <div className={classes.container}>
-      <div>
-        <form className={classes.formContainer} autoComplete='off'>
-          <div className={classes.uploadContainer}>
-            <img
-              className={classes.image}
-              src={
-                ideaForm.convertIdeaPic
-                  ? ideaForm.convertIdeaPic
-                  : 'https://img.icons8.com/plasticine/100/000000/image.png'
-              }
-              alt='user profile picture'
-            />
-            <Input
-              accept='image/*'
-              className={classes.uploadInput}
-              id='upload-btn'
-              multiple
-              type='file'
-              name='picture'
-              label='picture'
-              onChange={(e) => onChange(e)}
-            />
-            <label htmlFor='upload-btn'>
-              <Button
-                variant='contained'
-                className={classes.uploadBtn}
-                component='span'
-                startIcon={<PhotoCamera />}
-              >
-                Upload
-              </Button>
-            </label>
-          </div>
-        </form>
-      </div>
+      <form className={classes.formContainer} autoComplete='off'>
+        <div className={classes.uploadContainer}>
+          <img
+            className={classes.image}
+            src={
+              ideaForm.convertIdeaPic
+                ? ideaForm.convertIdeaPic
+                : 'https://img.icons8.com/plasticine/100/000000/image.png'
+            }
+            alt='user profile picture'
+          />
+          <Input
+            accept='image/*'
+            className={classes.uploadInput}
+            id='upload-btn'
+            multiple
+            type='file'
+            name='picture'
+            label='picture'
+            onChange={(e) => onChange(e)}
+          />
+          <label htmlFor='upload-btn'>
+            <Button
+              variant='contained'
+              className={classes.uploadBtn}
+              component='span'
+              startIcon={<PhotoCamera />}
+            >
+              Upload
+            </Button>
+          </label>
+        </div>
+      </form>
     </div>
   );
 };

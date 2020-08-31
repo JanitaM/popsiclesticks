@@ -75,7 +75,7 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, signedInUser }) => {
               {randomIdea.idea.title}
             </Typography>
           </CardContent>
-          <CardActions disableSpacing>
+          <CardActions>
             <Button
               className={classes.m1}
               onClick={handleAccept}

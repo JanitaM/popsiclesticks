@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { connect } from 'react-redux';
+import { setSnackbar } from '../../redux/actions/snackbarActions';
 import { Auth } from 'aws-amplify';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
@@ -23,11 +25,11 @@ import {
   Dialog,
   useMediaQuery,
   useTheme
-} from '@material-ui/core/';
+} from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import { Link } from 'react-router-dom';
-import AddIdeaStepper from '../ideas/AddIdeaStepper';
+import EditIdeaModal from '../ideas/EditIdeaModal';
 
 function descendingComparator(a, b, orderBy) {
   let value = 0;
@@ -174,21 +176,42 @@ const useToolbarStyles = makeStyles((theme) => ({
         },
   title: {
     flex: '1 1 100%'
-  }
+  },
+  titleContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    width: '100%'
+  },
+  homeBtn: {
+    backgroundColor: '#EC795D'
+  },
+  homeBtnText: { color: '#fff' }
 }));
 
 const EnhancedTableToolbar = (props) => {
   const classes = useToolbarStyles();
-  const { numSelected, signedInUser, selectedId, setSelected, getData } = props;
-  // console.log(props);
+  const {
+    numSelected,
+    signedInUser,
+    selectedId,
+    setSelected,
+    getData,
+    dispatch,
+    ideaToEdit
+  } = props;
+  console.log(props);
   // console.log(selectedId);
+  // console.log(ideaToEdit);
+
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const fullScreen = useMediaQuery(theme.breakpoints.down('xs'));
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
+  // const handleClickOpen = () => {
+  //   setOpen(true);
+  // };
   const handleClose = () => {
     setOpen(false);
   };
@@ -196,9 +219,9 @@ const EnhancedTableToolbar = (props) => {
   //onclick opens a modal with the idea filled in,
   const handleEditIdea = async (e) => {
     e.preventDefault();
+    // handleClickOpen();
+    setOpen(true);
     console.log('edit idea');
-
-    handleClickOpen();
   };
 
   const handleDeleteIdea = async (e) => {
@@ -224,6 +247,7 @@ const EnhancedTableToolbar = (props) => {
           }
         });
         alert('Idea deleted');
+        // dispatch(setSnackbar(true, 'success', 'Idea deleted'));
         getData(signedInUser.email, signedInUser.token);
         setSelected([]);
       } catch (error) {
@@ -236,15 +260,23 @@ const EnhancedTableToolbar = (props) => {
     if (numSelected === 1) {
       return (
         <>
-          <Tooltip title='Edit list'>
-            <IconButton
-              aria-label='edit list'
-              onClick={handleClickOpen}
-              open={open}
-            >
-              <EditIcon />
-            </IconButton>
-          </Tooltip>
+          <IconButton
+            aria-label='edit list'
+            title='Edit Idea'
+            onClick={handleEditIdea}
+            open={open}
+          >
+            <EditIcon />
+          </IconButton>
+
+          <Dialog
+            open={open}
+            onClose={handleClose}
+            aria-labelledby='edit-idea'
+            maxWidth='xl'
+          >
+            <EditIdeaModal ideaToEdit={ideaToEdit} handleClose={handleClose} />
+          </Dialog>
 
           <Tooltip title='Delete'>
             <IconButton aria-label='delete' onClick={handleDeleteIdea}>
@@ -274,17 +306,12 @@ const EnhancedTableToolbar = (props) => {
           {numSelected} selected
         </Typography>
       ) : (
-        <div>
-          <Typography
-            className={classes.title}
-            variant='h6'
-            id='tableTitle'
-            component='div'
-          >
+        <div className={classes.titleContainer}>
+          <Typography variant='h5' id='tableTitle' component='div'>
             Edit your ideas
           </Typography>
-          <Button>
-            <Link to='/home' variant='contained' color='primary'>
+          <Button className={classes.homeBtn}>
+            <Link to='/home' className={classes.homeBtnText}>
               Home
             </Link>
           </Button>
@@ -322,6 +349,8 @@ const Dashboard = () => {
   // console.log(signedInUser);
   const [rows, setRows] = useState([]);
   const [selectedId, setSelectedId] = useState([]);
+
+  const [ideaToEdit, setIdeaToEdit] = useState({});
 
   const getData = async (email, token) => {
     try {
@@ -378,7 +407,7 @@ const Dashboard = () => {
     let newSelected = [];
     let newSelectedId = [];
 
-    console.log(row);
+    // console.log(row); //this works
 
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, row.title);
@@ -403,6 +432,7 @@ const Dashboard = () => {
     // console.log('newSelectedId', newSelectedId); //this works
     setSelectedId(newSelectedId);
     setSelected(newSelected);
+    setIdeaToEdit(row);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -428,6 +458,7 @@ const Dashboard = () => {
           selectedId={selectedId}
           setSelected={setSelected}
           getData={getData}
+          ideaToEdit={ideaToEdit}
         />
         <TableContainer>
           <Table

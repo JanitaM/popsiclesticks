@@ -23,53 +23,49 @@ const Step1 = ({ ideaForm, setIdeaForm }) => {
 
   return (
     <div className={classes.container}>
-      <div>
-        <form className={classes.formContainer} autoComplete='off'>
-          <TextField
-            required
-            variant='outlined'
-            label='Title'
-            type='text'
-            name='title'
-            value={ideaForm.title}
-            onChange={(e) =>
-              setIdeaForm({ ...ideaForm, title: e.target.value })
-            }
-            className={classes.m1}
-          />
-          <TextField
-            variant='outlined'
-            label='Location'
-            type='text'
-            name='location'
-            value={ideaForm.location}
-            onChange={(e) =>
-              setIdeaForm({ ...ideaForm, location: e.target.value })
-            }
-            className={classes.m1}
-          />
-          <TextField
-            variant='outlined'
-            label='Description'
-            type='text'
-            name='description'
-            value={ideaForm.description}
-            onChange={(e) =>
-              setIdeaForm({ ...ideaForm, description: e.target.value })
-            }
-            className={classes.m1}
-          />
-          <TextField
-            variant='outlined'
-            label='URL'
-            type='url'
-            name='url'
-            value={ideaForm.url}
-            onChange={(e) => setIdeaForm({ ...ideaForm, url: e.target.value })}
-            className={classes.m1}
-          />
-        </form>
-      </div>
+      <form className={classes.formContainer} autoComplete='off'>
+        <TextField
+          required
+          variant='outlined'
+          label='Title'
+          type='text'
+          name='title'
+          value={ideaForm.title}
+          onChange={(e) => setIdeaForm({ ...ideaForm, title: e.target.value })}
+          className={classes.m1}
+        />
+        <TextField
+          variant='outlined'
+          label='Location'
+          type='text'
+          name='location'
+          value={ideaForm.location}
+          onChange={(e) =>
+            setIdeaForm({ ...ideaForm, location: e.target.value })
+          }
+          className={classes.m1}
+        />
+        <TextField
+          variant='outlined'
+          label='Description'
+          type='text'
+          name='description'
+          value={ideaForm.description}
+          onChange={(e) =>
+            setIdeaForm({ ...ideaForm, description: e.target.value })
+          }
+          className={classes.m1}
+        />
+        <TextField
+          variant='outlined'
+          label='URL'
+          type='url'
+          name='url'
+          value={ideaForm.url}
+          onChange={(e) => setIdeaForm({ ...ideaForm, url: e.target.value })}
+          className={classes.m1}
+        />
+      </form>
     </div>
   );
 };
