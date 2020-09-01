@@ -79,7 +79,7 @@ const useStyles = makeStyles({
     display: 'none'
   },
   uploadBtn: {
-    backgroundColor: 'red',
+    backgroundColor: '#EC795D',
     marginLeft: '1rem'
   },
   image: {

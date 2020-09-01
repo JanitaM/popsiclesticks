@@ -184,10 +184,10 @@ const useToolbarStyles = makeStyles((theme) => ({
     alignItems: 'center',
     width: '100%'
   },
-  homeBtn: {
+  backBtn: {
     backgroundColor: '#EC795D'
   },
-  homeBtnText: { color: '#fff' }
+  backBtnText: { color: '#fff' }
 }));
 
 const EnhancedTableToolbar = (props) => {
@@ -275,7 +275,11 @@ const EnhancedTableToolbar = (props) => {
             aria-labelledby='edit-idea'
             maxWidth='xl'
           >
-            <EditIdeaModal ideaToEdit={ideaToEdit} handleClose={handleClose} />
+            <EditIdeaModal
+              ideaToEdit={ideaToEdit}
+              handleClose={handleClose}
+              signedInUser={signedInUser}
+            />
           </Dialog>
 
           <Tooltip title='Delete'>
@@ -310,9 +314,9 @@ const EnhancedTableToolbar = (props) => {
           <Typography variant='h5' id='tableTitle' component='div'>
             Edit your ideas
           </Typography>
-          <Button className={classes.homeBtn}>
-            <Link to='/home' className={classes.homeBtnText}>
-              Home
+          <Button className={classes.backBtn}>
+            <Link to='/home' className={classes.backBtnText}>
+              Back
             </Link>
           </Button>
         </div>

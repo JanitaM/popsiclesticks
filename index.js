@@ -326,7 +326,7 @@ app.get('/user/ideas', authorizeUser, async (request, response) => {
 
 // GET The Random Idea Pic - Needs to be POST to get uuid in
 app.post('/idea/pic', authorizeUser, async (request, response) => {
-  console.log('GET RANDOM IDEA PIC');
+  console.log('GET IDEA PIC');
   // console.log(request.body.picUuid);
 
   const email = request.decodedToken.email;
@@ -373,7 +373,7 @@ app.post('/idea/pic', authorizeUser, async (request, response) => {
   getS3Data();
 });
 
-// GET One Idea
+// GET One Idea - Done
 app.get('/user/idea', authorizeUser, async (request, response) => {
   try {
     console.log('GET ONE IDEA');

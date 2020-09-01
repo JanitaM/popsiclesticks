@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Storage } from 'aws-amplify';
 import {
   Button,
   makeStyles,
@@ -8,6 +9,8 @@ import {
 } from '@material-ui/core';
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
+import { v4 as uuidv4 } from 'uuid';
+import axios from 'axios';
 
 const useStyles = makeStyles({
   container: {
@@ -34,6 +37,10 @@ const useStyles = makeStyles({
     display: 'none'
   },
   uploadBtn: {
+    backgroundColor: '#EC795D',
+    marginLeft: '1rem'
+  },
+  deleteBtn: {
     backgroundColor: 'red',
     marginLeft: '1rem'
   },
@@ -47,24 +54,32 @@ const useStyles = makeStyles({
   }
 });
 
-export default function EditIdeaModal({ ideaToEdit }) {
+function convertImg(binArr) {
+  let arrayBufferView = new Uint8Array(binArr);
+  let blob = new Blob([arrayBufferView], { type: 'image/*' });
+  let urlCreator = window.url || window.webkitURL;
+  let imgUrl = urlCreator.createObjectURL(blob);
+  return imgUrl;
+}
+
+export default function EditIdeaModal({ ideaToEdit, signedInUser }) {
   // console.log(ideaToEdit);
+  // console.log(signedInUser);
   const classes = useStyles();
   const [open, setOpen] = useState(false);
 
   const handleCost = (e, newCost) => {
     setUpdatedInfo({ ...updatedInfo, cost: newCost });
   };
-
   const handleIndoorOutdoor = (e, newIndoorOutdoor) => {
     setUpdatedInfo({ ...updatedInfo, indoor_outdoor: newIndoorOutdoor });
   };
-
   const handleWeather = (e, newWeather) => {
     setUpdatedInfo({ ...updatedInfo, weather: newWeather });
   };
 
   const [updatedInfo, setUpdatedInfo] = useState({
+    id: '',
     title: '',
     location: '',
     description: '',
@@ -77,9 +92,10 @@ export default function EditIdeaModal({ ideaToEdit }) {
     weather: '',
     isCompleted: false
   });
-  console.log(updatedInfo);
+  // console.log(updatedInfo);
 
   const {
+    id,
     title,
     location,
     description,
@@ -93,6 +109,10 @@ export default function EditIdeaModal({ ideaToEdit }) {
     isCompleted
   } = updatedInfo;
 
+  useEffect(() => {
+    if (ideaToEdit) setUpdatedInfo(ideaToEdit);
+  }, [ideaToEdit]);
+
   const onChange = (e) => {
     e.preventDefault();
     setUpdatedInfo({ ...updatedInfo, [e.target.name]: e.target.value });
@@ -101,14 +121,35 @@ export default function EditIdeaModal({ ideaToEdit }) {
   const handleClickOpen = () => {
     setOpen(true);
   };
-
   const handleClose = (value) => {
     setOpen(false);
   };
 
-  useEffect(() => {
-    if (ideaToEdit) setUpdatedInfo(ideaToEdit);
-  }, [ideaToEdit]);
+  const getIdeaPic = async (picture) => {
+    // console.log(picture);
+    const res = await axios({
+      method: 'post',
+      url: 'http://localhost:4000/idea/pic',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      data: {
+        email: signedInUser.email,
+        token: signedInUser.token,
+        picUuid: picture
+      }
+    });
+
+    let response = await res.data[0];
+    // console.log(response);
+    if (response) {
+      setUpdatedInfo({
+        ...updatedInfo,
+        picture: convertImg(response.Body.data)
+      });
+    }
+  };
+  getIdeaPic(picture);
 
   const handlePicture = (e) => {
     setUpdatedInfo({
@@ -121,7 +162,78 @@ export default function EditIdeaModal({ ideaToEdit }) {
   const updateIdea = (e) => {
     e.preventDefault();
     console.log('update idea');
+    // console.log(updatedInfo);
+    // console.log(signedInUser);
+
+    if (updatedInfo.title) {
+      async function uploadToSql(myUuid) {
+        return await axios({
+          method: 'put',
+          url: `http://localhost:4000/user/idea`,
+          data: {
+            email: signedInUser.email,
+            token: signedInUser.token,
+            id: updatedInfo.id,
+            title: updatedInfo.title,
+            location: updatedInfo.location,
+            description: updatedInfo.description,
+            cost: updatedInfo.cost,
+            indoor_outdoor: updatedInfo.indoor_outdoor,
+            category: updatedInfo.category,
+            url: updatedInfo.url,
+            picture: updatedInfo.myUuid,
+            weather: updatedInfo.weather,
+            isCompleted: false
+          },
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+      }
+
+      try {
+        if (signedInUser && updatedInfo.picture) {
+          const myUuid = uuidv4();
+          const type = updatedInfo.picture.type.split('/');
+
+          Storage.put(
+            `${signedInUser.email}/ideaPictures/${myUuid}.${type[1]}`,
+            updatedInfo.picture,
+            {
+              contentType: 'image/*'
+            }
+          )
+            .then((result) => console.log(result))
+            .then(() => uploadToSql(myUuid))
+            .then(() => handleClose())
+            .catch((error) => console.log(error));
+        } else {
+          if (signedInUser) {
+            uploadToSql();
+            handleClose();
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      alert('A title is required');
+    }
   };
+
+  const renderPic = () => {
+    // console.log('picture', picture);
+    // console.log('convertIdeaPic', convertIdeaPic);
+
+    if (convertIdeaPic) {
+      return convertIdeaPic;
+    } else if (picture) {
+      return picture;
+    } else {
+      return 'https://img.icons8.com/plasticine/100/000000/image.png';
+    }
+  };
+
   return (
     <div className={classes.container}>
       <Typography variant='h5' component='h1' gutterBottom>
@@ -253,11 +365,7 @@ export default function EditIdeaModal({ ideaToEdit }) {
         <div className={classes.uploadContainer}>
           <img
             className={classes.image}
-            src={
-              updatedInfo.convertIdeaPic
-                ? updatedInfo.convertIdeaPic
-                : 'https://img.icons8.com/plasticine/100/000000/image.png'
-            }
+            src={renderPic()}
             alt='user profile picture'
           />
           <Input
@@ -277,14 +385,25 @@ export default function EditIdeaModal({ ideaToEdit }) {
               component='span'
               startIcon={<PhotoCamera />}
             >
-              Upload
+              Upload New Picture
+            </Button>
+            <Button
+              variant='contained'
+              className={classes.deleteBtn}
+              component='span'
+              startIcon={<PhotoCamera />}
+            >
+              Delete Picture
             </Button>
           </label>
         </div>
       </form>
       <div>
         <Button variant='outlined' color='primary' onClick={updateIdea}>
-          Update
+          Update Idea
+        </Button>
+        <Button variant='outlined' color='primary' onClick={updateIdea}>
+          Delete Idea
         </Button>
       </div>
     </div>
