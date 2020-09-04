@@ -24,7 +24,7 @@ const Step3 = ({ ideaForm, setIdeaForm }) => {
                 ? ideaForm.convertIdeaPic
                 : 'https://img.icons8.com/plasticine/100/000000/image.png'
             }
-            alt='user profile picture'
+            alt='user profile'
           />
           <Input
             accept='image/*'

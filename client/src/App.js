@@ -42,8 +42,8 @@ const App = () => {
           <Route exact path='/register' component={Register} />
           <Route exact path='/signin' component={SignIn} />
 
-          <PrivateRoute exact path='/home' component={Home} />
-          {/* <Route exact path='/home' component={Home} /> */}
+          {/* <PrivateRoute exact path='/home' component={Home} /> */}
+          <Route exact path='/home' component={Home} />
 
           <Route exact path='/dashboard' component={Dashboard} />
           {/* <PrivateRoute exact path='/dashboard' component={Dashboard} /> */}

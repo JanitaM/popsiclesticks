@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import masonJar from '../../assets/masonJar.png';
 import './MasonJar.css';
 import DisplayRandomIdea from '../ideas/DisplayRandomIdea';
 import Modal from '@material-ui/core/Modal';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
-import { Auth } from 'aws-amplify';
 
 function convertImg(binArr) {
   let arrayBufferView = new Uint8Array(binArr);

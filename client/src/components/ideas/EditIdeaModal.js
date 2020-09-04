@@ -54,16 +54,12 @@ const useStyles = makeStyles({
   }
 });
 
-function convertImg(binArr) {
-  let arrayBufferView = new Uint8Array(binArr);
-  let blob = new Blob([arrayBufferView], { type: 'image/*' });
-  let urlCreator = window.url || window.webkitURL;
-  let imgUrl = urlCreator.createObjectURL(blob);
-  return imgUrl;
-}
-
-export default function EditIdeaModal({ ideaToEdit, signedInUser }) {
-  // console.log(ideaToEdit);
+export default function EditIdeaModal({
+  ideaToEdit,
+  signedInUser,
+  handleClose
+}) {
+  console.log('ideaToEdit', ideaToEdit);
   // console.log(signedInUser);
   const classes = useStyles();
   const [open, setOpen] = useState(false);
@@ -92,7 +88,7 @@ export default function EditIdeaModal({ ideaToEdit, signedInUser }) {
     weather: '',
     isCompleted: false
   });
-  // console.log(updatedInfo);
+  console.log('updatedInfo', updatedInfo);
 
   const {
     id,
@@ -110,46 +106,13 @@ export default function EditIdeaModal({ ideaToEdit, signedInUser }) {
   } = updatedInfo;
 
   useEffect(() => {
-    if (ideaToEdit) setUpdatedInfo(ideaToEdit);
-  }, [ideaToEdit]);
+    setUpdatedInfo(ideaToEdit.idea);
+  }, []);
 
   const onChange = (e) => {
     e.preventDefault();
     setUpdatedInfo({ ...updatedInfo, [e.target.name]: e.target.value });
   };
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-  const handleClose = (value) => {
-    setOpen(false);
-  };
-
-  const getIdeaPic = async (picture) => {
-    // console.log(picture);
-    const res = await axios({
-      method: 'post',
-      url: 'http://localhost:4000/idea/pic',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      data: {
-        email: signedInUser.email,
-        token: signedInUser.token,
-        picUuid: picture
-      }
-    });
-
-    let response = await res.data[0];
-    // console.log(response);
-    if (response) {
-      setUpdatedInfo({
-        ...updatedInfo,
-        picture: convertImg(response.Body.data)
-      });
-    }
-  };
-  getIdeaPic(picture);
 
   const handlePicture = (e) => {
     setUpdatedInfo({
@@ -162,13 +125,13 @@ export default function EditIdeaModal({ ideaToEdit, signedInUser }) {
   const updateIdea = (e) => {
     e.preventDefault();
     console.log('update idea');
-    // console.log(updatedInfo);
+    console.log(updatedInfo);
     // console.log(signedInUser);
 
     if (updatedInfo.title) {
       async function uploadToSql(myUuid) {
         return await axios({
-          method: 'put',
+          method: 'patch',
           url: `http://localhost:4000/user/idea`,
           data: {
             email: signedInUser.email,
@@ -191,10 +154,14 @@ export default function EditIdeaModal({ ideaToEdit, signedInUser }) {
         });
       }
 
+      console.log(updatedInfo.picture);
       try {
         if (signedInUser && updatedInfo.picture) {
+          uploadToSql();
+          handleClose();
+        } else if (signedInUser) {
           const myUuid = uuidv4();
-          const type = updatedInfo.picture.type.split('/');
+          const type = updatedInfo.picture.type.split('/'); //when there is an old picture (uuid), this fails
 
           Storage.put(
             `${signedInUser.email}/ideaPictures/${myUuid}.${type[1]}`,
@@ -207,11 +174,6 @@ export default function EditIdeaModal({ ideaToEdit, signedInUser }) {
             .then(() => uploadToSql(myUuid))
             .then(() => handleClose())
             .catch((error) => console.log(error));
-        } else {
-          if (signedInUser) {
-            uploadToSql();
-            handleClose();
-          }
         }
       } catch (error) {
         console.log(error);
@@ -227,8 +189,8 @@ export default function EditIdeaModal({ ideaToEdit, signedInUser }) {
 
     if (convertIdeaPic) {
       return convertIdeaPic;
-    } else if (picture) {
-      return picture;
+    } else if (ideaToEdit.picture) {
+      return ideaToEdit.picture;
     } else {
       return 'https://img.icons8.com/plasticine/100/000000/image.png';
     }
@@ -387,6 +349,7 @@ export default function EditIdeaModal({ ideaToEdit, signedInUser }) {
             >
               Upload New Picture
             </Button>
+            {/* https://docs.amplify.aws/lib/storage/remove/q/platform/js */}
             <Button
               variant='contained'
               className={classes.deleteBtn}
@@ -402,6 +365,7 @@ export default function EditIdeaModal({ ideaToEdit, signedInUser }) {
         <Button variant='outlined' color='primary' onClick={updateIdea}>
           Update Idea
         </Button>
+
         <Button variant='outlined' color='primary' onClick={updateIdea}>
           Delete Idea
         </Button>

@@ -315,7 +315,7 @@ app.get('/user/ideas', authorizeUser, async (request, response) => {
     );
     con.release();
 
-    console.log(recordset[0]);
+    // console.log(recordset[0]);
 
     response.status(200).send({ message: recordset[0] });
   } catch (error) {
@@ -324,7 +324,7 @@ app.get('/user/ideas', authorizeUser, async (request, response) => {
   }
 });
 
-// GET The Random Idea Pic - Needs to be POST to get uuid in
+// GET Idea Pic - Needs to be POST to get uuid in
 app.post('/idea/pic', authorizeUser, async (request, response) => {
   console.log('GET IDEA PIC');
   // console.log(request.body.picUuid);
@@ -401,9 +401,10 @@ app.get('/user/idea', authorizeUser, async (request, response) => {
 });
 
 // UPDATE Idea
-app.put('/user/idea', authorizeUser, async (request, response) => {
+app.patch('/user/idea', authorizeUser, async (request, response) => {
   try {
     console.log('UPDATE ONE IDEA');
+    console.log(request.body);
 
     const email = request.decodedToken.email;
     if (!email) {
@@ -414,30 +415,23 @@ app.put('/user/idea', authorizeUser, async (request, response) => {
       'SELECT * FROM popsicle_stick.idea WHERE id = ? AND email = ?',
       [request.body.id, email]
     );
-
     console.log(selectQuery[0][0]);
-
     const selectedUser = selectQuery[0][0];
+
     const con = await pool.getConnection();
     const queryResponse = await con.execute(
       'UPDATE popsicle_stick.idea SET title = ?, location = ?, description = ?, cost = ?, indoor_outdoor = ?, category = ?, url = ?, picture = ?, weather = ?, isCompleted = ? WHERE id = ? AND email = ?',
       [
-        request.body.title ? request.body.title : selectedUser.title,
-        request.body.location ? request.body.location : selectedUser.location,
-        request.body.description
-          ? request.body.description
-          : selectedUser.description,
-        request.body.cost ? request.body.cost : selectedUser.cost,
-        request.body.indoor_outdoor
-          ? request.body.indoor_outdoor
-          : selectedUser.indoor_outdoor,
-        request.body.category ? request.body.category : selectedUser.category,
-        request.body.url ? request.body.url : selectedUser.url,
-        request.body.picture ? request.body.picture : selectedUser.picture,
-        request.body.weather ? request.body.weather : selectedUser.weather,
-        request.body.isCompleted
-          ? request.body.isCompleted
-          : selectedUser.isCompleted,
+        request.body.title,
+        request.body.location ? request.body.location : null,
+        request.body.description ? request.body.description : null,
+        request.body.cost ? request.body.cost : null,
+        request.body.indoor_outdoor ? request.body.indoor_outdoor : null,
+        request.body.category ? request.body.category : null,
+        request.body.url ? request.body.url : null,
+        request.body.picture ? request.body.picture : null,
+        request.body.weather ? request.body.weather : null,
+        request.body.isCompleted ? request.body.isCompleted : null,
         request.body.id,
         email
       ]

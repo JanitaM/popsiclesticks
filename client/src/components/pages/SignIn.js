@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import { Button, makeStyles, TextField } from '@material-ui/core';
+import {
+  Button,
+  CssBaseline,
+  Grid,
+  makeStyles,
+  Paper,
+  TextField,
+  Typography
+} from '@material-ui/core';
 import { connect } from 'react-redux';
 import { signIn } from '../../redux/actions/userActions';
 import { useHistory } from 'react-router-dom';
@@ -18,7 +25,7 @@ const SignIn = ({ signIn }) => {
     setCurrentUser({ ...currentUser, [e.target.name]: e.target.value });
   };
 
-  const onSubmit = (e) => {
+  const onSignIn = (e) => {
     e.preventDefault();
 
     signIn(currentUser);
@@ -26,74 +33,113 @@ const SignIn = ({ signIn }) => {
   };
 
   return (
-    <div className={classes.container}>
-      <div>
-        <h1 className={classes.m1}>Sign In</h1>
-        <form
-          onSubmit={onSubmit}
-          className={classes.formContainer}
-          autoComplete='off'
-        >
-          <TextField
-            required
-            variant='outlined'
-            label='Email'
-            type='text'
-            name='username'
-            value={username}
-            onChange={onChange}
-            className={classes.m1}
-          />
-          <TextField
-            required
-            variant='outlined'
-            label='Password'
-            type='password'
-            name='password'
-            value={password}
-            onChange={onChange}
-            className={classes.m1}
-          />
-          <Button className={classes.registerBtn} onClick={onSubmit}>
-            Sign In
-          </Button>
-          <Button className={classes.forgotPasswordBtn} onClick={onSubmit}>
-            Forgot password
-          </Button>
-        </form>
-      </div>
-    </div>
+    <Grid container component='main' className={classes.root}>
+      <CssBaseline />
+      <Grid item xs={false} sm={6} md={7} className={classes.image} />
+      <Grid item xs={12} sm={6} md={5} component={Paper} elevation={6} square>
+        <div className={classes.paper}>
+          <Typography component='h1' variant='h4'>
+            Sign in
+          </Typography>
+          <form className={classes.form} onSubmit={onSignIn}>
+            <TextField
+              required
+              variant='outlined'
+              label='Email'
+              type='text'
+              name='username'
+              value={username}
+              onChange={onChange}
+              className={classes.textfield}
+              id='email'
+              autoComplete='email'
+              autoFocus
+            />
+            <TextField
+              required
+              variant='outlined'
+              label='Password'
+              type='password'
+              name='password'
+              value={password}
+              onChange={onChange}
+              className={classes.textfield}
+              id='password'
+              autoComplete='current-password'
+            />
+
+            <Button
+              type='submit'
+              variant='contained'
+              color='primary'
+              className={classes.signInBtn}
+              onClick={onSignIn}
+            >
+              Sign In
+            </Button>
+            <Button
+              type='submit'
+              variant='contained'
+              color='primary'
+              className={classes.forgotPasswordBtn}
+              // onClick={onSubmit}
+            >
+              Forgot Password
+            </Button>
+          </form>
+        </div>
+      </Grid>
+    </Grid>
   );
 };
 
-const useStyles = makeStyles({
-  container: {
-    textAlign: 'center',
-    backgroundColor: '#fff',
-    border: '2px solid #E75734',
-    borderRadius: '.5rem',
-    maxWidth: '350px',
-    margin: '2rem auto'
+const useStyles = makeStyles((theme) => ({
+  root: {
+    height: 'calc(100vh - 64px)'
   },
-  formContainer: {
+  image: {
+    backgroundImage:
+      'url(https://images.pexels.com/photos/1274260/pexels-photo-1274260.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260)',
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center'
+  },
+  paper: {
+    margin: '2rem',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center'
+  },
+  form: {
+    width: '100%',
     display: 'flex',
     flexDirection: 'column'
+  },
+  textfield: {
+    margin: '1rem',
+    'input:valid + fieldset': {
+      borderBottom: 'solid',
+      borderColor: 'green',
+      borderWidth: 2
+    }
   },
   m1: {
     margin: '1rem'
   },
-  registerBtn: {
-    backgroundColor: '#EC795D',
-    margin: '1rem'
+  signInBtn: {
+    backgroundColor: '#E75734',
+    margin: '1rem',
+    '&:hover': {
+      backgroundColor: '#EC795D'
+    }
   },
   forgotPasswordBtn: {
     backgroundColor: '#A6C1C1',
-    margin: '1rem'
+    margin: '1rem',
+    '&:hover': {
+      backgroundColor: '#d5d5d5'
+    }
   }
-});
-
-SignIn.propTypes = {
-  signIn: PropTypes.func.isRequired
-};
+}));
 
 export default connect(null, { signIn })(SignIn);

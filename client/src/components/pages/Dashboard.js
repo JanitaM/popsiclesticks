@@ -31,6 +31,14 @@ import EditIcon from '@material-ui/icons/Edit';
 import { Link } from 'react-router-dom';
 import EditIdeaModal from '../ideas/EditIdeaModal';
 
+function convertImg(binArr) {
+  let arrayBufferView = new Uint8Array(binArr);
+  let blob = new Blob([arrayBufferView], { type: 'image/*' });
+  let urlCreator = window.url || window.webkitURL;
+  let imgUrl = urlCreator.createObjectURL(blob);
+  return imgUrl;
+}
+
 function descendingComparator(a, b, orderBy) {
   let value = 0;
   if (a[orderBy] === null || b[orderBy === null]) {
@@ -216,10 +224,8 @@ const EnhancedTableToolbar = (props) => {
     setOpen(false);
   };
 
-  //onclick opens a modal with the idea filled in,
   const handleEditIdea = async (e) => {
     e.preventDefault();
-    // handleClickOpen();
     setOpen(true);
     console.log('edit idea');
   };
@@ -227,10 +233,6 @@ const EnhancedTableToolbar = (props) => {
   const handleDeleteIdea = async (e) => {
     e.preventDefault();
     console.log('delete idea');
-
-    // console.log(signedInUser.email);
-    // console.log(signedInUser.token);
-    // console.log(selectedId);
 
     if (signedInUser.token) {
       try {
@@ -354,7 +356,10 @@ const Dashboard = () => {
   const [rows, setRows] = useState([]);
   const [selectedId, setSelectedId] = useState([]);
 
-  const [ideaToEdit, setIdeaToEdit] = useState({});
+  const [ideaToEdit, setIdeaToEdit] = useState({
+    idea: {},
+    picture: ''
+  });
 
   const getData = async (email, token) => {
     try {
@@ -406,12 +411,38 @@ const Dashboard = () => {
     setSelected([]);
   };
 
+  // on click, get the picture ready to pass to EditIdeaModal
+  const getIdeaPic = async (picture) => {
+    // console.log(picture);
+    const res = await axios({
+      method: 'post',
+      url: 'http://localhost:4000/idea/pic',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      data: {
+        email: signedInUser.email,
+        token: signedInUser.token,
+        picUuid: picture
+      }
+    });
+
+    let response = await res.data[0];
+    // console.log(response);
+    if (response) {
+      setIdeaToEdit({
+        ...ideaToEdit,
+        picture: convertImg(response.Body.data)
+      });
+    }
+  };
+
   const handleClick = (event, row) => {
     const selectedIndex = selected.indexOf(row.title);
     let newSelected = [];
     let newSelectedId = [];
 
-    // console.log(row); //this works
+    // console.log('row', row); //this works
 
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, row.title);
@@ -432,11 +463,12 @@ const Dashboard = () => {
         selectedId.slice(selectedIndex + 1)
       );
     }
-    // console.log('newSelected', newSelected);
-    // console.log('newSelectedId', newSelectedId); //this works
     setSelectedId(newSelectedId);
     setSelected(newSelected);
-    setIdeaToEdit(row);
+    setIdeaToEdit({ ...ideaToEdit, idea: row, picture: null });
+    if (row.picture) {
+      return getIdeaPic(row.picture);
+    }
   };
 
   const handleChangePage = (event, newPage) => {
