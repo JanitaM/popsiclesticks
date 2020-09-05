@@ -20,7 +20,7 @@ function setCreds() {
 setCreds();
 
 const s3 = new aws.S3();
-// const bucket = 'popsiclestickbucket153356-dev';
+const bucket = 'popsiclesticks2';
 
 const PORT = 4000;
 
@@ -38,7 +38,7 @@ const pool = mysql.createPool({
 
 // later comes from currentAuthenticatedUser-the one that says token_use: id
 const jwtIdToken =
-  'eyJraWQiOiJtd0J1aTVPR3RsV3Jma2RiUjFcL1p6ZmJYWGNGNlRzTXc3MjA3aFFxbGhPWT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI1NmYyODI3Mi1kYjMwLTRmNmEtYTMzZS1lMTViOTBlMWQwNjYiLCJhdWQiOiI5cjRmcGhqcHB2bWg3dDg0NmFpYTlhYm02IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImV2ZW50X2lkIjoiOGVjMTc2NWItZTg3Ny00ZTFjLTlmNmMtNzcxODU5NjE5OGM1IiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE1OTczNjI3NDMsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTIuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0yX1gzVE1IUWVUbSIsImNvZ25pdG86dXNlcm5hbWUiOiJqdm1zdXJmc0BnbWFpbC5jb20iLCJleHAiOjE1OTczNjYzNDMsImlhdCI6MTU5NzM2Mjc0MywiZW1haWwiOiJqdm1zdXJmc0BnbWFpbC5jb20ifQ.h65gkKSRe_NUlY71t5xImXQ6Td23GphvwnvLPwBgnVsqBSUdnqLtd6Y7KVNFXNKt8yqqyJyNGmV9Q8TciX1lEE_Fckym3pR3FvT12gwA2-k1JSKmp1iobPdEoaNwHy8fbS4aoaetkg3hrzhaIFd_bdynEnOpI9Vmg3rDYr45-VW_6WykM3SZPb_lkpNI_sJfFHxT1T9YHqfs5NyAM0Y-f12X5IIVu-ZbJcHayPIOzOeEB9n_N1Rzw0LnUauLYTVWuncTGCLidRh3ZECo7Kojm0DJPYot0dj8oYzZy6JqMDnsZay1a9d2IO2jRDn_i-6QIWuo-07u5OlfL4q0hBzh-Q';
+  'eyJraWQiOiI5WkZSQlVDU2JrUnpzbWxZZHBYenEzdCtTK0hac2hnYzFLXC9DQkViRlBjST0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI2YmFkY2M5Mi04MjJhLTRmYWYtYTQ4ZS0wOTgzM2NjYWVkZWUiLCJhdWQiOiI0ZzhvbnMwZ25kbWprNGQ0dXVnZmFmMzZiYiIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJldmVudF9pZCI6IjQzMDlmZDIwLTViZGUtNGYxZi04ZDllLTIwMzBmOWNhZTgxMyIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNTk5MzI5OTIxLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0xLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMV9WcDVnNW1qbEwiLCJjb2duaXRvOnVzZXJuYW1lIjoianZtc3VyZnNAZ21haWwuY29tIiwiZXhwIjoxNTk5MzMzNTIxLCJpYXQiOjE1OTkzMjk5MjEsImVtYWlsIjoianZtc3VyZnNAZ21haWwuY29tIn0.C_v6fwmjRacvnfXXNO8aiHbda7_YjuF_krfHHSEZd0n5wVDYbRLq-rZ9NgfFEdhGov7Np6btrwt72Yy0Yq2hOkTzIWejuutJ3JQ8HX4xHzgoS4v82R6F6yXuXmPXX5OaocnJQ2s_W_u2k_2dqQsiiHQJ-W54Gp7mdyFjeSosXNsfxQ-GkHDVFMj613RpPnffnltvFtCfExLuOdnNbmnH0_i45Y2zNhQPWB7tTSMmEswpq0V3IHkysrvrAqIKh-UDdvKq5b2o6aYcO1SIzL2Gm8ZkP0dE5CDQBCeNJ8WJs1wGAJe-pDb2WYizjck4tWBZddva2qSMCbe6MuxkTgrGzA';
 
 const jwks = {
   keys: [
@@ -148,6 +148,7 @@ app.get('/user', authorizeUser, async (request, response) => {
 // GET User Profile Pic - Done
 app.get('/user/profilepic', authorizeUser, async (request, response) => {
   console.log('GET USER PROFILE PIC');
+  console.log(request.decodedToken.email);
 
   const email = request.decodedToken.email;
   if (!email) {
@@ -286,6 +287,8 @@ app.post('/user/idea', authorizeUser, async (request, response) => {
         request.body.isCompleted
       ]
     );
+
+    // insert pic into ideapic
     con.release();
 
     console.log(queryResponse);
@@ -678,6 +681,7 @@ app.delete('/idea/pic', authorizeUser, async (request, response) => {
 // Authorize User
 function authorizeUser(request, response, next) {
   console.log('AuthroizeUser');
+  console.log(request.query.token);
 
   if (request.query.token) request.body.token = request.query.token;
   const tokenFromRequestBody = request.body.token;
