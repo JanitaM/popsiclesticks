@@ -20,7 +20,7 @@ function setCreds() {
 setCreds();
 
 const s3 = new aws.S3();
-const bucket = 'popsiclesticks2';
+const bucket = 'popsiclesticks2135535-dev';
 
 const PORT = 4000;
 
@@ -38,26 +38,26 @@ const pool = mysql.createPool({
 
 // later comes from currentAuthenticatedUser-the one that says token_use: id
 const jwtIdToken =
-  'eyJraWQiOiI5WkZSQlVDU2JrUnpzbWxZZHBYenEzdCtTK0hac2hnYzFLXC9DQkViRlBjST0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI2YmFkY2M5Mi04MjJhLTRmYWYtYTQ4ZS0wOTgzM2NjYWVkZWUiLCJhdWQiOiI0ZzhvbnMwZ25kbWprNGQ0dXVnZmFmMzZiYiIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJldmVudF9pZCI6IjQzMDlmZDIwLTViZGUtNGYxZi04ZDllLTIwMzBmOWNhZTgxMyIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNTk5MzI5OTIxLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0xLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMV9WcDVnNW1qbEwiLCJjb2duaXRvOnVzZXJuYW1lIjoianZtc3VyZnNAZ21haWwuY29tIiwiZXhwIjoxNTk5MzMzNTIxLCJpYXQiOjE1OTkzMjk5MjEsImVtYWlsIjoianZtc3VyZnNAZ21haWwuY29tIn0.C_v6fwmjRacvnfXXNO8aiHbda7_YjuF_krfHHSEZd0n5wVDYbRLq-rZ9NgfFEdhGov7Np6btrwt72Yy0Yq2hOkTzIWejuutJ3JQ8HX4xHzgoS4v82R6F6yXuXmPXX5OaocnJQ2s_W_u2k_2dqQsiiHQJ-W54Gp7mdyFjeSosXNsfxQ-GkHDVFMj613RpPnffnltvFtCfExLuOdnNbmnH0_i45Y2zNhQPWB7tTSMmEswpq0V3IHkysrvrAqIKh-UDdvKq5b2o6aYcO1SIzL2Gm8ZkP0dE5CDQBCeNJ8WJs1wGAJe-pDb2WYizjck4tWBZddva2qSMCbe6MuxkTgrGzA';
+  '"eyJraWQiOiI5WkZSQlVDU2JrUnpzbWxZZHBYenEzdCtTK0hac2hnYzFLXC9DQkViRlBjST0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI2YmFkY2M5Mi04MjJhLTRmYWYtYTQ4ZS0wOTgzM2NjYWVkZWUiLCJhdWQiOiI0ZzhvbnMwZ25kbWprNGQ0dXVnZmFmMzZiYiIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJldmVudF9pZCI6ImQ1NWM4ODc4LWFmYjgtNDI4OC1hZTk4LWY4OTFhMGEzZmI1MyIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNTk5MzM2MTQ5LCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0xLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMV9WcDVnNW1qbEwiLCJjb2duaXRvOnVzZXJuYW1lIjoianZtc3VyZnNAZ21haWwuY29tIiwiZXhwIjoxNTk5MzM5NzQ5LCJpYXQiOjE1OTkzMzYxNTAsImVtYWlsIjoianZtc3VyZnNAZ21haWwuY29tIn0.H7Hyp-XQgdCs_A1VYdU49ajCrPRBDQ1IbvzYL02wUWhG7Hp4r4OCImrGW-CSL1DKIWjVJLXzTZ8TjRYy2WCnTEDN77vTGA0yZt5sjXdAUlLGsKgs1GyusVnYreyej38z3r6IaZrb6AQN6Z6klOEdgG8zonywi6ZndFcviUXUKWmiyFIr84iw33tXC845PItjjhn-OyGIbAfPYUZAzX5CDOLt_cftfR33wVxiCcLA3vhZNIMPP8vrJgYnDw-UjVVd5msVJeQW-VAXsbR-zeXKCbvv1DMpQFLV-kehxV7wH1yaqlvMSGIdqDKvoX5OJinD1RFsW85j0b9AYVTYsDp4OQ"';
 
 const jwks = {
   keys: [
     {
       alg: 'RS256',
       e: 'AQAB',
-      kid: 'mwBui5OGtlWrfkdbR1/ZzfbXXcF6TsMw7207hQqlhOY=',
+      kid: '9ZFRBUCSbkRzsmlYdpXzq3t+S+HZshgc1K/CBEbFPcI=',
       kty: 'RSA',
       n:
-        'rL4sw19DtbKaKDLbncrmBMn8n8_Zpt6X2wdrE-Vh0po4EYlVDng8wn3cye_LO0_nIDSmzA2kKRzF3ExKWVVVZ6YU9Ukxpoy5pKkxn1AeHk7fazicLWDjSlcaUaI0Q2bNQyq6seRc-ixX7FptLaIoBcJs4Ga0a3jJwtnpLTSUA_OkBKG96yhmeJidxbAwCAgUt53ksMxgQu4kbFCTW-wJAYxNb4-xlOoca_Kz0R3aOBQcCNqAe5s-QlBuHVxgDo65kbW6IaMac7hbc4u758biWacH3kEPhanM7syUwc-taDYHv73hTn-knu8BqgmW58mizRvEowH7zSx4Q8IAPNOxUQ',
+        'hyMqPuYzrljIlPrdCIMaOr0kE4qvGL1svMP66xG7NvUeKBJfNNymwXrKAdUjFShJurT0_IJVWG3O10xb8fn3ylhnxHxiTGtv-myTt4sBqDxya4uW9j4VFt6k2aBPOskjg8DcsWHgp32jzAXNd2_XJTHtp5-IogRLkJj_mGodYRy5ehFJNc-cnc8LOtM1Ss5sNTz2S62I6UsGi2Kp3AEnVwL3jIjKQg6y_DJ4e7ItiKl8ccQOnPpiEUBZm-s2sKCMvmIyf08H08-Zzynzgg9WayTD5EHAYRd5oGvEEPb62SuuP8IAjHLN5ccwL0G5SaqK3vJb286c5bl2gKtBJrLZnQ',
       use: 'sig'
     },
     {
       alg: 'RS256',
       e: 'AQAB',
-      kid: 'xfVBBSZuZL7cklp9WAEpxmBmA426CIJ6HuA9cua9fKk=',
+      kid: 'KcYJh05RlG3/plnVBOBSCIFa2xNVBqTAcDPXVMDYxJ0=',
       kty: 'RSA',
       n:
-        'ncKGDGr_-tvhI-0kKx2prNtJ9IPXxxKiSWa9BXYvX9VYO3aO03mBo6fjgmD3B4kzygVxIzFZGKMzBdMyxpycZSzKA5zqlI8O_wYnSulB26zXXgG5wNRU6GfkcXukXMoIvyWpOGFOkE55VL-Me-sq6M5wCG3IKhj6QZMFDDoKXgSAfEa_DfAa3ZOO21gzNQHwKslwHgHhjAjM5q0zN8bShVwGb29i37dN-WiLxjYkg0tv171vFdzgohM6Fsp2cUJvlJ1m59y3qniP_gSg8RcutAI5qlFQuqYgHT9R_vT1sNyfVo9vlbuIxA--NT9xN3pDcL-GbXVKk-aYUMKoXNCW6Q',
+        'gnP76WNQ1nfOvIIaeMtxdvNSYPboaTy7VVzdquesN4QgS9rHhvdp7QB9SrJIrjplquM6s_hjU4x7tSiwsrKBgWDGpTFD0NvJgqsmxsdkHY5nAN_pb8U7obq5JWjZuwrGGtIr2jq2fJH_y_kShdIdXd_w3OO80aKsdq5Hae-fm1nmx0N6SLT7w7EPQ4siszUgKyF2dcsNng1_NX4cussx-jamiekL5Gb5pDkQTKOA-cr5gKgyNlqqpGxN0kCu-KXlBEMNDQmaB1Vb4ZeXBHE5wIqPxzTAQWD8mmWkmle86HpZk1JvSK5d1Yv3cS491AVwvVJ9lgEuPrEiGioCXWWbAw',
       use: 'sig'
     }
   ]
@@ -148,7 +148,6 @@ app.get('/user', authorizeUser, async (request, response) => {
 // GET User Profile Pic - Done
 app.get('/user/profilepic', authorizeUser, async (request, response) => {
   console.log('GET USER PROFILE PIC');
-  console.log(request.decodedToken.email);
 
   const email = request.decodedToken.email;
   if (!email) {
@@ -681,7 +680,6 @@ app.delete('/idea/pic', authorizeUser, async (request, response) => {
 // Authorize User
 function authorizeUser(request, response, next) {
   console.log('AuthroizeUser');
-  console.log(request.query.token);
 
   if (request.query.token) request.body.token = request.query.token;
   const tokenFromRequestBody = request.body.token;
