@@ -46,21 +46,19 @@ const Navbar = ({ props, signedInUser, signOut }) => {
   const classes = useStyles();
   const [profilePic, setProfilePic] = useState([]);
 
-  console.log(signedInUser);
-
   useEffect(() => {
     async function getPhotos() {
-      const fullInfo = await Auth.currentAuthenticatedUser();
-      const token = await fullInfo.signInUserSession.idToken.jwtToken;
-      const username = await fullInfo.username;
+      if (signedInUser) {
+        const token = await signedInUser.signInUserSession.idToken.jwtToken;
+        const username = signedInUser.username;
 
-      const res = await axios.get(
-        `http://localhost:4000/user/profilepic?email=${username}&token=${token}`
-      );
-
-      // console.log(res.data.Body.data);
-      setProfilePic(convertImg(res.data.Body.data));
-      // setProfilePic(res.data.map((item) => convertImg(item.Body.data)));
+        const res = await axios.get(
+          `http://localhost:4000/user/profilepic?email=${username}&token=${token}`
+        );
+        // console.log(res.data.Body.data);
+        setProfilePic(convertImg(res.data.Body.data));
+        // setProfilePic(res.data.map((item) => convertImg(item.Body.data)));
+      }
     }
     getPhotos();
   }, []);
@@ -101,7 +99,11 @@ const Navbar = ({ props, signedInUser, signOut }) => {
         onClose={handleDrawerClose}
       >
         {signedInUser ? (
-          <UserMobileNavBar profilePic={profilePic} />
+          <UserMobileNavBar
+            profilePic={profilePic}
+            signOut={signOut}
+            signedInUser={signedInUser}
+          />
         ) : (
           <List onClick={handleDrawerClose}>
             <ListItem>
@@ -148,7 +150,11 @@ const Navbar = ({ props, signedInUser, signOut }) => {
               <div className={classes.grow} />
               {signedInUser ? (
                 <div className={classes.sectionDesktop}>
-                  <UserDesktopNavbar profilePic={profilePic} />
+                  <UserDesktopNavbar
+                    profilePic={profilePic}
+                    signOut={signOut}
+                    signedInUser={signedInUser}
+                  />
                 </div>
               ) : (
                 <div className={classes.sectionDesktop}>

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Auth } from 'aws-amplify';
 import PublicRoutes from './routes/PublicRoutes';
 import PrivateRoutes from './routes/PrivateRoutes';
-import Navbar from './components/layout/Navbar';
 import './App.css';
 import { navigate } from '@reach/router';
 
@@ -18,14 +17,10 @@ const App = () => {
     e.preventDefault();
 
     try {
-      console.log(signInForm);
       const user = await Auth.signIn(signInForm.username, signInForm.password);
 
-      console.log(user);
-
       setSignedInUser(user);
-      navigate('/home');
-      // console.log(await Auth.currentAuthenticatedUser());
+      navigate('/');
     } catch (error) {
       console.log(error);
     }
@@ -43,90 +38,24 @@ const App = () => {
     (async () => {
       const user = await Auth.currentAuthenticatedUser();
       setSignedInUser(user);
-      console.log(signedInUser);
     })();
   }, []);
 
-  if (!signedInUser) {
-    return (
-      <>
-        <Navbar signedInUser={signedInUser} />
+  return (
+    <>
+      {signedInUser ? (
+        <PrivateRoutes signedInUser={signedInUser} signOut={signOut} />
+      ) : (
         <PublicRoutes
           signIn={signIn}
           setSignInForm={setSignInForm}
           signInForm={signInForm}
+          signedInUser={signedInUser}
+          signOut={signOut}
         />
-      </>
-    );
-  }
-
-  return (
-    <>
-      <Navbar signedInUser={signedInUser} />
-      <PrivateRoutes signOut={signOut} />
+      )}
     </>
   );
-
-  // return (
-  //   <Router>
-  //     <>
-  //       <Navbar />
-  //       <Switch>
-  //         <Route exact path='/' component={Landing} />
-  //         <Route exact path='/register' component={Register} />
-  //         <Route
-  //           // component={SignInPage}
-  //           exact
-  //           path='/signin'
-  //           render={(props) => (
-  //             <SignInPage
-  //               {...props}
-  //               signInForm={signInForm}
-  //               setSignInForm={setSignInForm}
-  //               signIn={signIn}
-  //             />
-  //           )}
-  //         />
-
-  //         {/* <Route exact path='/home'>
-  //           {signedInUser ? <Redirect to='/home' /> : <SignInPage />}
-  //         </Route> */}
-  //         <Route
-  //           exact
-  //           path='/home'
-  //           // component={Home}
-  //           render={(props) => (
-  //             <Home
-  //               {...props}
-  //               signedInUser={signedInUser}
-  //               setSignedInUser={setSignedInUser}
-  //             />
-  //           )}
-  //         />
-
-  //         <Route
-  //           exact
-  //           path='/dashboard'
-  //           // component={Dashboard}
-  //           render={(props) => (
-  //             <Dashboard {...props} signedInUser={signedInUser} />
-  //           )}
-  //         />
-
-  //         <Route
-  //           exact
-  //           path='/account'
-  //           // component={AccountSettings}
-  //           render={(props) => (
-  //             <AccountSettings {...props} signedInUser={signedInUser} />
-  //           )}
-  //         />
-
-  //         <Route component={NotFound} />
-  //       </Switch>
-  //     </>
-  //   </Router>
-  // );
 };
 
 export default App;

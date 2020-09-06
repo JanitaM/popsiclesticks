@@ -9,7 +9,7 @@ const UserDesktopNavbar = ({ signOut, signedInUser, profilePic }) => {
   const handleOnClick = (e) => {
     e.preventDefault();
 
-    // signOut();
+    signOut();
     navigate('/');
   };
 

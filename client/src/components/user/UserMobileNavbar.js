@@ -11,12 +11,10 @@ const UserMobileNavbar = ({ signedInUser, signOut, profilePic }) => {
     setOpen(false);
   };
 
-  console.log(profilePic);
-
   const handleOnClick = (e) => {
     e.preventDefault();
 
-    // signOut();
+    signOut();
     navigate('/');
   };
 
