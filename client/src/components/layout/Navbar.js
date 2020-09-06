@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { user } from '../../redux/actions/userActions';
+// import { connect } from 'react-redux';
+// import { user } from '../../redux/actions/userActions';
 import {
   makeStyles,
   AppBar,
@@ -45,7 +44,7 @@ function HideOnScroll({ children, window }) {
   );
 }
 
-const Navbar = ({ props, user }) => {
+const Navbar = ({ props, signedInUser, signOut }) => {
   const classes = useStyles();
   const [profilePic, setProfilePic] = useState([]);
 
@@ -101,7 +100,7 @@ const Navbar = ({ props, user }) => {
         }}
         onClose={handleDrawerClose}
       >
-        {user.user && user.isAuthenticated ? (
+        {signedInUser ? (
           <UserMobileNavBar profilePic={profilePic} />
         ) : (
           <List onClick={handleDrawerClose}>
@@ -147,7 +146,7 @@ const Navbar = ({ props, user }) => {
                 </Typography>
               </Link>
               <div className={classes.grow} />
-              {user.user && user.isAuthenticated ? (
+              {signedInUser ? (
                 <div className={classes.sectionDesktop}>
                   <UserDesktopNavbar profilePic={profilePic} />
                 </div>
@@ -235,15 +234,4 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-Navbar.propTypes = {
-  user: PropTypes.object.isRequired
-};
-
-const mapStateToProps = (state) => {
-  // console.log(state);
-  return {
-    user: state.user
-  };
-};
-
-export default connect(mapStateToProps)(Navbar);
+export default Navbar;

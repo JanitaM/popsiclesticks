@@ -6,51 +6,66 @@ import {
   Route,
   Redirect
 } from 'react-router-dom';
-import PrivateRoute from './routes/PrivateRoute';
+import PublicRoutes from './routes/PublicRoutes';
+import PrivateRoutes from './routes/PrivateRoutes';
 import Navbar from './components/layout/Navbar';
-import Home from './components/pages/Home';
-import Register from './components/pages/Register';
-import SignIn from './components/pages/SignIn';
-import Landing from './components/pages/Landing';
-import Dashboard from './components/pages/Dashboard';
-import AccountSettings from './components/pages/AccountSettings';
-import NotFound from './components/pages/NotFound';
-import SnackbarAlert from './components/snackbar/SnackbarAlert';
+import SignInPage from './components/pages/SignInPage';
 import './App.css';
 
 const App = () => {
-  const [signedInUser, setSignedInUser] = useState({
-    email: '',
-    token: ''
-  });
+  const [signedInUser, setSignedInUser] = useState(undefined);
+  const [signInForm, setSignInForm] = useState({ username: '', password: '' });
+
+  async function signIn(e) {
+    e.preventDefault();
+
+    try {
+      console.log(signInForm);
+      const user = await Auth.signIn(signInForm.username, signInForm.password);
+      setSignedInUser(user);
+
+      console.log(await Auth.currentAuthenticatedUser());
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  function signOut() {
+    try {
+      Auth.signOut({ global: true }).then(() => setSignedInUser(undefined));
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   useEffect(() => {
     (async () => {
-      const fullInfo = await Auth.currentAuthenticatedUser();
-      const token = await fullInfo.signInUserSession.idToken.jwtToken;
-      const email = await fullInfo.username;
-      setSignedInUser({ ...signedInUser, token, email });
+      const user = await Auth.currentAuthenticatedUser();
+      setSignedInUser(user);
     })();
   }, []);
 
   return (
     <Router>
       <>
-        <Navbar />
-        <SnackbarAlert />
-        <Switch>
-          <Route exact path='/' component={Landing} />
-          <Route exact path='/register' component={Register} />
-          <Route exact path='/signin' component={SignIn} />
+        <Navbar signedInUser={signedInUser} signOut={signOut} />
+        {signedInUser ? (
+          <PrivateRoutes signedInUser={signedInUser} />
+        ) : (
+          <>
+            <PublicRoutes
+              signIn={signIn}
+              signInForm={signInForm}
+              setSignInForm={setSignInForm}
+            />
 
-          {/* <PrivateRoute exact path='/home' component={Home} /> */}
-          <Route exact path='/home' component={Home} />
-
-          <Route exact path='/dashboard' component={Dashboard} />
-          {/* <PrivateRoute exact path='/dashboard' component={Dashboard} /> */}
-
-          <PrivateRoute exact path='/account' component={AccountSettings} />
-          <Route component={NotFound} />
-        </Switch>
+            {/* <SignInPage
+              signIn={signIn}
+              signInForm={signInForm}
+              setSignInForm={setSignInForm}
+            /> */}
+          </>
+        )}
       </>
     </Router>
   );

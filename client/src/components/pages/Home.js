@@ -1,34 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { user } from '../../redux/actions/userActions';
 import { Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Preloader from '../layout/Preloader';
 import MasonJar from '../layout/MasonJar';
 import FilterIdeas from '../ideas/FilterIdeasBtn';
 import AddEditIdeaBtns from '../ideas/AddEditIdeaBtns';
-import { connect } from 'react-redux';
 import { Auth } from 'aws-amplify';
 
-const Home = ({ user }) => {
+const Home = ({ signedInUser }) => {
   const classes = useStyles();
 
-  const [signedInUser, setSignedInUser] = useState({
-    email: '',
-    token: ''
-  });
-  useEffect(() => {
-    (async () => {
-      const fullInfo = await Auth.currentAuthenticatedUser();
-      const token = await fullInfo.signInUserSession.idToken.jwtToken;
-      const email = await fullInfo.username;
-      setSignedInUser({ ...signedInUser, token, email });
-    })();
-  }, []);
+  // const [signedInUser, setSignedInUser] = useState({
+  //   email: '',
+  //   token: ''
+  // });
+  // useEffect(() => {
+  //   (async () => {
+  //     const fullInfo = await Auth.currentAuthenticatedUser();
+  //     const token = await fullInfo.signInUserSession.idToken.jwtToken;
+  //     const email = await fullInfo.username;
+  //     setSignedInUser({ ...signedInUser, token, email });
+  //   })();
+  // }, []);
 
   return (
     <>
-      {user.user && user.loading ? (
+      {!signedInUser ? (
         <Preloader />
       ) : (
         <div className={classes.mainContainer}>
@@ -54,7 +51,7 @@ const Home = ({ user }) => {
               <Grid item xs={12} sm={9}>
                 <MasonJar
                   signedInUser={signedInUser}
-                  setSignedInUser={setSignedInUser}
+                  // setSignedInUser={setSignedInUser}
                 />
               </Grid>
               <Grid item xs={12} sm={3}>
@@ -79,15 +76,4 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-Home.propTypes = {
-  user: PropTypes.object.isRequired
-};
-
-const mapStateToProps = (state) => {
-  console.log(state);
-  return {
-    user: state.user
-  };
-};
-
-export default connect(mapStateToProps)(Home);
+export default Home;

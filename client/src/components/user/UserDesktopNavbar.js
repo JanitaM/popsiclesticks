@@ -1,12 +1,9 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Link, useHistory } from 'react-router-dom';
 import './UserNavbar.css';
-import { connect } from 'react-redux';
-import { signOut, user } from '../../redux/actions/userActions';
 import { Avatar, makeStyles } from '@material-ui/core';
 
-const UserDesktopNavbar = ({ signOut, user, profilePic }) => {
+const UserDesktopNavbar = ({ signOut, signedInUser, profilePic }) => {
   const classes = useStyles();
   const history = useHistory();
 
@@ -20,7 +17,7 @@ const UserDesktopNavbar = ({ signOut, user, profilePic }) => {
   return (
     <div className={classes.sectionDesktop}>
       <Avatar
-        src={user.user && profilePic}
+        src={signedInUser && profilePic}
         alt='user profile picture'
         className={classes.image}
         variant='rounded'
@@ -65,13 +62,4 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-UserDesktopNavbar.propTypes = {
-  signOut: PropTypes.func.isRequired,
-  user: PropTypes.object.isRequired
-};
-
-const mapStateToProps = (state) => ({
-  user: state.user
-});
-
-export default connect(mapStateToProps, { signOut })(UserDesktopNavbar);
+export default UserDesktopNavbar;

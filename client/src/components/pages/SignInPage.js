@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Button,
   CssBaseline,
@@ -8,29 +8,23 @@ import {
   TextField,
   Typography
 } from '@material-ui/core';
-import { connect } from 'react-redux';
-import { signIn } from '../../redux/actions/userActions';
-import { useHistory } from 'react-router-dom';
+// import { useHistory } from 'react-router-dom';
 
-const SignIn = ({ signIn }) => {
+const SignInPage = (props) => {
   const classes = useStyles();
-  const history = useHistory();
+  // const history = useHistory();
+  const { signIn, signInForm, setSignInForm } = props;
+  console.log(signInForm);
+  console.log(setSignInForm);
+  console.log(signIn);
+  console.log(props);
 
-  const [currentUser, setCurrentUser] = useState({
-    username: '',
-    password: ''
-  });
-  const { username, password } = currentUser;
-  const onChange = (e) => {
-    setCurrentUser({ ...currentUser, [e.target.name]: e.target.value });
-  };
+  // const onSignIn = (e) => {
+  //   e.preventDefault();
 
-  const onSignIn = (e) => {
-    e.preventDefault();
-
-    signIn(currentUser);
-    history.push('/home');
-  };
+  //   signIn(currentUser);
+  //   history.push('/home');
+  // };
 
   return (
     <Grid container component='main' className={classes.root}>
@@ -41,15 +35,20 @@ const SignIn = ({ signIn }) => {
           <Typography component='h1' variant='h4'>
             Sign in
           </Typography>
-          <form className={classes.form} onSubmit={onSignIn}>
+          <form
+            className={classes.form}
+            // onSubmit={signIn}
+          >
             <TextField
               required
               variant='outlined'
               label='Email'
               type='text'
               name='username'
-              value={username}
-              onChange={onChange}
+              // value={signInForm.username}
+              onChange={(e) =>
+                setSignInForm({ ...signInForm, username: e.target.value })
+              }
               className={classes.textfield}
               id='email'
               autoComplete='email'
@@ -61,8 +60,10 @@ const SignIn = ({ signIn }) => {
               label='Password'
               type='password'
               name='password'
-              value={password}
-              onChange={onChange}
+              // value={signInForm.password}
+              // onChange={(e) =>
+              //   setSignInForm({ ...signInForm, password: e.target.value })
+              // }
               className={classes.textfield}
               id='password'
               autoComplete='current-password'
@@ -73,7 +74,8 @@ const SignIn = ({ signIn }) => {
               variant='contained'
               color='primary'
               className={classes.signInBtn}
-              onClick={onSignIn}
+              // onClick={onSignIn}
+              // onClick={signIn}
             >
               Sign In
             </Button>
@@ -142,4 +144,4 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default connect(null, { signIn })(SignIn);
+export default SignInPage;

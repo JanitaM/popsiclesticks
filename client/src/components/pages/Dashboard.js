@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { connect } from 'react-redux';
-import { setSnackbar } from '../../redux/actions/snackbarActions';
 import { Auth } from 'aws-amplify';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';

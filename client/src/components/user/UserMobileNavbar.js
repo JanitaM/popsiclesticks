@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import { Link, useHistory } from 'react-router-dom';
 import './UserNavbar.css';
-import { connect } from 'react-redux';
-import { signOut, user } from '../../redux/actions/userActions';
 import { Avatar, makeStyles, Divider, List, ListItem } from '@material-ui/core';
 
-const UserMobileNavbar = ({ user, signOut, profilePic }) => {
+const UserMobileNavbar = ({ signedInUser, signOut, profilePic }) => {
   const classes = useStyles();
   const history = useHistory();
 
@@ -34,7 +31,7 @@ const UserMobileNavbar = ({ user, signOut, profilePic }) => {
         }}
       >
         <Avatar
-          src={user.user && profilePic}
+          src={signedInUser && profilePic}
           alt='user profile picture'
           className={classes.image}
           variant='rounded'
@@ -76,16 +73,4 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-UserMobileNavbar.propTypes = {
-  signOut: PropTypes.func.isRequired,
-  user: PropTypes.object.isRequired
-};
-
-const mapStateToProps = (state) => {
-  console.log(state);
-  return {
-    user: state.user
-  };
-};
-
-export default connect(mapStateToProps, { signOut })(UserMobileNavbar);
+export default UserMobileNavbar;
