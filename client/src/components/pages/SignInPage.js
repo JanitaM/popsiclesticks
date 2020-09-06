@@ -8,23 +8,13 @@ import {
   TextField,
   Typography
 } from '@material-ui/core';
-// import { useHistory } from 'react-router-dom';
 
-const SignInPage = (props) => {
+const SignInPage = ({ signInForm, setSignInForm, signIn }) => {
   const classes = useStyles();
-  // const history = useHistory();
-  const { signIn, signInForm, setSignInForm } = props;
-  console.log(signInForm);
-  console.log(setSignInForm);
-  console.log(signIn);
-  console.log(props);
 
-  // const onSignIn = (e) => {
-  //   e.preventDefault();
-
-  //   signIn(currentUser);
-  //   history.push('/home');
-  // };
+  // console.log(signInForm);
+  // console.log(setSignInForm);
+  // console.log(signIn);
 
   return (
     <Grid container component='main' className={classes.root}>
@@ -35,17 +25,14 @@ const SignInPage = (props) => {
           <Typography component='h1' variant='h4'>
             Sign in
           </Typography>
-          <form
-            className={classes.form}
-            // onSubmit={signIn}
-          >
+          <form className={classes.form} onSubmit={signIn}>
             <TextField
               required
               variant='outlined'
               label='Email'
               type='text'
               name='username'
-              // value={signInForm.username}
+              value={signInForm.username}
               onChange={(e) =>
                 setSignInForm({ ...signInForm, username: e.target.value })
               }
@@ -60,10 +47,10 @@ const SignInPage = (props) => {
               label='Password'
               type='password'
               name='password'
-              // value={signInForm.password}
-              // onChange={(e) =>
-              //   setSignInForm({ ...signInForm, password: e.target.value })
-              // }
+              value={signInForm.password}
+              onChange={(e) =>
+                setSignInForm({ ...signInForm, password: e.target.value })
+              }
               className={classes.textfield}
               id='password'
               autoComplete='current-password'
@@ -75,7 +62,7 @@ const SignInPage = (props) => {
               color='primary'
               className={classes.signInBtn}
               // onClick={onSignIn}
-              // onClick={signIn}
+              onClick={signIn}
             >
               Sign In
             </Button>

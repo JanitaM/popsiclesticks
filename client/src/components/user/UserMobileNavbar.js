@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, navigate } from '@reach/router';
 import './UserNavbar.css';
 import { Avatar, makeStyles, Divider, List, ListItem } from '@material-ui/core';
 
 const UserMobileNavbar = ({ signedInUser, signOut, profilePic }) => {
   const classes = useStyles();
-  const history = useHistory();
 
   const [open, setOpen] = useState(false);
   const handleDrawerClose = () => {
@@ -17,8 +16,8 @@ const UserMobileNavbar = ({ signedInUser, signOut, profilePic }) => {
   const handleOnClick = (e) => {
     e.preventDefault();
 
-    signOut();
-    history.push('/');
+    // signOut();
+    navigate('/');
   };
 
   return (

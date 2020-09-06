@@ -1,17 +1,16 @@
 import React from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, navigate } from '@reach/router';
 import './UserNavbar.css';
 import { Avatar, makeStyles } from '@material-ui/core';
 
 const UserDesktopNavbar = ({ signOut, signedInUser, profilePic }) => {
   const classes = useStyles();
-  const history = useHistory();
 
   const handleOnClick = (e) => {
     e.preventDefault();
 
-    signOut();
-    history.push('/');
+    // signOut();
+    navigate('/');
   };
 
   return (

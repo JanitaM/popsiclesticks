@@ -26,7 +26,7 @@ import {
 } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
-import { Link } from 'react-router-dom';
+import { Link } from '@reach/router';
 import EditIdeaModal from '../ideas/EditIdeaModal';
 
 function convertImg(binArr) {

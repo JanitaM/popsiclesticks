@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-// import { connect } from 'react-redux';
-// import { user } from '../../redux/actions/userActions';
+import { Link } from '@reach/router';
 import {
   makeStyles,
   AppBar,
@@ -47,6 +45,8 @@ function HideOnScroll({ children, window }) {
 const Navbar = ({ props, signedInUser, signOut }) => {
   const classes = useStyles();
   const [profilePic, setProfilePic] = useState([]);
+
+  console.log(signedInUser);
 
   useEffect(() => {
     async function getPhotos() {

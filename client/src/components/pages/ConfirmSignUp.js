@@ -1,7 +1,6 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { navigate } from '@reach/router';
 import { Auth, Storage } from 'aws-amplify';
-import { useHistory } from 'react-router-dom';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import {
   TextField,
@@ -16,7 +15,6 @@ import axios from 'axios';
 
 const ConfirmSignUp = ({ signUpForm, setSignUpForm }) => {
   const classes = useStyles();
-  const history = useHistory();
 
   const confirmUser = async (e) => {
     e.preventDefault();
@@ -57,11 +55,11 @@ const ConfirmSignUp = ({ signUpForm, setSignUpForm }) => {
           )
             .then((result) => console.log(result))
             .then(() => uploadToSql(myUuid))
-            .then(() => history.push('/signin'))
+            .then(() => navigate('/signin'))
             .catch((error) => console.log(error));
         } else {
           uploadToSql();
-          history.push('/signin');
+          navigate('/signin');
         }
       }
     } catch (error) {
@@ -124,9 +122,5 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(3, 0, 2)
   }
 }));
-
-ConfirmSignUp.propTypes = {
-  confirmUser: PropTypes.func.isRequired
-};
 
 export default ConfirmSignUp;
