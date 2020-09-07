@@ -55,18 +55,13 @@ const Step3 = ({ ideaForm, setIdeaForm }) => {
 const useStyles = makeStyles({
   container: {
     textAlign: 'center',
-    backgroundColor: '#ccc',
     border: '1px solid #333',
-    borderRadius: '.5rem',
-    maxWidth: '350px',
-    margin: '2rem auto'
+    borderRadius: '4px'
   },
   formContainer: {
     display: 'flex',
-    flexDirection: 'column'
-  },
-  m1: {
-    margin: '1rem'
+    flexDirection: 'column',
+    alignItems: 'center'
   },
   uploadContainer: {
     display: 'flex',
@@ -79,16 +74,15 @@ const useStyles = makeStyles({
     display: 'none'
   },
   uploadBtn: {
-    backgroundColor: '#EC795D',
-    marginLeft: '1rem'
+    backgroundColor: '#E75734'
   },
   image: {
     textAlign: 'center',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
-    marginBottom: '1rem',
-    width: '15vw'
+    margin: '1rem 0',
+    maxWidth: '50%'
   }
 });
 

@@ -6,7 +6,7 @@ const Step1 = ({ ideaForm, setIdeaForm }) => {
 
   return (
     <div className={classes.container}>
-      <form className={classes.formContainer} autoComplete='off'>
+      <form autoComplete='off' className={classes.formContainer}>
         <TextField
           required
           variant='outlined'
@@ -15,7 +15,7 @@ const Step1 = ({ ideaForm, setIdeaForm }) => {
           name='title'
           value={ideaForm.title}
           onChange={(e) => setIdeaForm({ ...ideaForm, title: e.target.value })}
-          className={classes.m1}
+          className={classes.textfields}
         />
         <TextField
           variant='outlined'
@@ -26,7 +26,7 @@ const Step1 = ({ ideaForm, setIdeaForm }) => {
           onChange={(e) =>
             setIdeaForm({ ...ideaForm, location: e.target.value })
           }
-          className={classes.m1}
+          className={classes.textfields}
         />
         <TextField
           variant='outlined'
@@ -37,7 +37,7 @@ const Step1 = ({ ideaForm, setIdeaForm }) => {
           onChange={(e) =>
             setIdeaForm({ ...ideaForm, description: e.target.value })
           }
-          className={classes.m1}
+          className={classes.textfields}
         />
         <TextField
           variant='outlined'
@@ -46,7 +46,7 @@ const Step1 = ({ ideaForm, setIdeaForm }) => {
           name='url'
           value={ideaForm.url}
           onChange={(e) => setIdeaForm({ ...ideaForm, url: e.target.value })}
-          className={classes.m1}
+          className={classes.textfields}
         />
       </form>
     </div>
@@ -55,17 +55,17 @@ const Step1 = ({ ideaForm, setIdeaForm }) => {
 
 const useStyles = makeStyles({
   container: {
-    textAlign: 'center',
-    backgroundColor: '#ccc',
-    maxWidth: '550px',
-    margin: '2rem auto'
+    textAlign: 'center'
   },
   formContainer: {
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
-  m1: {
-    margin: '1rem'
+  textfields: {
+    margin: '1rem',
+    minWidth: '100%'
   }
 });
 

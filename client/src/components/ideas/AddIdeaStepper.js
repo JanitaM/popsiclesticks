@@ -44,13 +44,23 @@ const AddIdeaStepper = ({ ideaForm, setIdeaForm, handleClose }) => {
   const renderButton = () => {
     if (activeStep === steps.length - 1) {
       return (
-        <Button variant='contained' color='primary' onClick={handleSaveIdea}>
+        <Button
+          variant='contained'
+          color='primary'
+          onClick={handleSaveIdea}
+          className={classes.btn}
+        >
           Save
         </Button>
       );
     } else {
       return (
-        <Button variant='contained' color='primary' onClick={handleNext}>
+        <Button
+          variant='contained'
+          color='primary'
+          onClick={handleNext}
+          className={classes.btn}
+        >
           Next
         </Button>
       );
@@ -68,7 +78,6 @@ const AddIdeaStepper = ({ ideaForm, setIdeaForm, handleClose }) => {
       async function uploadToSql(myUuid) {
         return await axios({
           method: 'post',
-          // url: 'https://ds7m4gu0n5.execute-api.us-east-2.amazonaws.com/dev/idea',
           url: `http://localhost:4000/user/idea`,
           data: {
             email: username,
@@ -135,11 +144,11 @@ const AddIdeaStepper = ({ ideaForm, setIdeaForm, handleClose }) => {
         <Typography className={classes.instructions}>
           {getStepContent(activeStep, ideaForm, setIdeaForm)}
         </Typography>
-        <div>
+        <div className={classes.buttons}>
           <Button
             disabled={activeStep === 0}
             onClick={handleBack}
-            className={classes.backButton}
+            className={classes.btn}
           >
             Back
           </Button>
@@ -149,6 +158,7 @@ const AddIdeaStepper = ({ ideaForm, setIdeaForm, handleClose }) => {
               variant='contained'
               color='primary'
               onClick={handleSaveIdea}
+              className={classes.btn}
             >
               Save
             </Button>
@@ -163,14 +173,15 @@ const AddIdeaStepper = ({ ideaForm, setIdeaForm, handleClose }) => {
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: '100%'
+    width: '100%',
+    padding: '1rem',
+    textAlign: 'center'
   },
-  button: {
-    marginRight: theme.spacing(1)
+  buttons: {
+    margin: '1rem auto'
   },
-  instructions: {
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1)
+  btn: {
+    margin: '0 1rem'
   }
 }));
 

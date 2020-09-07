@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { makeStyles, TextField } from '@material-ui/core';
+import { Divider, makeStyles, TextField } from '@material-ui/core';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 
@@ -30,70 +30,107 @@ const Step2 = ({ ideaForm, setIdeaForm }) => {
           exclusive
           onChange={handleCost}
           aria-label='cost'
+          className={classes.m1b}
         >
-          <ToggleButton value='cheap' aria-label='cheap cost'>
+          <ToggleButton
+            value='cheap'
+            aria-label='cheap cost'
+            className={classes.toggleBtns}
+          >
             <img
               src='https://img.icons8.com/dusk/64/000000/cheap-2.png'
               alt='cheap cost'
             />
           </ToggleButton>
-          <ToggleButton value='average' aria-label='average cost'>
+          <ToggleButton
+            value='average'
+            aria-label='average cost'
+            className={classes.toggleBtns}
+          >
             <img
               src='https://img.icons8.com/dusk/64/000000/average-2.png'
               alt='average cost'
             />
           </ToggleButton>
-          <ToggleButton value='expensive' aria-label='expensive cost'>
+          <ToggleButton
+            value='expensive'
+            aria-label='expensive cost'
+            className={classes.toggleBtns}
+          >
             <img
               src='https://img.icons8.com/dusk/64/000000/expensive.png'
               alt='expenisve cost'
             />
           </ToggleButton>
         </ToggleButtonGroup>
+        <Divider />
         <ToggleButtonGroup
           value={ideaForm.indoorOutdoor}
           exclusive
           onChange={handleIndoorOutdoor}
           aria-label='indoors or outdoors'
+          className={classes.m1b}
         >
-          <ToggleButton value='outdoor' aria-label='outdoor'>
+          <ToggleButton
+            value='outdoor'
+            aria-label='outdoor'
+            className={classes.toggleBtns}
+          >
             <img
               src='https://img.icons8.com/doodle/48/000000/coniferous-tree.png'
               alt='outdoor'
             />
           </ToggleButton>
-          <ToggleButton value='indoor' aria-label='indoor'>
+          <ToggleButton
+            value='indoor'
+            aria-label='indoor'
+            className={classes.toggleBtns}
+          >
             <img
               src='https://img.icons8.com/dusk/64/000000/home.png'
               alt='indoor'
             />
           </ToggleButton>
         </ToggleButtonGroup>
+        <Divider />
         <ToggleButtonGroup
           value={ideaForm.weather}
           exclusive
           onChange={handleWeather}
           aria-label='weather'
         >
-          <ToggleButton value='sunny' aria-label='sunny'>
+          <ToggleButton
+            value='sunny'
+            aria-label='sunny'
+            className={classes.toggleBtns}
+          >
             <img
               src='https://img.icons8.com/dusk/64/000000/summer.png'
               alt='sunny'
             />
           </ToggleButton>
-          <ToggleButton value='rain' aria-label='rain'>
+          <ToggleButton
+            value='rain'
+            aria-label='rain'
+            className={classes.toggleBtns}
+          >
             <img
               src='https://img.icons8.com/dusk/64/000000/rain.png'
               alt='rain'
             />
           </ToggleButton>
-          <ToggleButton value='snow' aria-label='snow'>
+          <ToggleButton
+            value='snow'
+            aria-label='snow'
+            className={classes.toggleBtns}
+          >
             <img
               src='https://img.icons8.com/dusk/64/000000/snow-storm.png'
               alt='snow'
             />
           </ToggleButton>
         </ToggleButtonGroup>
+
         <TextField
           variant='outlined'
           label='Give it a category/tag'
@@ -103,7 +140,7 @@ const Step2 = ({ ideaForm, setIdeaForm }) => {
           onChange={(e) =>
             setIdeaForm({ ...ideaForm, category: e.target.value })
           }
-          className={classes.m1}
+          className={classes.textfields}
         />
       </form>
     </div>
@@ -112,17 +149,22 @@ const Step2 = ({ ideaForm, setIdeaForm }) => {
 
 const useStyles = makeStyles({
   container: {
-    textAlign: 'center',
-    backgroundColor: '#ccc',
-    maxWidth: '550px',
-    margin: '2rem auto'
+    textAlign: 'center'
   },
   formContainer: {
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    justifyContent: 'space-between'
   },
-  m1: {
-    margin: '1rem'
+  m1b: {
+    marginBottom: '1rem'
+  },
+  toggleBtns: {
+    margin: '0 1rem',
+    border: 'none'
+  },
+  textfields: {
+    margin: '1rem 0'
   }
 });
 
