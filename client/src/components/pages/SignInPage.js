@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   CssBaseline,
@@ -8,13 +8,22 @@ import {
   TextField,
   Typography
 } from '@material-ui/core';
+import ForgotPasswordPage from './ForgotPasswordPage';
 
 const SignInPage = ({ signInForm, setSignInForm, signIn }) => {
   const classes = useStyles();
 
-  // console.log(signInForm);
-  // console.log(setSignInForm);
-  // console.log(signIn);
+  const [isSignInPage, setIsSignInPage] = useState(true);
+
+  if (!isSignInPage) {
+    return <ForgotPasswordPage setIsSignInPage={setIsSignInPage} />;
+  }
+
+  const handleForgotPassword = (e) => {
+    e.preventDefault();
+
+    setIsSignInPage(false);
+  };
 
   return (
     <Grid container component='main' className={classes.root}>
@@ -25,7 +34,7 @@ const SignInPage = ({ signInForm, setSignInForm, signIn }) => {
           <Typography component='h1' variant='h4'>
             Sign in
           </Typography>
-          <form className={classes.form} onSubmit={signIn}>
+          <form className={classes.form}>
             <TextField
               required
               variant='outlined'
@@ -61,7 +70,6 @@ const SignInPage = ({ signInForm, setSignInForm, signIn }) => {
               variant='contained'
               color='primary'
               className={classes.signInBtn}
-              // onClick={onSignIn}
               onClick={signIn}
             >
               Sign In
@@ -71,7 +79,7 @@ const SignInPage = ({ signInForm, setSignInForm, signIn }) => {
               variant='contained'
               color='primary'
               className={classes.forgotPasswordBtn}
-              // onClick={onSubmit}
+              onClick={handleForgotPassword}
             >
               Forgot Password
             </Button>

@@ -48,7 +48,6 @@ const Register = () => {
     });
   };
 
-  // need to add alerts
   const registerUser = (e) => {
     e.preventDefault();
 
@@ -60,7 +59,7 @@ const Register = () => {
 
         async function signUp() {
           const user = await Auth.signUp({
-            username: signUpForm.email, //use username to but pass in email
+            username: signUpForm.email, //use username but pass in email
             password: signUpForm.password,
             attributes: {
               email: signUpForm.email
@@ -69,7 +68,6 @@ const Register = () => {
           setSignUpUser(user);
         }
         signUp();
-        // need to alerts
         setIsRegisterPage(false);
       } catch (error) {
         console.log(error);

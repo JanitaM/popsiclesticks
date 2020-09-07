@@ -55,7 +55,7 @@ const pool = mysql.createPool({
     const con = await pool.getConnection();
     con.query('USE popsicle_stick');
     const ideapicDB = await con.query(
-      'CREATE TABLE IF NOT EXISTS ideapic (s3uuid VARCHAR(255) UNIQUE NOT NULL, email VARCHAR(255) NOT NULL, PRIMARY KEY(s3uuid), FOREIGN KEY(s3uuid) REFERENCES idea(email))'
+      'CREATE TABLE IF NOT EXISTS ideapic (s3uuid VARCHAR(255) UNIQUE NOT NULL, idea INT NOT NULL, email VARCHAR(255) NOT NULL, PRIMARY KEY(s3uuid), FOREIGN KEY(idea) REFERENCES idea(id))'
     );
 
     console.log(ideapicDB);

@@ -29,7 +29,6 @@ const ConfirmSignUp = ({ signUpForm, setSignUpForm }) => {
 
       return await axios({
         method: 'post',
-        // url: 'https://ds7m4gu0n5.execute-api.us-east-2.amazonaws.com/dev/user', //serverless not working, revisit later
         url: 'http://localhost:4000/user',
         data: data
       });
@@ -70,15 +69,10 @@ const ConfirmSignUp = ({ signUpForm, setSignUpForm }) => {
   return (
     <Container component='main' maxWidth='xs'>
       <CssBaseline />
-      <Typography component='h1' variant='h5'>
+      <Typography component='h1' variant='h5' className={classes.title}>
         You were emailed a confirmation code. Enter it here.
       </Typography>
-      <form
-        className={classes.form}
-        noValidate
-        onSubmit={confirmUser}
-        autoComplete='off'
-      >
+      <form noValidate onSubmit={confirmUser} autoComplete='off'>
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <TextField
@@ -97,29 +91,26 @@ const ConfirmSignUp = ({ signUpForm, setSignUpForm }) => {
             />
           </Grid>
         </Grid>
-        <Button onClick={confirmUser}>Confirm</Button>
+        <Button onClick={confirmUser} className={classes.confirmBtn}>
+          Confirm
+        </Button>
       </form>
     </Container>
   );
 };
 
 const useStyles = makeStyles((theme) => ({
-  paper: {
-    marginTop: theme.spacing(8),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center'
+  title: {
+    textAlign: 'center',
+    margin: '2rem'
   },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main
-  },
-  form: {
-    width: '100%', // Fix IE 11 issue.
-    marginTop: theme.spacing(3)
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2)
+  confirmBtn: {
+    width: '100%',
+    margin: '1rem 0',
+    backgroundColor: '#E75734',
+    '&:hover': {
+      backgroundColor: '#EC795D'
+    }
   }
 }));
 
