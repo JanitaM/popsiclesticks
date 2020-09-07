@@ -205,6 +205,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: '1rem'
   },
   uploadInput: {
@@ -218,7 +219,9 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat'
+    backgroundRepeat: 'no-repeat',
+    height: '90px',
+    width: '90px'
   }
 }));
 

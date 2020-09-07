@@ -67,10 +67,10 @@ const ConfirmSignUp = ({ signUpForm, setSignUpForm }) => {
   };
 
   return (
-    <Container component='main' maxWidth='xs'>
+    <Container component='main' maxWidth='xs' className={classes.container}>
       <CssBaseline />
       <Typography component='h1' variant='h5' className={classes.title}>
-        You were emailed a confirmation code. Enter it here.
+        Please check your email for a confirmation code.
       </Typography>
       <form noValidate onSubmit={confirmUser} autoComplete='off'>
         <Grid container spacing={2}>
@@ -100,13 +100,17 @@ const ConfirmSignUp = ({ signUpForm, setSignUpForm }) => {
 };
 
 const useStyles = makeStyles((theme) => ({
-  title: {
+  container: {
     textAlign: 'center',
-    margin: '2rem'
+    minWidth: '500px',
+    marginTop: '2rem'
+  },
+  title: {
+    margin: '2rem 0'
   },
   confirmBtn: {
     width: '100%',
-    margin: '1rem 0',
+    margin: '2rem 0',
     backgroundColor: '#E75734',
     '&:hover': {
       backgroundColor: '#EC795D'
