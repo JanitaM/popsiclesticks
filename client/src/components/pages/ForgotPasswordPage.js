@@ -51,7 +51,7 @@ const ForgotPasswordPage = ({ setIsSignInPage }) => {
     <Container component='main' maxWidth='xs'>
       <CssBaseline />
       <Typography component='h1' variant='h4' className={classes.title}>
-        Reset Password
+        Reset Your Password
       </Typography>
       <form noValidate autoComplete='off'>
         <Grid container spacing={2}>
@@ -84,7 +84,7 @@ const useStyles = makeStyles((theme) => ({
   },
   resetBtn: {
     width: '100%',
-    margin: '1rem 0',
+    margin: '2rem 0',
     backgroundColor: '#E75734',
     '&:hover': {
       backgroundColor: '#EC795D'

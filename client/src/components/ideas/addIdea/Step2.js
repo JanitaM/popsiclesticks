@@ -30,7 +30,6 @@ const Step2 = ({ ideaForm, setIdeaForm }) => {
           exclusive
           onChange={handleCost}
           aria-label='cost'
-          className={classes.m1b}
         >
           <ToggleButton
             value='cheap'
@@ -63,13 +62,12 @@ const Step2 = ({ ideaForm, setIdeaForm }) => {
             />
           </ToggleButton>
         </ToggleButtonGroup>
-        <Divider />
+        <Divider className={classes.m1} />
         <ToggleButtonGroup
           value={ideaForm.indoorOutdoor}
           exclusive
           onChange={handleIndoorOutdoor}
           aria-label='indoors or outdoors'
-          className={classes.m1b}
         >
           <ToggleButton
             value='outdoor'
@@ -92,7 +90,7 @@ const Step2 = ({ ideaForm, setIdeaForm }) => {
             />
           </ToggleButton>
         </ToggleButtonGroup>
-        <Divider />
+        <Divider className={classes.m1} />
         <ToggleButtonGroup
           value={ideaForm.weather}
           exclusive
@@ -156,8 +154,8 @@ const useStyles = makeStyles({
     flexDirection: 'column',
     justifyContent: 'space-between'
   },
-  m1b: {
-    marginBottom: '1rem'
+  m1: {
+    margin: '1rem 0'
   },
   toggleBtns: {
     margin: '0 1rem',

@@ -40,8 +40,7 @@ export default function AddIdeaModal() {
     url: '',
     picture: undefined,
     convertIdeaPic: '',
-    weather: '',
-    isCompleted: false
+    weather: ''
   });
 
   return (

@@ -315,7 +315,7 @@ const EnhancedTableToolbar = (props) => {
             Edit your ideas
           </Typography>
           <Button className={classes.backBtn}>
-            <Link to='/home' className={classes.backBtnText}>
+            <Link to='/' className={classes.backBtnText}>
               Back
             </Link>
           </Button>

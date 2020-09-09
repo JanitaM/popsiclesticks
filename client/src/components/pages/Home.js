@@ -8,18 +8,8 @@ import FilterIdeas from '../ideas/FilterIdeasBtn';
 import AddEditIdeaBtns from '../ideas/AddEditIdeaBtns';
 import { Auth } from 'aws-amplify';
 
-const Home = ({ signedInUser, setSignedInUser }) => {
+const Home = ({ signedInUser }) => {
   const classes = useStyles();
-  console.log(signedInUser);
-
-  // useEffect(() => {
-  //   (async () => {
-  //     const fullInfo = await Auth.currentAuthenticatedUser();
-  //     const token = await fullInfo.signInUserSession.idToken.jwtToken;
-  //     const email = await fullInfo.username;
-  //     setSignedInUser({ ...signedInUser, token, email });
-  //   })();
-  // }, []);
 
   return (
     <>
@@ -44,10 +34,7 @@ const Home = ({ signedInUser, setSignedInUser }) => {
             alignItems='flex-end'
           >
             <Grid item xs={12} sm={9}>
-              <MasonJar
-                signedInUser={signedInUser}
-                setSignedInUser={setSignedInUser}
-              />
+              <MasonJar signedInUser={signedInUser} />
             </Grid>
             <Grid item xs={12} sm={3}>
               <AddEditIdeaBtns

@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 const jwkToPem = require('jwk-to-pem');
 const aws = require('aws-sdk');
 const asyncMap = require('./helpers');
+const { CodeCommit } = require('aws-sdk');
 
 function setCreds() {
   aws.config.setPromisesDependency();
@@ -260,19 +261,23 @@ app.delete('/user', authorizeUser, async (request, response) => {
   }
 });
 
-// POST Idea - Done
+// POST Idea Only
 app.post('/user/idea', authorizeUser, async (request, response) => {
   try {
     console.log('POST IDEA');
 
     const email = request.decodedToken.email;
+
     if (!email) {
       response.status(400).send({ message: 'access denied' });
     }
+    if (!request.body.title) {
+      response.status(400).send({ message: 'a title is required' });
+    }
 
     const con = await pool.getConnection();
-    const queryResponse = await con.execute(
-      'INSERT INTO popsicle_stick.idea (email, title, location, description, cost, indoor_outdoor, category, url, weather, isCompleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    const queryIdeaResponse = await con.execute(
+      'INSERT INTO popsicle_stick.idea (email, title, location, description, cost, indoor_outdoor, category, url, picture, weather) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
       [
         email,
         request.body.title,
@@ -282,24 +287,22 @@ app.post('/user/idea', authorizeUser, async (request, response) => {
         request.body.indoor_outdoor ? request.body.indoor_outdoor : null,
         request.body.category ? request.body.category : null,
         request.body.url ? request.body.url : null,
-        request.body.weather ? request.body.weather : null,
-        request.body.isCompleted
+        request.body.picture ? request.body.picture : null,
+        request.body.weather ? request.body.weather : null
       ]
     );
-
-    // insert pic into ideapic
     con.release();
 
-    console.log(queryResponse);
+    console.log(queryIdeaResponse);
 
-    response.status(200).send({ messge: queryResponse });
+    response.status(200).send({ message: queryIdeaResponse });
   } catch (error) {
     console.log(error);
     response.status(500).send({ error: error.message, message: error });
   }
 });
 
-// GET ALL Ideas by User - Done
+// GET ALL Ideas by User
 app.get('/user/ideas', authorizeUser, async (request, response) => {
   try {
     console.log('GET ALL IDEAS');
@@ -325,7 +328,7 @@ app.get('/user/ideas', authorizeUser, async (request, response) => {
   }
 });
 
-// GET One Idea - Done
+// GET One Idea
 app.get('/user/idea', authorizeUser, async (request, response) => {
   try {
     console.log('GET ONE IDEA');
@@ -352,7 +355,7 @@ app.get('/user/idea', authorizeUser, async (request, response) => {
   }
 });
 
-// UPDATE Idea - working
+// UPDATE Idea
 app.patch('/user/idea', authorizeUser, async (request, response) => {
   try {
     console.log('UPDATE ONE IDEA');

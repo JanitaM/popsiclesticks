@@ -14,8 +14,11 @@ function convertImg(binArr) {
   return imgUrl;
 }
 
-const MasonJar = ({ signedInUser, setSignedInUser }) => {
+const MasonJar = ({ signedInUser }) => {
   const classes = useStyles();
+
+  const email = signedInUser.username;
+  const token = signedInUser.signInUserSession.idToken.jwtToken;
 
   const [randomIdea, setRandomIdea] = useState({
     idea: {},
@@ -28,14 +31,14 @@ const MasonJar = ({ signedInUser, setSignedInUser }) => {
     e.preventDefault();
 
     try {
-      if (signedInUser.token) {
+      if (token) {
         // GET all of the user's ideas
         const res = await axios({
           method: 'get',
           url: `http://localhost:4000/user/ideas`,
           params: {
-            email: signedInUser.email,
-            token: signedInUser.token
+            email: email,
+            token: token
           }
         });
         // console.log(res.data.message);
@@ -77,8 +80,8 @@ const MasonJar = ({ signedInUser, setSignedInUser }) => {
         'Content-Type': 'application/json'
       },
       data: {
-        email: signedInUser.email,
-        token: signedInUser.token,
+        email: email,
+        token: token,
         picUuid: idea.picture
       }
     });
@@ -120,7 +123,8 @@ const MasonJar = ({ signedInUser, setSignedInUser }) => {
         className={classes.modal}
       >
         <DisplayRandomIdea
-          signedInUser={signedInUser}
+          email={email}
+          token={token}
           handleClose={handleClose}
           randomIdea={randomIdea}
         />

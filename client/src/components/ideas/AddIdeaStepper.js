@@ -113,14 +113,14 @@ const AddIdeaStepper = ({ ideaForm, setIdeaForm, handleClose }) => {
           )
             .then((result) => console.log(result))
             .then(() => uploadToSql(myUuid))
-            .then(() => handleClose())
             .catch((error) => console.log(error));
         } else {
           if (fullInfo) {
             uploadToSql();
-            handleClose();
           }
         }
+
+        handleClose();
       } catch (error) {
         console.log(error);
       }
@@ -178,7 +178,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center'
   },
   buttons: {
-    margin: '1rem auto'
+    margin: '1rem auto 0'
   },
   btn: {
     margin: '0 1rem'
