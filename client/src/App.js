@@ -6,7 +6,10 @@ import './App.css';
 import { navigate } from '@reach/router';
 
 const App = () => {
-  const [signedInUser, setSignedInUser] = useState(undefined);
+  const [signedInUser, setSignedInUser] = useState({
+    username: '',
+    token: ''
+  });
 
   const [signInForm, setSignInForm] = useState({
     username: '',
@@ -37,7 +40,9 @@ const App = () => {
   useEffect(() => {
     (async () => {
       const user = await Auth.currentAuthenticatedUser();
-      setSignedInUser(user);
+      const token = await user.signInUserSession.idToken.jwtToken;
+      const username = user.username;
+      setSignedInUser({ ...signedInUser, token: token, username: username });
     })();
   }, []);
 

@@ -29,8 +29,15 @@ function getStepContent(step, ideaForm, setIdeaForm) {
   }
 }
 
-const AddIdeaStepper = ({ ideaForm, setIdeaForm, handleClose }) => {
+const AddIdeaStepper = ({
+  ideaForm,
+  setIdeaForm,
+  handleClose,
+  signedInUser
+}) => {
   const classes = useStyles();
+
+  const { username, token } = signedInUser;
 
   const [activeStep, setActiveStep] = useState(0);
   const steps = getSteps();
@@ -71,10 +78,6 @@ const AddIdeaStepper = ({ ideaForm, setIdeaForm, handleClose }) => {
     e.preventDefault();
 
     if (ideaForm.title) {
-      const fullInfo = await Auth.currentAuthenticatedUser();
-      const token = await fullInfo.signInUserSession.idToken.jwtToken;
-      const username = await fullInfo.username;
-
       async function uploadToSql(myUuid) {
         return await axios({
           method: 'post',
@@ -100,7 +103,7 @@ const AddIdeaStepper = ({ ideaForm, setIdeaForm, handleClose }) => {
       }
 
       try {
-        if (fullInfo && ideaForm.picture) {
+        if (signedInUser && ideaForm.picture) {
           const myUuid = uuidv4();
           const type = ideaForm.picture.type.split('/');
 
@@ -115,7 +118,7 @@ const AddIdeaStepper = ({ ideaForm, setIdeaForm, handleClose }) => {
             .then(() => uploadToSql(myUuid))
             .catch((error) => console.log(error));
         } else {
-          if (fullInfo) {
+          if (signedInUser) {
             uploadToSql();
           }
         }

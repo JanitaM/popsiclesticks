@@ -247,7 +247,6 @@ const EnhancedTableToolbar = (props) => {
           }
         });
         alert('Idea deleted');
-        // dispatch(setSnackbar(true, 'success', 'Idea deleted'));
         getData(signedInUser.email, signedInUser.token);
         setSelected([]);
       } catch (error) {

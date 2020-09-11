@@ -10,14 +10,12 @@ const PublicRoutes = ({
   signIn,
   signInForm,
   setSignInForm,
-  signInUser,
+  signedInUser,
   signOut
 }) => {
-  // console.log(signInForm);
-
   return (
     <>
-      <Navbar signInUser={signInUser} signOut={signOut} />
+      <Navbar signedInUser={signedInUser} signOut={signOut} />
       <Router>
         <Landing path='/' />
         <Register path='/register' />

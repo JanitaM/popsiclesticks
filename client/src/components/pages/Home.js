@@ -11,42 +11,46 @@ import { Auth } from 'aws-amplify';
 const Home = ({ signedInUser }) => {
   const classes = useStyles();
 
-  return (
-    <>
-      <div className={classes.mainContainer}>
-        <Grid
-          container
-          spacing={2}
-          direction='column'
-          style={{ marginLeft: '1rem' }}
-        >
-          <Grid item xs={12}>
-            <FilterIdeas className={classes.filter} />
-          </Grid>
-
+  if (!signedInUser) {
+    return <Preloader />;
+  } else {
+    return (
+      <>
+        <div className={classes.mainContainer}>
           <Grid
-            item
             container
-            spacing={6}
-            xs={12}
-            direction='row'
-            justify='flex-end'
-            alignItems='flex-end'
+            spacing={2}
+            direction='column'
+            style={{ marginLeft: '1rem' }}
           >
-            <Grid item xs={12} sm={9}>
-              <MasonJar signedInUser={signedInUser} />
+            <Grid item xs={12}>
+              <FilterIdeas className={classes.filter} />
             </Grid>
-            <Grid item xs={12} sm={3}>
-              <AddEditIdeaBtns
-                signedInUser={signedInUser}
-                className={classes.addEdit}
-              />
+
+            <Grid
+              item
+              container
+              spacing={6}
+              xs={12}
+              direction='row'
+              justify='flex-end'
+              alignItems='flex-end'
+            >
+              <Grid item xs={12} sm={9}>
+                <MasonJar signedInUser={signedInUser} />
+              </Grid>
+              <Grid item xs={12} sm={3}>
+                <AddEditIdeaBtns
+                  signedInUser={signedInUser}
+                  className={classes.addEdit}
+                />
+              </Grid>
             </Grid>
           </Grid>
-        </Grid>
-      </div>
-    </>
-  );
+        </div>
+      </>
+    );
+  }
 };
 
 const useStyles = makeStyles((theme) => ({

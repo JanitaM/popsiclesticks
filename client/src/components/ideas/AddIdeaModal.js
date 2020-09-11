@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function AddIdeaModal() {
+export default function AddIdeaModal({ signedInUser }) {
   const classes = useStyles();
 
   const [open, setOpen] = useState(false);
@@ -64,6 +64,7 @@ export default function AddIdeaModal() {
       >
         <AddIdeaStepper
           ideaForm={ideaForm}
+          signedInUser={signedInUser}
           setIdeaForm={setIdeaForm}
           handleClose={handleClose}
         />

@@ -8,14 +8,19 @@ import {
   CardActions,
   Divider,
   Grid,
+  Link,
   Typography,
   Button
 } from '@material-ui/core';
 import Preloader from '../layout/Preloader';
 
-const DisplayRandomIdea = ({ handleClose, randomIdea, token, email }) => {
+const DisplayRandomIdea = ({ handleClose, randomIdea, signedInUser }) => {
   const classes = useStyles();
   console.log(randomIdea);
+
+  const { username, token } = signedInUser;
+
+  // const [cost, setCost] =
 
   const handleAccept = (e) => {
     e.preventDefault();
@@ -30,7 +35,7 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, token, email }) => {
 
   const handleDelete = async (e) => {
     e.preventDefault();
-    // console.log(randomIdea.idea);
+    console.log(randomIdea.idea);
 
     try {
       const res = await axios({
@@ -40,7 +45,7 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, token, email }) => {
           'Content-Type': 'application/json'
         },
         data: {
-          email: email,
+          email: username,
           token: token,
           id: randomIdea.idea.id
         }
@@ -54,7 +59,7 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, token, email }) => {
 
   return (
     <>
-      {!randomIdea.idea && randomIdea.ideaPic ? (
+      {!randomIdea.idea ? (
         <Preloader />
       ) : (
         <Card className={classes.paper}>
@@ -75,6 +80,15 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, token, email }) => {
                   >
                     {randomIdea.idea && randomIdea.idea.description}
                   </Typography>
+                  {/* Icon container */}
+                  <div>
+                    <img
+                      src={randomIdea.idea.cost}
+                      alt={randomIdea.idea.cost}
+                    />
+                    {/* <img src={randomIdea.idea.cost} alt={randomIdea.idea.indoor_outdoor}/>
+ <img src={randomIdea.idea.cost} alt={randomIdea.idea.weather}/> */}
+                  </div>
                 </CardContent>
               </Grid>
               {/* Right Container */}
@@ -90,13 +104,16 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, token, email }) => {
                     className={classes.media}
                   />
                   {randomIdea.idea && randomIdea.idea.url ? (
-                    <Button
-                      variant='contained'
-                      color='primary'
+                    <Link
                       href={randomIdea.idea.url}
+                      rel='noreferrer'
+                      size='large'
+                      className={classes.webLink}
                     >
-                      Visit Website
-                    </Button>
+                      <Button variant='contained' color='primary'>
+                        Visit Website
+                      </Button>
+                    </Link>
                   ) : null}
                 </Card>
               </Grid>
@@ -137,7 +154,7 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, token, email }) => {
                 <CardActions>
                   <Button
                     className={classes.m1}
-                    // onClick={handleAccept}
+                    // onClick={handleComplete}
                     variant='contained'
                     color='primary'
                   >
@@ -171,11 +188,13 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1
   },
   imagePaper: {
-    // padding: '16px 0',
     textAlign: 'center',
     color: theme.palette.text.secondary
   },
   m1: {
+    margin: '1rem'
+  },
+  webLink: {
     margin: '1rem'
   }
 }));

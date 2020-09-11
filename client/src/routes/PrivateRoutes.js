@@ -7,14 +7,13 @@ import AccountSettings from '../components/pages/AccountSettings';
 import Navbar from '../components/layout/Navbar';
 
 const PrivateRoutes = ({ signedInUser, signOut }) => {
-  console.log(signedInUser);
   return (
     <>
       <Navbar signedInUser={signedInUser} signOut={signOut} />
       <Router>
         <Home path='/' signedInUser={signedInUser} />
-        <Dashboard path='/dashboard' />
-        <AccountSettings path='/account' />
+        <Dashboard path='/dashboard' signedInUser={signedInUser} />
+        <AccountSettings path='/account' signedInUser={signedInUser} />
         <NotFound default />
       </Router>
     </>

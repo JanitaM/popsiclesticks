@@ -17,8 +17,7 @@ function convertImg(binArr) {
 const MasonJar = ({ signedInUser }) => {
   const classes = useStyles();
 
-  const email = signedInUser.username;
-  const token = signedInUser.signInUserSession.idToken.jwtToken;
+  const { username, token } = signedInUser;
 
   const [randomIdea, setRandomIdea] = useState({
     idea: {},
@@ -37,7 +36,7 @@ const MasonJar = ({ signedInUser }) => {
           method: 'get',
           url: `http://localhost:4000/user/ideas`,
           params: {
-            email: email,
+            email: username,
             token: token
           }
         });
@@ -80,7 +79,7 @@ const MasonJar = ({ signedInUser }) => {
         'Content-Type': 'application/json'
       },
       data: {
-        email: email,
+        email: username,
         token: token,
         picUuid: idea.picture
       }
@@ -123,8 +122,7 @@ const MasonJar = ({ signedInUser }) => {
         className={classes.modal}
       >
         <DisplayRandomIdea
-          email={email}
-          token={token}
+          signedInUser={signedInUser}
           handleClose={handleClose}
           randomIdea={randomIdea}
         />

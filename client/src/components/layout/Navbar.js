@@ -47,20 +47,17 @@ const Navbar = ({ props, signedInUser, signOut }) => {
   const [profilePic, setProfilePic] = useState([]);
 
   useEffect(() => {
-    async function getPhotos() {
-      if (signedInUser) {
-        const token = await signedInUser.signInUserSession.idToken.jwtToken;
-        const username = signedInUser.username;
-
-        const res = await axios.get(
-          `http://localhost:4000/user/profilepic?email=${username}&token=${token}`
-        );
-        // console.log(res.data.Body.data);
-        setProfilePic(convertImg(res.data.Body.data));
-        // setProfilePic(res.data.map((item) => convertImg(item.Body.data)));
-      }
-    }
-    getPhotos();
+    (async () => {
+      const user = await Auth.currentAuthenticatedUser();
+      const token = await user.signInUserSession.idToken.jwtToken;
+      const username = await user.username;
+      const res = await axios.get(
+        `http://localhost:4000/user/profilepic?email=${username}&token=${token}`
+      );
+      // console.log(res.data.Body.data);
+      setProfilePic(convertImg(res.data.Body.data));
+      // setProfilePic(res.data.map((item) => convertImg(item.Body.data)));
+    })();
   }, []);
 
   const [open, setOpen] = useState(false);

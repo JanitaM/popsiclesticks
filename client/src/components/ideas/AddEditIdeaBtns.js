@@ -3,13 +3,13 @@ import { makeStyles } from '@material-ui/core/styles';
 import AddIdeaModal from '../ideas/AddIdeaModal';
 import EditIdeas from '../ideas/EditIdeas';
 
-const AddEditIdeaBtns = () => {
+const AddEditIdeaBtns = ({ signedInUser }) => {
   const classes = useStyles();
 
   return (
     <div className={classes.container}>
-      <AddIdeaModal />
-      <EditIdeas />
+      <AddIdeaModal signedInUser={signedInUser} />
+      <EditIdeas signedInUser={signedInUser} />
     </div>
   );
 };
