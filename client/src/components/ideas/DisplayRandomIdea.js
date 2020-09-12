@@ -19,38 +19,68 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, signedInUser }) => {
   console.log(randomIdea);
 
   const { username, token } = signedInUser;
-
   const [costSrc, setCostSrc] = useState('');
+  const [indoorOutdoorSrc, setIndoorOutdoorSrc] = useState('');
+  const [weatherSrc, setWeatherSrc] = useState('');
+
   const cost = {
     cheap: 'https://img.icons8.com/dusk/64/000000/cheap-2.png',
     average: 'https://img.icons8.com/dusk/64/000000/average-2.png',
     expensive: 'https://img.icons8.com/dusk/64/000000/expensive.png'
   };
-  const getCostImg = () => {
+  const indoorOutdoor = {
+    indoor: 'https://img.icons8.com/dusk/64/000000/home.png',
+    outdoor: 'https://img.icons8.com/doodle/48/000000/coniferous-tree.png'
+  };
+  const weather = {
+    sunny: 'https://img.icons8.com/dusk/64/000000/summer.png',
+    rain: 'https://img.icons8.com/dusk/64/000000/rain.png',
+    snow: 'https://img.icons8.com/dusk/64/000000/snow-storm.png'
+  };
+
+  const getCostImg = async () => {
     for (const price in cost) {
-      if (price === randomIdea.idea.cost) {
+      if (price === (await randomIdea.idea.cost)) {
         setCostSrc(cost[price]);
       }
     }
   };
   console.log(costSrc);
 
-  useEffect(() => {
-    if (randomIdea.idea.cost) {
-      getCostImg();
+  const getIndoorOutdoorImg = async () => {
+    for (const location in indoorOutdoor) {
+      if (location === (await randomIdea.idea.indoor_outdoor)) {
+        setIndoorOutdoorSrc(indoorOutdoor[location]);
+      }
     }
-  }, []);
-
-  const indoorOutdoor = {
-    indoor: 'https://img.icons8.com/dusk/64/000000/home.png',
-    outdoor: 'https://img.icons8.com/doodle/48/000000/coniferous-tree.png'
   };
+  console.log(indoorOutdoorSrc);
 
-  const weather = {
-    sunny: 'https://img.icons8.com/dusk/64/000000/summer.png',
-    rain: 'https://img.icons8.com/dusk/64/000000/rain.png',
-    snow: 'https://img.icons8.com/dusk/64/000000/snow-storm.png'
+  const getWeatherImg = async () => {
+    for (const item in weather) {
+      if (item === (await randomIdea.idea.weather)) {
+        setWeatherSrc(weather[item]);
+      }
+    }
   };
+  console.log(weatherSrc);
+
+  useEffect(() => {
+    (async () => {
+      if (await randomIdea.idea.cost) {
+        console.log(randomIdea.idea.cost);
+        getCostImg();
+      }
+      if (await randomIdea.idea.indoor_outdoor) {
+        console.log(randomIdea.idea.indoor_outdoor);
+        getIndoorOutdoorImg();
+      }
+      if (await randomIdea.idea.weather) {
+        console.log(randomIdea.idea.weather);
+        getWeatherImg();
+      }
+    })();
+  }, [randomIdea.idea]);
 
   const handleAccept = (e) => {
     e.preventDefault();
@@ -110,12 +140,28 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, signedInUser }) => {
                   >
                     {randomIdea.idea && randomIdea.idea.description}
                   </Typography>
-                  {/* Icon container */}
-                  <div>
-                    <img
-                      src={costSrc}
-                      // alt={randomIdea.idea.cost}
-                    />
+                  <div className={classes.iconContainer}>
+                    {randomIdea.idea.cost ? (
+                      <img
+                        src={costSrc}
+                        alt={randomIdea.idea && randomIdea.idea.cost}
+                        className={classes.mr1}
+                      />
+                    ) : null}
+                    {randomIdea.idea.indoor_outdoor ? (
+                      <img
+                        src={indoorOutdoorSrc}
+                        alt={randomIdea.idea && randomIdea.idea.indoor_outdoor}
+                        className={classes.mr1}
+                      />
+                    ) : null}
+                    {randomIdea.idea.weather ? (
+                      <img
+                        src={weatherSrc}
+                        alt={randomIdea.idea && randomIdea.idea.weather}
+                        className={classes.mr1}
+                      />
+                    ) : null}
                   </div>
                 </CardContent>
               </Grid>
@@ -222,8 +268,14 @@ const useStyles = makeStyles((theme) => ({
   m1: {
     margin: '1rem'
   },
+  mr1: {
+    marginRight: '1rem'
+  },
   webLink: {
     margin: '1rem'
+  },
+  iconContainer: {
+    margin: '3rem 0'
   }
 }));
 
