@@ -198,7 +198,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: '#E75734',
     margin: '1rem',
     '&:hover': {
-      backgroundColor: '#EC795D'
+      backgroundColor: '#CF4F30'
     }
   },
   uploadContainer: {
@@ -212,8 +212,11 @@ const useStyles = makeStyles((theme) => ({
     display: 'none'
   },
   uploadBtn: {
-    backgroundColor: '#A6C1C1',
-    marginLeft: '1rem'
+    backgroundColor: '#65B5B4',
+    marginLeft: '1rem',
+    '&:hover': {
+      backgroundColor: '#579C9A'
+    }
   },
   avatarImage: {
     textAlign: 'center',

@@ -15,7 +15,7 @@
 }
 
 .signOutBtnD {
-  background-color: #3f51b5;
+  background-color: #147e9c;
   border: none;
   color: #fff;
   cursor: pointer;
@@ -27,7 +27,7 @@
 }
 
 .signOutBtnD:hover {
-  background-color: #3f51b5;
+  background-color: #147e9c;
   color: #fff;
 }
 

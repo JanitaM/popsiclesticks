@@ -127,14 +127,14 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: '#E75734',
     margin: '1rem',
     '&:hover': {
-      backgroundColor: '#EC795D'
+      backgroundColor: '#CF4F30'
     }
   },
   forgotPasswordBtn: {
-    backgroundColor: '#A6C1C1',
+    backgroundColor: '#65B5B4',
     margin: '1rem',
     '&:hover': {
-      backgroundColor: '#d5d5d5'
+      backgroundColor: '#579C9A'
     }
   }
 }));

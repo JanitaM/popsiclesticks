@@ -10,9 +10,27 @@ import {
   Grid,
   Link,
   Typography,
-  Button
+  Button,
+  Switch,
+  FormControlLabel,
+  FormGroup,
+  withStyles
 } from '@material-ui/core';
 import Preloader from '../layout/Preloader';
+
+const CustomSwitch = withStyles({
+  switchBase: {
+    color: '#E8471E',
+    '&$checked': {
+      color: '#A83316'
+    },
+    '&$checked + $track': {
+      backgroundColor: '#A83316'
+    }
+  },
+  checked: {},
+  track: {}
+})(Switch);
 
 const DisplayRandomIdea = ({ handleClose, randomIdea, signedInUser }) => {
   const classes = useStyles();
@@ -45,7 +63,6 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, signedInUser }) => {
       }
     }
   };
-  console.log(costSrc);
 
   const getIndoorOutdoorImg = async () => {
     for (const location in indoorOutdoor) {
@@ -54,7 +71,6 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, signedInUser }) => {
       }
     }
   };
-  console.log(indoorOutdoorSrc);
 
   const getWeatherImg = async () => {
     for (const item in weather) {
@@ -63,22 +79,18 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, signedInUser }) => {
       }
     }
   };
-  console.log(weatherSrc);
 
   useEffect(() => {
     (async () => {
       if (await randomIdea.idea.cost) {
-        console.log(randomIdea.idea.cost);
         getCostImg();
-      }
+      } else return;
       if (await randomIdea.idea.indoor_outdoor) {
-        console.log(randomIdea.idea.indoor_outdoor);
         getIndoorOutdoorImg();
-      }
+      } else return;
       if (await randomIdea.idea.weather) {
-        console.log(randomIdea.idea.weather);
         getWeatherImg();
-      }
+      } else return;
     })();
   }, [randomIdea.idea]);
 
@@ -117,9 +129,15 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, signedInUser }) => {
     }
   };
 
+  const [completed, setCompleted] = useState(false);
+  const handleCompleted = (event) => {
+    setCompleted(!completed);
+  };
+  console.log(completed);
+
   return (
     <>
-      {!randomIdea.idea ? (
+      {!randomIdea.idea && !randomIdea.idea.title ? (
         <Preloader />
       ) : (
         <Card className={classes.paper}>
@@ -133,11 +151,7 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, signedInUser }) => {
                 />
                 <Divider />
                 <CardContent>
-                  <Typography
-                    variant='body2'
-                    color='textSecondary'
-                    component='p'
-                  >
+                  <Typography variant='body1' color='textPrimary' component='p'>
                     {randomIdea.idea && randomIdea.idea.description}
                   </Typography>
                   <div className={classes.iconContainer}>
@@ -184,7 +198,11 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, signedInUser }) => {
                       size='large'
                       className={classes.webLink}
                     >
-                      <Button variant='contained' color='primary'>
+                      <Button
+                        variant='contained'
+                        color='primary'
+                        className={classes.webLink}
+                      >
                         Visit Website
                       </Button>
                     </Link>
@@ -193,28 +211,31 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, signedInUser }) => {
               </Grid>
             </Grid>
             {/* Bottom Container */}
-            <Grid container spacing={2}>
+            <Grid
+              container
+              spacing={2}
+              justify='space-between'
+              alignItems='center'
+            >
               {/* Left Container */}
               <Grid item xs={6}>
                 <CardActions>
                   <Button
-                    className={classes.m1}
+                    className={classes.yesBtn}
                     onClick={handleAccept}
                     variant='contained'
-                    color='primary'
                   >
                     Yes
                   </Button>
                   <Button
-                    className={classes.m1}
+                    className={classes.noBtn}
                     onClick={handleDecline}
                     variant='contained'
-                    color='default'
                   >
                     No
                   </Button>
                   <Button
-                    className={classes.m1}
+                    className={classes.deleteBtn}
                     onClick={handleDelete}
                     variant='contained'
                     color='secondary'
@@ -225,15 +246,21 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, signedInUser }) => {
               </Grid>
               {/* Right Container */}
               <Grid item xs={6}>
-                <CardActions>
-                  <Button
-                    className={classes.m1}
-                    // onClick={handleComplete}
-                    variant='contained'
-                    color='primary'
-                  >
-                    Completed?
-                  </Button>
+                <CardActions className={classes.completed}>
+                  <FormGroup row>
+                    <FormControlLabel
+                      control={
+                        <CustomSwitch
+                          checked={completed}
+                          onChange={handleCompleted}
+                          name='completed'
+                          size='normal'
+                          color='primary'
+                        />
+                      }
+                      label='Completed'
+                    />
+                  </FormGroup>
                 </CardActions>
               </Grid>
             </Grid>
@@ -253,10 +280,10 @@ const useStyles = makeStyles((theme) => ({
     position: 'absolute',
     width: '80vw',
     height: '80vh',
-    overflow: 'hidden',
-    backgroundColor: theme.palette.background.paper,
+    overflow: 'auto',
+    backgroundColor: '#F7FFF2',
     boxShadow: theme.shadows[5],
-    padding: theme.spacing(2, 4, 3)
+    padding: '1rem'
   },
   root: {
     flexGrow: 1
@@ -265,17 +292,47 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     color: theme.palette.text.secondary
   },
-  m1: {
-    margin: '1rem'
+  yesBtn: {
+    backgroundColor: '#E75734',
+    color: '#fff',
+    margin: '1rem',
+    '&:hover': {
+      backgroundColor: '#CF4F30'
+    }
+  },
+  deleteBtn: {
+    backgroundColor: '#65B5B4',
+    color: '#fff',
+    margin: '1rem',
+    '&:hover': {
+      backgroundColor: '#579C9A'
+    }
+  },
+  noBtn: {
+    backgroundColor: '#147E9C',
+    color: '#fff',
+    margin: '1rem',
+    '&:hover': {
+      backgroundColor: '#116A82'
+    }
   },
   mr1: {
     marginRight: '1rem'
   },
   webLink: {
-    margin: '1rem'
+    margin: '1rem 0',
+    backgroundColor: '#0E64B3',
+    color: '#fff',
+    '&:hover': {
+      backgroundColor: '#0C5599'
+    }
   },
   iconContainer: {
     margin: '3rem 0'
+  },
+  completed: {
+    float: 'right',
+    marginRight: '1rem'
   }
 }));
 

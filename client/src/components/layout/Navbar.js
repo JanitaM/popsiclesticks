@@ -131,7 +131,7 @@ const Navbar = ({ props, signedInUser, signOut }) => {
       <CssBaseline />
       <HideOnScroll {...props}>
         <div className={classes.grow}>
-          <AppBar>
+          <AppBar style={{ backgroundColor: '#147E9C' }}>
             <Toolbar>
               <Link to='/'>
                 <img
