@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Redirect } from '@reach/router';
+import React from 'react';
 import { Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Preloader from '../layout/Preloader';
 import MasonJar from '../layout/MasonJar';
 import FilterIdeas from '../ideas/FilterIdeasBtn';
 import AddEditIdeaBtns from '../ideas/AddEditIdeaBtns';
-import { Auth } from 'aws-amplify';
 
 const Home = ({ signedInUser }) => {
   const classes = useStyles();

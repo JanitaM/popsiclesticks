@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -20,7 +20,37 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, signedInUser }) => {
 
   const { username, token } = signedInUser;
 
-  // const [cost, setCost] =
+  const [costSrc, setCostSrc] = useState('');
+  const cost = {
+    cheap: 'https://img.icons8.com/dusk/64/000000/cheap-2.png',
+    average: 'https://img.icons8.com/dusk/64/000000/average-2.png',
+    expensive: 'https://img.icons8.com/dusk/64/000000/expensive.png'
+  };
+  const getCostImg = () => {
+    for (const price in cost) {
+      if (price === randomIdea.idea.cost) {
+        setCostSrc(cost[price]);
+      }
+    }
+  };
+  console.log(costSrc);
+
+  useEffect(() => {
+    if (randomIdea.idea.cost) {
+      getCostImg();
+    }
+  }, []);
+
+  const indoorOutdoor = {
+    indoor: 'https://img.icons8.com/dusk/64/000000/home.png',
+    outdoor: 'https://img.icons8.com/doodle/48/000000/coniferous-tree.png'
+  };
+
+  const weather = {
+    sunny: 'https://img.icons8.com/dusk/64/000000/summer.png',
+    rain: 'https://img.icons8.com/dusk/64/000000/rain.png',
+    snow: 'https://img.icons8.com/dusk/64/000000/snow-storm.png'
+  };
 
   const handleAccept = (e) => {
     e.preventDefault();
@@ -83,11 +113,9 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, signedInUser }) => {
                   {/* Icon container */}
                   <div>
                     <img
-                      src={randomIdea.idea.cost}
-                      alt={randomIdea.idea.cost}
+                      src={costSrc}
+                      // alt={randomIdea.idea.cost}
                     />
-                    {/* <img src={randomIdea.idea.cost} alt={randomIdea.idea.indoor_outdoor}/>
- <img src={randomIdea.idea.cost} alt={randomIdea.idea.weather}/> */}
                   </div>
                 </CardContent>
               </Grid>
