@@ -5,60 +5,28 @@ import {
   makeStyles,
   TextField,
   Typography,
-  Input
+  Input,
+  Grid
 } from '@material-ui/core';
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 
-const useStyles = makeStyles({
-  container: {
-    textAlign: 'center',
-    backgroundColor: '#ccc',
-    minWidth: '700px',
-    margin: '2rem auto'
-  },
-  formContainer: {
-    display: 'flex',
-    flexDirection: 'column'
-  },
-  m1: {
-    margin: '1rem'
-  },
-  uploadContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: '1rem'
-  },
-  uploadInput: {
-    display: 'none'
-  },
-  uploadBtn: {
-    backgroundColor: '#EC795D',
-    marginLeft: '1rem'
-  },
-  deleteBtn: {
-    backgroundColor: 'red',
-    marginLeft: '1rem'
-  },
-  image: {
-    textAlign: 'center',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat',
-    marginBottom: '1rem',
-    width: '15vw'
-  }
-});
+function convertImg(binArr) {
+  let arrayBufferView = new Uint8Array(binArr);
+  let blob = new Blob([arrayBufferView], { type: 'image/*' });
+  let urlCreator = window.url || window.webkitURL;
+  let imgUrl = urlCreator.createObjectURL(blob);
+  return imgUrl;
+}
 
-export default function EditIdeaModal({
+const EditIdeaModal = ({
   ideaToEdit,
+  setIdeaToEdit,
   signedInUser,
   handleClose
-}) {
+}) => {
   console.log('ideaToEdit', ideaToEdit);
   // console.log(signedInUser);
   const classes = useStyles();
@@ -85,8 +53,7 @@ export default function EditIdeaModal({
     url: '',
     picture: undefined,
     convertIdeaPic: '',
-    weather: '',
-    isCompleted: false
+    weather: ''
   });
   console.log('updatedInfo', updatedInfo);
 
@@ -101,12 +68,38 @@ export default function EditIdeaModal({
     url,
     picture,
     convertIdeaPic,
-    weather,
-    isCompleted
+    weather
   } = updatedInfo;
 
   useEffect(() => {
-    setUpdatedInfo(ideaToEdit.idea);
+    // Get Idea pic from s3
+    (async () => {
+      console.log(signedInUser.username);
+
+      const res = await axios({
+        method: 'post',
+        url: 'http://localhost:4000/idea/pic',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        data: {
+          email: signedInUser.username,
+          token: signedInUser.token,
+          picUuid: ideaToEdit.picture
+        }
+      });
+
+      let response = await res.data[0];
+      console.log(response);
+      if (response) {
+        setIdeaToEdit({
+          ...ideaToEdit,
+          picture: convertImg(response.Body.data)
+        });
+      }
+    })();
+
+    setUpdatedInfo(ideaToEdit);
   }, []);
 
   const onChange = (e) => {
@@ -198,9 +191,10 @@ export default function EditIdeaModal({
 
   return (
     <div className={classes.container}>
-      <Typography variant='h5' component='h1' gutterBottom>
+      <Typography variant='h4' component='h1' className={classes.title}>
         Update This Idea
       </Typography>
+
       <form className={classes.formContainer} autoComplete='off'>
         <TextField
           required
@@ -239,75 +233,107 @@ export default function EditIdeaModal({
           onChange={onChange}
           className={classes.m1}
         />
-
         <ToggleButtonGroup
           value={cost}
           name='cost'
           exclusive
           onChange={handleCost}
           aria-label='cost'
+          className={classes.m1}
         >
-          <ToggleButton value='cheap' aria-label='cheap cost'>
+          <ToggleButton
+            value='cheap'
+            aria-label='cheap cost'
+            className={classes.toggleBtns}
+          >
             <img
               src='https://img.icons8.com/dusk/64/000000/cheap-2.png'
               alt='cheap cost'
             />
           </ToggleButton>
-          <ToggleButton value='average' aria-label='average cost'>
+          <ToggleButton
+            value='average'
+            aria-label='average cost'
+            className={classes.toggleBtns}
+          >
             <img
               src='https://img.icons8.com/dusk/64/000000/average-2.png'
               alt='average cost'
             />
           </ToggleButton>
-          <ToggleButton value='expensive' aria-label='expensive cost'>
+          <ToggleButton
+            value='expensive'
+            aria-label='expensive cost'
+            className={classes.toggleBtns}
+          >
             <img
               src='https://img.icons8.com/dusk/64/000000/expensive.png'
               alt='expenisve cost'
             />
           </ToggleButton>
         </ToggleButtonGroup>
-
         <ToggleButtonGroup
           name='indoor_outdoor'
           value={indoor_outdoor}
           exclusive
           onChange={handleIndoorOutdoor}
           aria-label='indoors or outdoors'
+          className={classes.m1}
         >
-          <ToggleButton value='outdoor' aria-label='outdoor'>
+          <ToggleButton
+            value='outdoor'
+            aria-label='outdoor'
+            className={classes.toggleBtns}
+          >
             <img
               src='https://img.icons8.com/doodle/48/000000/coniferous-tree.png'
               alt='outdoor'
             />
           </ToggleButton>
-          <ToggleButton value='indoor' aria-label='indoor'>
+          <ToggleButton
+            value='indoor'
+            aria-label='indoor'
+            className={classes.toggleBtns}
+          >
             <img
               src='https://img.icons8.com/dusk/64/000000/home.png'
               alt='indoor'
             />
           </ToggleButton>
         </ToggleButtonGroup>
-
         <ToggleButtonGroup
           name='weather'
           value={weather}
           exclusive
           onChange={handleWeather}
           aria-label='weather'
+          className={classes.m1}
         >
-          <ToggleButton value='sunny' aria-label='sunny'>
+          <ToggleButton
+            value='sunny'
+            aria-label='sunny'
+            className={classes.toggleBtns}
+          >
             <img
               src='https://img.icons8.com/dusk/64/000000/summer.png'
               alt='sunny'
             />
           </ToggleButton>
-          <ToggleButton value='rain' aria-label='rain'>
+          <ToggleButton
+            value='rain'
+            aria-label='rain'
+            className={classes.toggleBtns}
+          >
             <img
               src='https://img.icons8.com/dusk/64/000000/rain.png'
               alt='rain'
             />
           </ToggleButton>
-          <ToggleButton value='snow' aria-label='snow'>
+          <ToggleButton
+            value='snow'
+            aria-label='snow'
+            className={classes.toggleBtns}
+          >
             <img
               src='https://img.icons8.com/dusk/64/000000/snow-storm.png'
               alt='snow'
@@ -316,14 +342,13 @@ export default function EditIdeaModal({
         </ToggleButtonGroup>
         <TextField
           variant='outlined'
-          label='Give it a category/tag'
+          label='Category/tag'
           type='text'
           name='category'
           value={category}
           onChange={onChange}
           className={classes.m1}
         />
-
         <div className={classes.uploadContainer}>
           <img
             className={classes.image}
@@ -349,27 +374,79 @@ export default function EditIdeaModal({
             >
               Upload New Picture
             </Button>
-            {/* https://docs.amplify.aws/lib/storage/remove/q/platform/js */}
-            <Button
-              variant='contained'
-              className={classes.deleteBtn}
-              component='span'
-              startIcon={<PhotoCamera />}
-            >
-              Delete Picture
-            </Button>
           </label>
+          {/* https://docs.amplify.aws/lib/storage/remove/q/platform/js */}
+          <Button
+            variant='contained'
+            className={classes.deleteBtn}
+            component='span'
+            startIcon={<PhotoCamera />}
+          >
+            Delete Picture
+          </Button>
         </div>
       </form>
+
       <div>
         <Button variant='outlined' color='primary' onClick={updateIdea}>
           Update Idea
         </Button>
-
         <Button variant='outlined' color='primary' onClick={updateIdea}>
           Delete Idea
         </Button>
       </div>
     </div>
   );
-}
+};
+
+const useStyles = makeStyles({
+  container: {
+    textAlign: 'center',
+    backgroundColor: '#F7FFF2',
+    minWidth: '600px',
+    width: '100%',
+    margin: '0 auto'
+  },
+  formContainer: {
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  m1: {
+    margin: '1rem'
+  },
+  uploadContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: '1rem'
+  },
+  uploadInput: {
+    display: 'none'
+  },
+  uploadBtn: {
+    backgroundColor: '#EC795D',
+    marginLeft: '1rem'
+  },
+  deleteBtn: {
+    backgroundColor: 'red',
+    marginLeft: '1rem'
+  },
+  image: {
+    textAlign: 'center',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    marginBottom: '1rem',
+    width: '15vw'
+  },
+  title: {
+    margin: '1rem 0'
+  },
+  toggleBtns: {
+    margin: '0 1rem',
+    border: 'none'
+  }
+});
+
+export default EditIdeaModal;

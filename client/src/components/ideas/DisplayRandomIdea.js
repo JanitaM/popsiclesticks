@@ -142,13 +142,12 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, signedInUser }) => {
 
   return (
     <>
-      {!randomIdea.idea ? (
+      {!randomIdea.idea.title ? (
         <Preloader />
       ) : (
         <Card className={classes.paper}>
           <div className={classes.root}>
             <Grid container spacing={2}>
-              {/* Left Container */}
               <Grid item xs={12} md={6}>
                 <CardHeader
                   title={randomIdea.idea && randomIdea.idea.title}
@@ -184,7 +183,6 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, signedInUser }) => {
                   </div>
                 </CardContent>
               </Grid>
-              {/* Right Container */}
               <Grid item xs={12} md={6}>
                 <Card className={classes.imagePaper}>
                   <img
@@ -215,14 +213,12 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, signedInUser }) => {
                 </Card>
               </Grid>
             </Grid>
-            {/* Bottom Container */}
             <Grid
               container
               spacing={2}
               justify='space-between'
               alignItems='center'
             >
-              {/* Left Container */}
               <Grid item xs={6}>
                 <CardActions>
                   <Button
@@ -249,7 +245,6 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, signedInUser }) => {
                   </Button>
                 </CardActions>
               </Grid>
-              {/* Right Container */}
               <Grid item xs={6}>
                 <CardActions className={classes.completed}>
                   <FormGroup row>
@@ -284,7 +279,6 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     position: 'absolute',
     width: '80vw',
-    height: '80vh',
     overflow: 'auto',
     backgroundColor: '#F7FFF2',
     boxShadow: theme.shadows[5],

@@ -130,7 +130,7 @@ const Step2 = ({ ideaForm, setIdeaForm }) => {
 
         <TextField
           variant='outlined'
-          label='Give it a category/tag'
+          label='Category/tag'
           type='text'
           name='category'
           value={ideaForm.category}

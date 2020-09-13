@@ -30,14 +30,6 @@ import { Link } from '@reach/router';
 import EditIdeaModal from '../ideas/EditIdeaModal';
 import Preloader from '../layout/Preloader';
 
-function convertImg(binArr) {
-  let arrayBufferView = new Uint8Array(binArr);
-  let blob = new Blob([arrayBufferView], { type: 'image/*' });
-  let urlCreator = window.url || window.webkitURL;
-  let imgUrl = urlCreator.createObjectURL(blob);
-  return imgUrl;
-}
-
 function descendingComparator(a, b, orderBy) {
   let value = 0;
   if (a[orderBy] === null || b[orderBy === null]) {
@@ -205,27 +197,25 @@ const EnhancedTableToolbar = (props) => {
     selectedId,
     setSelected,
     getData,
-    ideaToEdit
+    ideaToEdit,
+    setIdeaToEdit
   } = props;
-  console.log(props);
-  // console.log(selectedId);
-  // console.log(ideaToEdit);
+  console.log('props', props);
 
   const theme = useTheme();
   const [open, setOpen] = useState(false);
-  const fullScreen = useMediaQuery(theme.breakpoints.down('xs'));
 
-  // const handleClickOpen = () => {
-  //   setOpen(true);
-  // };
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
   const handleClose = () => {
     setOpen(false);
   };
 
   const handleEditIdea = async (e) => {
     e.preventDefault();
+
     setOpen(true);
-    console.log('edit idea');
   };
 
   const handleDeleteIdea = async (e) => {
@@ -276,6 +266,7 @@ const EnhancedTableToolbar = (props) => {
           >
             <EditIdeaModal
               ideaToEdit={ideaToEdit}
+              setIdeaToEdit={setIdeaToEdit}
               handleClose={handleClose}
               signedInUser={signedInUser}
             />
@@ -338,6 +329,7 @@ EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired
 };
 
+// DASHBOARD
 const Dashboard = () => {
   const classes = useStyles();
   const [order, setOrder] = useState('asc');
@@ -352,10 +344,7 @@ const Dashboard = () => {
     email: ''
   });
 
-  const [ideaToEdit, setIdeaToEdit] = useState({
-    idea: {},
-    picture: ''
-  });
+  const [ideaToEdit, setIdeaToEdit] = useState({});
 
   useEffect(() => {
     (async () => {
@@ -369,7 +358,6 @@ const Dashboard = () => {
   }, []);
 
   const getData = async (username, token) => {
-    console.log(username);
     try {
       // GET all of the user's ideas
       const res = await axios({
@@ -408,38 +396,12 @@ const Dashboard = () => {
     setSelected([]);
   };
 
-  // on click, get the picture ready to pass to EditIdeaModal
-  // const getIdeaPic = async (picture) => {
-  //   // console.log(picture);
-  //   const res = await axios({
-  //     method: 'post',
-  //     url: 'http://localhost:4000/idea/pic',
-  //     headers: {
-  //       'Content-Type': 'application/json'
-  //     },
-  //     data: {
-  //       email: username,
-  //       token: token,
-  //       picUuid: picture
-  //     }
-  //   });
-
-  //   let response = await res.data[0];
-  //   // console.log(response);
-  //   if (response) {
-  //     setIdeaToEdit({
-  //       ...ideaToEdit,
-  //       picture: convertImg(response.Body.data)
-  //     });
-  //   }
-  // };
-
   const handleClick = (event, row) => {
     const selectedIndex = selected.indexOf(row.title);
     let newSelected = [];
     let newSelectedId = [];
 
-    // console.log('row', row); //this works
+    // console.log('row', row);
 
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, row.title);
@@ -462,10 +424,7 @@ const Dashboard = () => {
     }
     setSelectedId(newSelectedId);
     setSelected(newSelected);
-    setIdeaToEdit({ ...ideaToEdit, idea: row, picture: null });
-    if (row.picture) {
-      // return getIdeaPic(row.picture);
-    }
+    setIdeaToEdit(row);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -482,8 +441,8 @@ const Dashboard = () => {
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
-  console.log(rows);
-  if (rows.length < 0) {
+  // console.log(rows);
+  if (rows.length === 0) {
     return <Preloader />;
   } else {
     return (
@@ -496,6 +455,7 @@ const Dashboard = () => {
             setSelected={setSelected}
             getData={getData}
             ideaToEdit={ideaToEdit}
+            setIdeaToEdit={setIdeaToEdit}
           />
           <TableContainer>
             <Table
