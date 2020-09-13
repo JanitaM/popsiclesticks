@@ -209,6 +209,8 @@ const EnhancedTableToolbar = (props) => {
     setOpen(true);
   };
   const handleClose = () => {
+    setIdeaToEdit({});
+    setSelected([]);
     setOpen(false);
   };
 

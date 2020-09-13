@@ -6,12 +6,13 @@ import {
   TextField,
   Typography,
   Input,
-  Grid
+  Divider
 } from '@material-ui/core';
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
+import Preloader from '../layout/Preloader';
 
 function convertImg(binArr) {
   let arrayBufferView = new Uint8Array(binArr);
@@ -72,10 +73,7 @@ const EditIdeaModal = ({
   } = updatedInfo;
 
   useEffect(() => {
-    // Get Idea pic from s3
     (async () => {
-      console.log(signedInUser.username);
-
       const res = await axios({
         method: 'post',
         url: 'http://localhost:4000/idea/pic',
@@ -90,7 +88,7 @@ const EditIdeaModal = ({
       });
 
       let response = await res.data[0];
-      console.log(response);
+      // console.log(response);
       if (response) {
         setIdeaToEdit({
           ...ideaToEdit,
@@ -107,87 +105,97 @@ const EditIdeaModal = ({
     setUpdatedInfo({ ...updatedInfo, [e.target.name]: e.target.value });
   };
 
+  const renderPic = () => {
+    if (ideaToEdit.picture && !convertIdeaPic) {
+      return ideaToEdit.picture;
+    }
+    if (convertIdeaPic) {
+      return convertIdeaPic;
+    }
+    if (!ideaToEdit.picture && !convertIdeaPic) {
+      return 'https://img.icons8.com/plasticine/100/000000/image.png';
+    }
+  };
+
   const handlePicture = (e) => {
     setUpdatedInfo({
       ...updatedInfo,
       convertIdeaPic: URL.createObjectURL(e.target.files[0]),
       picture: e.target.files[0]
     });
+    renderPic();
   };
 
-  const updateIdea = (e) => {
-    e.preventDefault();
-    console.log('update idea');
-    console.log(updatedInfo);
-    // console.log(signedInUser);
-
-    if (updatedInfo.title) {
-      async function uploadToSql(myUuid) {
-        return await axios({
-          method: 'patch',
-          url: `http://localhost:4000/user/idea`,
-          data: {
-            email: signedInUser.email,
-            token: signedInUser.token,
-            id: updatedInfo.id,
-            title: updatedInfo.title,
-            location: updatedInfo.location,
-            description: updatedInfo.description,
-            cost: updatedInfo.cost,
-            indoor_outdoor: updatedInfo.indoor_outdoor,
-            category: updatedInfo.category,
-            url: updatedInfo.url,
-            picture: updatedInfo.myUuid,
-            weather: updatedInfo.weather,
-            isCompleted: false
-          },
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-      }
-
-      console.log(updatedInfo.picture);
-      try {
-        if (signedInUser && updatedInfo.picture) {
-          uploadToSql();
-          handleClose();
-        } else if (signedInUser) {
-          const myUuid = uuidv4();
-          const type = updatedInfo.picture.type.split('/'); //when there is an old picture (uuid), this fails
-
-          Storage.put(
-            `${signedInUser.email}/ideaPictures/${myUuid}.${type[1]}`,
-            updatedInfo.picture,
-            {
-              contentType: 'image/*'
-            }
-          )
-            .then((result) => console.log(result))
-            .then(() => uploadToSql(myUuid))
-            .then(() => handleClose())
-            .catch((error) => console.log(error));
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    } else {
-      alert('A title is required');
-    }
+  const deleteIdeaPictureFromUI = (e) => {
+    setUpdatedInfo({ ...updatedInfo, convertIdeaPic: '', picture: undefined });
+    setIdeaToEdit({ ...ideaToEdit, picture: undefined });
+    renderPic();
   };
+  // Delete Idea Pic from S3
+  {
+    /* https://docs.amplify.aws/lib/storage/remove/q/platform/js */
+  }
 
-  const renderPic = () => {
-    // console.log('picture', picture);
-    // console.log('convertIdeaPic', convertIdeaPic);
+  // const updateIdea = (e) => {
+  //   e.preventDefault();
+  //   console.log('update idea');
+  //   console.log(updatedInfo);
+  //   // console.log(signedInUser);
 
-    if (convertIdeaPic) {
-      return convertIdeaPic;
-    } else if (ideaToEdit.picture) {
-      return ideaToEdit.picture;
-    } else {
-      return 'https://img.icons8.com/plasticine/100/000000/image.png';
-    }
-  };
+  //   if (updatedInfo.title) {
+  //     async function uploadToSql(myUuid) {
+  //       return await axios({
+  //         method: 'patch',
+  //         url: `http://localhost:4000/user/idea`,
+  //         data: {
+  //           email: signedInUser.email,
+  //           token: signedInUser.token,
+  //           id: updatedInfo.id,
+  //           title: updatedInfo.title,
+  //           location: updatedInfo.location,
+  //           description: updatedInfo.description,
+  //           cost: updatedInfo.cost,
+  //           indoor_outdoor: updatedInfo.indoor_outdoor,
+  //           category: updatedInfo.category,
+  //           url: updatedInfo.url,
+  //           picture: updatedInfo.myUuid,
+  //           weather: updatedInfo.weather,
+  //           isCompleted: false
+  //         },
+  //         headers: {
+  //           'Content-Type': 'application/json'
+  //         }
+  //       });
+  //     }
+
+  //     console.log(updatedInfo.picture);
+  //     try {
+  //       if (signedInUser && updatedInfo.picture) {
+  //         uploadToSql();
+  //         handleClose();
+  //       } else if (signedInUser) {
+  //         const myUuid = uuidv4();
+  //         const type = updatedInfo.picture.type.split('/'); //when there is an old picture (uuid), this fails
+
+  //         Storage.put(
+  //           `${signedInUser.email}/ideaPictures/${myUuid}.${type[1]}`,
+  //           updatedInfo.picture,
+  //           {
+  //             contentType: 'image/*'
+  //           }
+  //         )
+  //           .then((result) => console.log(result))
+  //           .then(() => uploadToSql(myUuid))
+  //           .then(() => handleClose())
+  //           .catch((error) => console.log(error));
+  //       }
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   } else {
+  //     alert('A title is required');
+  //   }
+  // };
 
   return (
     <div className={classes.container}>
@@ -349,49 +357,57 @@ const EditIdeaModal = ({
           onChange={onChange}
           className={classes.m1}
         />
-        <div className={classes.uploadContainer}>
-          <img
-            className={classes.image}
-            src={renderPic()}
-            alt='user profile picture'
-          />
-          <Input
-            accept='image/*'
-            className={classes.uploadInput}
-            id='upload-btn'
-            multiple
-            type='file'
-            name='picture'
-            label='picture'
-            onChange={(e) => handlePicture(e)}
-          />
-          <label htmlFor='upload-btn'>
+        <div className={classes.imageContainer}>
+          <img className={classes.image} src={renderPic()} alt='idea picture' />
+          <div className={classes.imageBtnContainer}>
+            <Input
+              accept='image/*'
+              className={classes.uploadInput}
+              id='upload-btn'
+              multiple
+              type='file'
+              name='picture'
+              label='picture'
+              onChange={(e) => handlePicture(e)}
+            />
+            <label htmlFor='upload-btn'>
+              <Button
+                variant='contained'
+                className={classes.uploadBtn}
+                component='span'
+                startIcon={<PhotoCamera />}
+              >
+                Upload New Picture
+              </Button>
+            </label>
             <Button
               variant='contained'
-              className={classes.uploadBtn}
+              className={classes.deleteBtn}
               component='span'
               startIcon={<PhotoCamera />}
+              onClick={deleteIdeaPictureFromUI}
             >
-              Upload New Picture
+              Delete Picture
             </Button>
-          </label>
-          {/* https://docs.amplify.aws/lib/storage/remove/q/platform/js */}
-          <Button
-            variant='contained'
-            className={classes.deleteBtn}
-            component='span'
-            startIcon={<PhotoCamera />}
-          >
-            Delete Picture
-          </Button>
+          </div>
         </div>
       </form>
-
-      <div>
-        <Button variant='outlined' color='primary' onClick={updateIdea}>
+      <Divider />
+      <div className={classes.updateDeleteBtns}>
+        <Button
+          variant='outlined'
+          color='primary'
+          // onClick={updateIdea}
+          className={classes.updateIdeaBtn}
+        >
           Update Idea
         </Button>
-        <Button variant='outlined' color='primary' onClick={updateIdea}>
+        <Button
+          variant='outlined'
+          color='primary'
+          // onClick={deleteIdea}
+          className={classes.deleteIdeaBtn}
+        >
           Delete Idea
         </Button>
       </div>
@@ -402,7 +418,7 @@ const EditIdeaModal = ({
 const useStyles = makeStyles({
   container: {
     textAlign: 'center',
-    backgroundColor: '#F7FFF2',
+    // backgroundColor: '#F7FFF2',
     minWidth: '600px',
     width: '100%',
     margin: '0 auto'
@@ -414,23 +430,36 @@ const useStyles = makeStyles({
   m1: {
     margin: '1rem'
   },
-  uploadContainer: {
+  imageContainer: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
+    alignItems: 'center'
+  },
+  imageBtnContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: '1rem'
+    margin: '1rem 2rem'
   },
   uploadInput: {
     display: 'none'
   },
   uploadBtn: {
-    backgroundColor: '#EC795D',
-    marginLeft: '1rem'
+    backgroundColor: '#E75734',
+    color: '#fff',
+    '&:hover': {
+      backgroundColor: '#CF4F30'
+    }
   },
   deleteBtn: {
-    backgroundColor: 'red',
-    marginLeft: '1rem'
+    backgroundColor: '#65B5B4',
+    color: '#fff',
+    margin: '1rem',
+    '&:hover': {
+      backgroundColor: '#579C9A'
+    }
   },
   image: {
     textAlign: 'center',
@@ -446,6 +475,27 @@ const useStyles = makeStyles({
   toggleBtns: {
     margin: '0 1rem',
     border: 'none'
+  },
+  updateDeleteBtns: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    margin: '1rem auto'
+  },
+  deleteIdeaBtn: {
+    backgroundColor: '#147E9C',
+    color: '#fff',
+    '&:hover': {
+      backgroundColor: '#116A82'
+    }
+  },
+  updateIdeaBtn: {
+    backgroundColor: '#A83316',
+    color: '#fff',
+    '&:hover': {
+      backgroundColor: '#8F2B13'
+    }
   }
 });
 
