@@ -34,9 +34,19 @@ const CustomSwitch = withStyles({
 
 const DisplayRandomIdea = ({ handleClose, randomIdea, signedInUser }) => {
   const classes = useStyles();
-  console.log(randomIdea);
+  // console.log(randomIdea);
+  const [username, setUsername] = useState('');
+  const [token, setToken] = useState('');
 
-  const { username, token } = signedInUser;
+  useEffect(() => {
+    (async () => {
+      if (await signedInUser) {
+        setUsername(signedInUser.username);
+        setToken(signedInUser.signInUserSession.idToken.jwtToken);
+      }
+    })();
+  }, []);
+
   const [costSrc, setCostSrc] = useState('');
   const [indoorOutdoorSrc, setIndoorOutdoorSrc] = useState('');
   const [weatherSrc, setWeatherSrc] = useState('');
@@ -80,19 +90,14 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, signedInUser }) => {
     }
   };
 
+  // Need to handle no cost, indoor_outdoor, or weather
   useEffect(() => {
     (async () => {
-      if (await randomIdea.idea.cost) {
-        getCostImg();
-      } else return;
-      if (await randomIdea.idea.indoor_outdoor) {
-        getIndoorOutdoorImg();
-      } else return;
-      if (await randomIdea.idea.weather) {
-        getWeatherImg();
-      } else return;
+      if (await randomIdea.idea.cost) getCostImg();
+      if (await randomIdea.idea.indoor_outdoor) getIndoorOutdoorImg();
+      if (await randomIdea.idea.weather) getWeatherImg();
     })();
-  }, [randomIdea.idea]);
+  }, [randomIdea]);
 
   const handleAccept = (e) => {
     e.preventDefault();
@@ -137,7 +142,7 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, signedInUser }) => {
 
   return (
     <>
-      {!randomIdea.idea && !randomIdea.idea.title ? (
+      {!randomIdea.idea ? (
         <Preloader />
       ) : (
         <Card className={classes.paper}>

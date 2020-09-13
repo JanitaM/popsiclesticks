@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Auth, Storage } from 'aws-amplify';
+import React, { useState, useEffect } from 'react';
+import { Storage } from 'aws-amplify';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 import { makeStyles } from '@material-ui/core/styles';
@@ -36,8 +36,17 @@ const AddIdeaStepper = ({
   signedInUser
 }) => {
   const classes = useStyles();
+  const [username, setUsername] = useState('');
+  const [token, setToken] = useState('');
 
-  const { username, token } = signedInUser;
+  useEffect(() => {
+    (async () => {
+      if (await signedInUser) {
+        setUsername(signedInUser.username);
+        setToken(signedInUser.signInUserSession.idToken.jwtToken);
+      }
+    })();
+  }, []);
 
   const [activeStep, setActiveStep] = useState(0);
   const steps = getSteps();

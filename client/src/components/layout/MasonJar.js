@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import masonJar from '../../assets/masonJar.png';
 import './MasonJar.css';
 import DisplayRandomIdea from '../ideas/DisplayRandomIdea';
 import Modal from '@material-ui/core/Modal';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
+import Preloader from '../layout/Preloader';
 
 function convertImg(binArr) {
   let arrayBufferView = new Uint8Array(binArr);
@@ -16,8 +17,17 @@ function convertImg(binArr) {
 
 const MasonJar = ({ signedInUser }) => {
   const classes = useStyles();
+  const [username, setUsername] = useState('');
+  const [token, setToken] = useState('');
 
-  const { username, token } = signedInUser;
+  useEffect(() => {
+    (async () => {
+      if (await signedInUser) {
+        setUsername(signedInUser.username);
+        setToken(signedInUser.signInUserSession.idToken.jwtToken);
+      }
+    })();
+  }, []);
 
   const [randomIdea, setRandomIdea] = useState({
     idea: {},
@@ -46,7 +56,7 @@ const MasonJar = ({ signedInUser }) => {
         if (ideaArr.length > 0) {
           getRandomIdea(ideaArr);
         } else {
-          console.log('no ideas in the db');
+          alert('no ideas in the db');
           return;
         }
       }
@@ -100,35 +110,39 @@ const MasonJar = ({ signedInUser }) => {
     setRandomIdea({});
   };
 
-  return (
-    <div className='main-container'>
-      <div className='img-container'>
-        <div className='sticks-container'>
-          <button onClick={getUserIdeas} className='btn1 btn'></button>
-          <button onClick={getUserIdeas} className='btn2 btn'></button>
-          <button onClick={getUserIdeas} className='btn3 btn'></button>
-          <button onClick={getUserIdeas} className='btn4 btn'></button>
-          <button onClick={getUserIdeas} className='btn5 btn'></button>
+  if (!signedInUser) {
+    return <Preloader />;
+  } else {
+    return (
+      <div className='main-container'>
+        <div className='img-container'>
+          <div className='sticks-container'>
+            <button onClick={getUserIdeas} className='btn1 btn'></button>
+            <button onClick={getUserIdeas} className='btn2 btn'></button>
+            <button onClick={getUserIdeas} className='btn3 btn'></button>
+            <button onClick={getUserIdeas} className='btn4 btn'></button>
+            <button onClick={getUserIdeas} className='btn5 btn'></button>
+          </div>
+          <div className='jar-container'>
+            <img src={masonJar} alt='mason-jar' className='jar-img' />
+          </div>
         </div>
-        <div className='jar-container'>
-          <img src={masonJar} alt='mason-jar' className='jar-img' />
-        </div>
+        <Modal
+          open={open}
+          onClose={handleClose}
+          aria-labelledby='simple-modal-title'
+          aria-describedby='simple-modal-description'
+          className={classes.modal}
+        >
+          <DisplayRandomIdea
+            signedInUser={signedInUser}
+            handleClose={handleClose}
+            randomIdea={randomIdea}
+          />
+        </Modal>
       </div>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby='simple-modal-title'
-        aria-describedby='simple-modal-description'
-        className={classes.modal}
-      >
-        <DisplayRandomIdea
-          signedInUser={signedInUser}
-          handleClose={handleClose}
-          randomIdea={randomIdea}
-        />
-      </Modal>
-    </div>
-  );
+    );
+  }
 };
 
 const useStyles = makeStyles((theme) => ({

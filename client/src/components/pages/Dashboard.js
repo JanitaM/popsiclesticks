@@ -28,6 +28,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import { Link } from '@reach/router';
 import EditIdeaModal from '../ideas/EditIdeaModal';
+import Preloader from '../layout/Preloader';
 
 function convertImg(binArr) {
   let arrayBufferView = new Uint8Array(binArr);
@@ -204,7 +205,6 @@ const EnhancedTableToolbar = (props) => {
     selectedId,
     setSelected,
     getData,
-    dispatch,
     ideaToEdit
   } = props;
   console.log(props);
@@ -241,13 +241,13 @@ const EnhancedTableToolbar = (props) => {
             'Content-Type': 'application/json'
           },
           data: {
-            email: signedInUser.email,
+            email: signedInUser.username,
             token: signedInUser.token,
             id: selectedId
           }
         });
         alert('Idea deleted');
-        getData(signedInUser.email, signedInUser.token);
+        getData(signedInUser.username, signedInUser.token);
         setSelected([]);
       } catch (error) {
         console.log(error);
@@ -345,48 +345,48 @@ const Dashboard = () => {
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rows, setRows] = useState([]);
+  const [selectedId, setSelectedId] = useState([]);
   const [signedInUser, setSignedInUser] = useState({
     token: '',
     email: ''
   });
-  // console.log(signedInUser);
-  const [rows, setRows] = useState([]);
-  const [selectedId, setSelectedId] = useState([]);
 
   const [ideaToEdit, setIdeaToEdit] = useState({
     idea: {},
     picture: ''
   });
 
-  const getData = async (email, token) => {
+  useEffect(() => {
+    (async () => {
+      const fullInfo = await Auth.currentAuthenticatedUser();
+      const token = await fullInfo.signInUserSession.idToken.jwtToken;
+      const username = await fullInfo.username;
+      setSignedInUser({ token, username });
+
+      if (token) getData(username, token);
+    })();
+  }, []);
+
+  const getData = async (username, token) => {
+    console.log(username);
     try {
       // GET all of the user's ideas
       const res = await axios({
         method: 'get',
         url: `http://localhost:4000/user/ideas`,
         params: {
-          email: email,
+          email: username,
           token: token
         }
       });
-      // console.log(res.data.message);
+      // console.log('res.data.message', res.data.message);
       const ideaArr = res.data.message;
       setRows(ideaArr);
     } catch (error) {
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    (async () => {
-      const fullInfo = await Auth.currentAuthenticatedUser();
-      const token = await fullInfo.signInUserSession.idToken.jwtToken;
-      const email = await fullInfo.username;
-      setSignedInUser({ token, email });
-
-      if (token) getData(email, token);
-    })();
-  }, []);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -409,30 +409,30 @@ const Dashboard = () => {
   };
 
   // on click, get the picture ready to pass to EditIdeaModal
-  const getIdeaPic = async (picture) => {
-    // console.log(picture);
-    const res = await axios({
-      method: 'post',
-      url: 'http://localhost:4000/idea/pic',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      data: {
-        email: signedInUser.email,
-        token: signedInUser.token,
-        picUuid: picture
-      }
-    });
+  // const getIdeaPic = async (picture) => {
+  //   // console.log(picture);
+  //   const res = await axios({
+  //     method: 'post',
+  //     url: 'http://localhost:4000/idea/pic',
+  //     headers: {
+  //       'Content-Type': 'application/json'
+  //     },
+  //     data: {
+  //       email: username,
+  //       token: token,
+  //       picUuid: picture
+  //     }
+  //   });
 
-    let response = await res.data[0];
-    // console.log(response);
-    if (response) {
-      setIdeaToEdit({
-        ...ideaToEdit,
-        picture: convertImg(response.Body.data)
-      });
-    }
-  };
+  //   let response = await res.data[0];
+  //   // console.log(response);
+  //   if (response) {
+  //     setIdeaToEdit({
+  //       ...ideaToEdit,
+  //       picture: convertImg(response.Body.data)
+  //     });
+  //   }
+  // };
 
   const handleClick = (event, row) => {
     const selectedIndex = selected.indexOf(row.title);
@@ -464,7 +464,7 @@ const Dashboard = () => {
     setSelected(newSelected);
     setIdeaToEdit({ ...ideaToEdit, idea: row, picture: null });
     if (row.picture) {
-      return getIdeaPic(row.picture);
+      // return getIdeaPic(row.picture);
     }
   };
 
@@ -482,94 +482,101 @@ const Dashboard = () => {
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
-  return (
-    <div className={classes.root}>
-      <Paper className={classes.paper}>
-        <EnhancedTableToolbar
-          numSelected={selected.length}
-          signedInUser={signedInUser}
-          selectedId={selectedId}
-          setSelected={setSelected}
-          getData={getData}
-          ideaToEdit={ideaToEdit}
-        />
-        <TableContainer>
-          <Table
-            className={classes.table}
-            aria-labelledby='tableTitle'
-            size='medium'
-            aria-label='enhanced table'
-          >
-            <EnhancedTableHead
-              classes={classes}
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={rows.length}
-            />
-            <TableBody>
-              {stableSort(rows, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const isItemSelected = isSelected(row.title);
-                  const labelId = `enhanced-table-checkbox-${index}`;
+  console.log(rows);
+  if (rows.length < 0) {
+    return <Preloader />;
+  } else {
+    return (
+      <div className={classes.root}>
+        <Paper className={classes.paper}>
+          <EnhancedTableToolbar
+            numSelected={selected.length}
+            signedInUser={signedInUser}
+            selectedId={selectedId}
+            setSelected={setSelected}
+            getData={getData}
+            ideaToEdit={ideaToEdit}
+          />
+          <TableContainer>
+            <Table
+              className={classes.table}
+              aria-labelledby='tableTitle'
+              size='medium'
+              aria-label='enhanced table'
+            >
+              <EnhancedTableHead
+                classes={classes}
+                numSelected={selected.length}
+                order={order}
+                orderBy={orderBy}
+                onSelectAllClick={handleSelectAllClick}
+                onRequestSort={handleRequestSort}
+                rowCount={rows.length}
+              />
+              <TableBody>
+                {stableSort(rows, getComparator(order, orderBy))
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row, index) => {
+                    const isItemSelected = isSelected(row.title);
+                    const labelId = `enhanced-table-checkbox-${index}`;
 
-                  return (
-                    <TableRow
-                      hover
-                      onClick={(event) => handleClick(event, row)}
-                      role='checkbox'
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row.title}
-                      selected={isItemSelected}
-                    >
-                      <TableCell padding='checkbox'>
-                        <Checkbox
-                          checked={isItemSelected}
-                          inputProps={{ 'aria-labelledby': labelId }}
-                        />
-                      </TableCell>
-                      <TableCell
-                        component='th'
-                        id={labelId}
-                        scope='row'
-                        padding='none'
+                    return (
+                      <TableRow
+                        hover
+                        onClick={(event) => handleClick(event, row)}
+                        role='checkbox'
+                        aria-checked={isItemSelected}
+                        tabIndex={-1}
+                        key={row.title}
+                        selected={isItemSelected}
                       >
-                        {row.title}
-                      </TableCell>
-                      <TableCell align='right'>{row.location}</TableCell>
-                      <TableCell align='right'>{row.description}</TableCell>
-                      <TableCell align='right'>{row.cost}</TableCell>
-                      <TableCell align='right'>{row.indoor_outdoor}</TableCell>
-                      <TableCell align='right'>{row.category}</TableCell>
-                      <TableCell align='right'>{row.weather}</TableCell>
-                      <TableCell align='right'>{row.url}</TableCell>
-                    </TableRow>
-                  );
-                })}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 53 * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component='div'
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
-        />
-      </Paper>
-    </div>
-  );
+                        <TableCell padding='checkbox'>
+                          <Checkbox
+                            checked={isItemSelected}
+                            inputProps={{ 'aria-labelledby': labelId }}
+                          />
+                        </TableCell>
+                        <TableCell
+                          component='th'
+                          id={labelId}
+                          scope='row'
+                          padding='none'
+                        >
+                          {row.title}
+                        </TableCell>
+                        <TableCell align='right'>{row.location}</TableCell>
+                        <TableCell align='right'>{row.description}</TableCell>
+                        <TableCell align='right'>{row.cost}</TableCell>
+                        <TableCell align='right'>
+                          {row.indoor_outdoor}
+                        </TableCell>
+                        <TableCell align='right'>{row.category}</TableCell>
+                        <TableCell align='right'>{row.weather}</TableCell>
+                        <TableCell align='right'>{row.url}</TableCell>
+                      </TableRow>
+                    );
+                  })}
+                {emptyRows > 0 && (
+                  <TableRow style={{ height: 53 * emptyRows }}>
+                    <TableCell colSpan={6} />
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component='div'
+            count={rows.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onChangePage={handleChangePage}
+            onChangeRowsPerPage={handleChangeRowsPerPage}
+          />
+        </Paper>
+      </div>
+    );
+  }
 };
 
 const useStyles = makeStyles((theme) => ({

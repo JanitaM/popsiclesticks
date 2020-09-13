@@ -13,9 +13,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function EditIdea() {
   const classes = useStyles();
-
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('xs'));
 
   return (
     <div>
