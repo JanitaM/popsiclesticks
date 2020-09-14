@@ -280,7 +280,7 @@ const useStyles = makeStyles((theme) => ({
     position: 'absolute',
     width: '80vw',
     overflow: 'auto',
-    backgroundColor: '#F7FFF2',
+    // backgroundColor: '#F7FFF2',
     boxShadow: theme.shadows[5],
     padding: '1rem'
   },

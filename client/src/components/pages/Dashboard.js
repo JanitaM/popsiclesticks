@@ -211,6 +211,7 @@ const EnhancedTableToolbar = (props) => {
   const handleClose = () => {
     setIdeaToEdit({});
     setSelected([]);
+    getData(signedInUser.username, signedInUser.token);
     setOpen(false);
   };
 

@@ -12,6 +12,15 @@ const Landing = () => {
           <Typography variant='h3'>What Are You Doing Today?</Typography>
         </div>
       </div>
+      {/* <Typography variant='h4' className={classes.whatIsTitle}>
+        What Is Popsicle Sticks
+      </Typography> */}
+      <div className={classes.heroImg2}>
+        <div className={classes.heroText2}>
+          <Typography variant='h3'>2nd hero</Typography>
+        </div>
+      </div>
+
       <div className={classes.bodyContainer}>
         <Typography variant='h4' className={classes.whatIsTitle}>
           What Is Popsicle Sticks
@@ -27,7 +36,6 @@ const Landing = () => {
             "
             <Link
               href='https://www.google.com/search?q=popsicle+sticks+mason+jar&rlz=1C1SQJL_enUS806US806&oq=popsicle+sticks+mason+jar&aqs=chrome..69i57j0.6913j0j7&sourceid=chrome&ie=UTF-8'
-              // onClick={preventDefault}
               color='secondary'
             >
               {'popsicle sticks mason jar'}
@@ -107,6 +115,26 @@ const useStyles = makeStyles({
     textAlign: 'center',
     position: 'absolute',
     top: '30%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)'
+  },
+  heroImg2: {
+    height: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background:
+      'rgba(0,0,0,0.2) url("https://images.pexels.com/photos/2542012/pexels-photo-2542012.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940")',
+    backgroundSize: 'cover',
+    backgroundAttachment: 'fixed',
+    backgroundPosition: 'center',
+    backgroundBlendMode: 'overlay'
+  },
+  heroText2: {
+    textAlign: 'center',
+    position: 'absolute',
+    top: 'calc(100vh-30%)',
     left: '50%',
     transform: 'translate(-50%, -50%)'
   },

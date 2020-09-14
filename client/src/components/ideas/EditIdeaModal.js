@@ -29,7 +29,6 @@ const EditIdeaModal = ({
   handleClose
 }) => {
   console.log('ideaToEdit', ideaToEdit);
-  // console.log(signedInUser);
   const classes = useStyles();
   const [open, setOpen] = useState(false);
 
@@ -92,7 +91,7 @@ const EditIdeaModal = ({
       if (response) {
         setIdeaToEdit({
           ...ideaToEdit,
-          picture: convertImg(response.Body.data)
+          picture: convertImg(response.Body.data) //set to oldPicture to preserve uuid of old picture?
         });
       }
     })();
@@ -107,6 +106,7 @@ const EditIdeaModal = ({
 
   const renderPic = () => {
     if (ideaToEdit.picture && !convertIdeaPic) {
+      //ideaToEdit.oldPicture?
       return ideaToEdit.picture;
     }
     if (convertIdeaPic) {
@@ -117,7 +117,7 @@ const EditIdeaModal = ({
     }
   };
 
-  const handlePicture = (e) => {
+  const handleNewPicture = (e) => {
     setUpdatedInfo({
       ...updatedInfo,
       convertIdeaPic: URL.createObjectURL(e.target.files[0]),
@@ -136,66 +136,90 @@ const EditIdeaModal = ({
     /* https://docs.amplify.aws/lib/storage/remove/q/platform/js */
   }
 
-  // const updateIdea = (e) => {
-  //   e.preventDefault();
-  //   console.log('update idea');
-  //   console.log(updatedInfo);
-  //   // console.log(signedInUser);
+  const handleUpdateIdea = (e) => {
+    e.preventDefault();
+    console.log('update idea');
+    console.log(typeof updatedInfo.picture);
+    console.log(typeof ideaToEdit.picture);
 
-  //   if (updatedInfo.title) {
-  //     async function uploadToSql(myUuid) {
-  //       return await axios({
-  //         method: 'patch',
-  //         url: `http://localhost:4000/user/idea`,
-  //         data: {
-  //           email: signedInUser.email,
-  //           token: signedInUser.token,
-  //           id: updatedInfo.id,
-  //           title: updatedInfo.title,
-  //           location: updatedInfo.location,
-  //           description: updatedInfo.description,
-  //           cost: updatedInfo.cost,
-  //           indoor_outdoor: updatedInfo.indoor_outdoor,
-  //           category: updatedInfo.category,
-  //           url: updatedInfo.url,
-  //           picture: updatedInfo.myUuid,
-  //           weather: updatedInfo.weather,
-  //           isCompleted: false
-  //         },
-  //         headers: {
-  //           'Content-Type': 'application/json'
-  //         }
-  //       });
-  //     }
+    if (updatedInfo.title) {
+      async function uploadToSql(myUuid) {
+        return await axios({
+          method: 'patch',
+          url: `http://localhost:4000/user/idea`,
+          data: {
+            email: signedInUser.email,
+            token: signedInUser.token,
+            id: updatedInfo.id,
+            title: updatedInfo.title,
+            location: updatedInfo.location,
+            description: updatedInfo.description,
+            cost: updatedInfo.cost,
+            indoor_outdoor: updatedInfo.indoor_outdoor,
+            category: updatedInfo.category,
+            url: updatedInfo.url,
+            picture: updatedInfo.myUuid, //set this to undefined if type is string, else updatedInfo.myUuid
+            weather: updatedInfo.weather
+          },
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+      }
 
-  //     console.log(updatedInfo.picture);
-  //     try {
-  //       if (signedInUser && updatedInfo.picture) {
-  //         uploadToSql();
-  //         handleClose();
-  //       } else if (signedInUser) {
-  //         const myUuid = uuidv4();
-  //         const type = updatedInfo.picture.type.split('/'); //when there is an old picture (uuid), this fails
+      try {
+        if (signedInUser && typeof updatedInfo.picture === 'string') {
+          console.log('you have the old pic'); //old pic is still not a match with new pic
+          //       uploadToSql();
+          //       handleClose();
+        } else if (signedInUser && typeof updatedInfo.picture === 'object') {
+          console.log('you have a new pic'); //update everything
+          //       const myUuid = uuidv4();
+          //       const type = updatedInfo.picture.type.split('/'); //when there is an old picture (uuid), this fails
 
-  //         Storage.put(
-  //           `${signedInUser.email}/ideaPictures/${myUuid}.${type[1]}`,
-  //           updatedInfo.picture,
-  //           {
-  //             contentType: 'image/*'
-  //           }
-  //         )
-  //           .then((result) => console.log(result))
-  //           .then(() => uploadToSql(myUuid))
-  //           .then(() => handleClose())
-  //           .catch((error) => console.log(error));
-  //       }
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   } else {
-  //     alert('A title is required');
-  //   }
-  // };
+          //       Storage.put(
+          //         `${signedInUser.username}/ideaPictures/${myUuid}.${type[1]}`,
+          //         updatedInfo.picture,
+          //         {
+          //           contentType: 'image/*'
+          //         }
+          //       )
+          //         .then((result) => console.log(result))
+          //         .then(() => uploadToSql(myUuid))
+          //         .then(() => handleClose())
+          //         .catch((error) => console.log(error));
+        } else if (signedInUser && typeof updatedInfo.picture === 'undefined') {
+          console.log('picture was deleted'); //need to remove from S3 storage and update idea. picture will be undefined/null
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      alert('A title is required');
+    }
+  };
+
+  const handleDelete = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await axios({
+        method: 'delete',
+        url: `http://localhost:4000/user/idea`,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        data: {
+          email: signedInUser.username,
+          token: signedInUser.token,
+          id: ideaToEdit.id
+        }
+      });
+      handleClose();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className={classes.container}>
@@ -368,7 +392,7 @@ const EditIdeaModal = ({
               type='file'
               name='picture'
               label='picture'
-              onChange={(e) => handlePicture(e)}
+              onChange={(e) => handleNewPicture(e)}
             />
             <label htmlFor='upload-btn'>
               <Button
@@ -397,7 +421,7 @@ const EditIdeaModal = ({
         <Button
           variant='outlined'
           color='primary'
-          // onClick={updateIdea}
+          onClick={handleUpdateIdea}
           className={classes.updateIdeaBtn}
         >
           Update Idea
@@ -405,7 +429,7 @@ const EditIdeaModal = ({
         <Button
           variant='outlined'
           color='primary'
-          // onClick={deleteIdea}
+          onClick={handleDelete}
           className={classes.deleteIdeaBtn}
         >
           Delete Idea
