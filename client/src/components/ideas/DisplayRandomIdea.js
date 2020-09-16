@@ -10,29 +10,16 @@ import {
   Grid,
   Link,
   Typography,
-  Button,
-  Switch,
-  FormControlLabel,
-  FormGroup,
-  withStyles
+  Button
 } from '@material-ui/core';
 import Preloader from '../layout/Preloader';
 
-const CustomSwitch = withStyles({
-  switchBase: {
-    color: '#E8471E',
-    '&$checked': {
-      color: '#A83316'
-    },
-    '&$checked + $track': {
-      backgroundColor: '#A83316'
-    }
-  },
-  checked: {},
-  track: {}
-})(Switch);
-
-const DisplayRandomIdea = ({ handleClose, randomIdea, signedInUser }) => {
+const DisplayRandomIdea = ({
+  handleClose,
+  randomIdea,
+  signedInUser,
+  getCompletedIdeas
+}) => {
   const classes = useStyles();
   // console.log(randomIdea);
   const [username, setUsername] = useState('');
@@ -90,18 +77,50 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, signedInUser }) => {
     }
   };
 
-  // Need to handle no cost, indoor_outdoor, or weather
   useEffect(() => {
     (async () => {
-      if (await randomIdea.idea.cost) getCostImg();
-      if (await randomIdea.idea.indoor_outdoor) getIndoorOutdoorImg();
-      if (await randomIdea.idea.weather) getWeatherImg();
+      if (await randomIdea.idea.cost) {
+        getCostImg();
+      } else {
+        return;
+      }
+      if (await randomIdea.idea.indoor_outdoor) {
+        getIndoorOutdoorImg();
+      } else {
+        return;
+      }
+      if (await randomIdea.idea.weather) {
+        getWeatherImg();
+      } else {
+        return;
+      }
     })();
   }, [randomIdea]);
 
-  const handleAccept = (e) => {
+  const handleAccept = async (e) => {
     e.preventDefault();
+    console.log(randomIdea.idea.id);
+
+    try {
+      const res = await axios({
+        method: 'post',
+        url: `http://localhost:4000/complete`,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        data: {
+          email: username,
+          token: token,
+          id: randomIdea.idea.id,
+          isCompleted: true
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+
     handleClose();
+    getCompletedIdeas();
     alert('Go have fun!');
   };
 
@@ -134,12 +153,6 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, signedInUser }) => {
     }
   };
 
-  const [completed, setCompleted] = useState(false);
-  const handleCompleted = (event) => {
-    setCompleted(!completed);
-  };
-  console.log(completed);
-
   return (
     <>
       {!randomIdea.idea.title ? (
@@ -147,7 +160,13 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, signedInUser }) => {
       ) : (
         <Card className={classes.paper}>
           <div className={classes.root}>
-            <Grid container spacing={2}>
+            <Grid
+              container
+              spacing={2}
+              direction='row'
+              justify='space-evenly'
+              alignItems='center'
+            >
               <Grid item xs={12} md={6}>
                 <CardHeader
                   title={randomIdea.idea && randomIdea.idea.title}
@@ -213,57 +232,32 @@ const DisplayRandomIdea = ({ handleClose, randomIdea, signedInUser }) => {
                 </Card>
               </Grid>
             </Grid>
-            <Grid
-              container
-              spacing={2}
-              justify='space-between'
-              alignItems='center'
-            >
-              <Grid item xs={6}>
-                <CardActions>
-                  <Button
-                    className={classes.yesBtn}
-                    onClick={handleAccept}
-                    variant='contained'
-                  >
-                    Yes
-                  </Button>
-                  <Button
-                    className={classes.noBtn}
-                    onClick={handleDecline}
-                    variant='contained'
-                  >
-                    No
-                  </Button>
-                  <Button
-                    className={classes.deleteBtn}
-                    onClick={handleDelete}
-                    variant='contained'
-                    color='secondary'
-                  >
-                    Delete
-                  </Button>
-                </CardActions>
-              </Grid>
-              <Grid item xs={6}>
-                <CardActions className={classes.completed}>
-                  <FormGroup row>
-                    <FormControlLabel
-                      control={
-                        <CustomSwitch
-                          checked={completed}
-                          onChange={handleCompleted}
-                          name='completed'
-                          size='normal'
-                          color='primary'
-                        />
-                      }
-                      label='Completed'
-                    />
-                  </FormGroup>
-                </CardActions>
-              </Grid>
-            </Grid>
+            <div className={classes.bottomContainer}>
+              <CardActions>
+                <Button
+                  className={classes.yesBtn}
+                  onClick={handleAccept}
+                  variant='contained'
+                >
+                  Yes
+                </Button>
+                <Button
+                  className={classes.noBtn}
+                  onClick={handleDecline}
+                  variant='contained'
+                >
+                  No
+                </Button>
+                <Button
+                  className={classes.deleteBtn}
+                  onClick={handleDelete}
+                  variant='contained'
+                  color='secondary'
+                >
+                  Delete
+                </Button>
+              </CardActions>
+            </div>
           </div>
         </Card>
       )}
@@ -278,9 +272,9 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     position: 'absolute',
+    backgroundColor: '#FFF',
     width: '80vw',
     overflow: 'auto',
-    // backgroundColor: '#F7FFF2',
     boxShadow: theme.shadows[5],
     padding: '1rem'
   },
@@ -300,11 +294,11 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   deleteBtn: {
-    backgroundColor: '#65B5B4',
+    backgroundColor: '#8C8C8C',
     color: '#fff',
     margin: '1rem',
     '&:hover': {
-      backgroundColor: '#579C9A'
+      backgroundColor: '#737373'
     }
   },
   noBtn: {
@@ -323,15 +317,17 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: '#0E64B3',
     color: '#fff',
     '&:hover': {
-      backgroundColor: '#0C5599'
+      backgroundColor: '#0C5599',
+      textDecoration: 'none'
     }
   },
   iconContainer: {
     margin: '3rem 0'
   },
-  completed: {
-    float: 'right',
-    marginRight: '1rem'
+  bottomContainer: {
+    display: 'flex',
+    justifyContent: 'space-around',
+    alignItems: 'center'
   }
 }));
 

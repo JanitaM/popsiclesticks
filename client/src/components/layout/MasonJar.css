@@ -1,6 +1,6 @@
 .main-container {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
   text-align: center;
   margin: 0 1rem;
@@ -19,6 +19,8 @@
 .btn {
   border-radius: 30px;
   padding: 20px 60px;
+  cursor: -webkit-grab;
+  cursor: grab;
 }
 
 .btn:hover {

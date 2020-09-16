@@ -15,7 +15,7 @@ function convertImg(binArr) {
   return imgUrl;
 }
 
-const MasonJar = ({ signedInUser }) => {
+const MasonJar = ({ signedInUser, getCompletedIdeas }) => {
   const classes = useStyles();
   const [username, setUsername] = useState('');
   const [token, setToken] = useState('');
@@ -138,6 +138,7 @@ const MasonJar = ({ signedInUser }) => {
             signedInUser={signedInUser}
             handleClose={handleClose}
             randomIdea={randomIdea}
+            getCompletedIdeas={getCompletedIdeas}
           />
         </Modal>
       </div>

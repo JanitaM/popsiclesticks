@@ -43,9 +43,6 @@ const Landing = () => {
           </span>
           " you'll find creative ideas of keeping a bucket list.
         </Typography>
-        <Typography variant='body1' className={classes.whatIsBody}>
-          But technology rules and ...{' '}
-        </Typography>
         <p className={classes.whatIsBody}>
           Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ex, alias.
           Tempore, enim nemo! Culpa, dicta esse hic soluta non eaqu Lorem ipsum,

@@ -2,11 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Storage } from 'aws-amplify';
 import {
   Button,
+  FormGroup,
+  FormControlLabel,
   makeStyles,
   TextField,
   Typography,
   Input,
-  Divider
+  Divider,
+  Switch,
+  withStyles
 } from '@material-ui/core';
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
@@ -21,6 +25,20 @@ function convertImg(binArr) {
   let imgUrl = urlCreator.createObjectURL(blob);
   return imgUrl;
 }
+
+const CustomSwitch = withStyles({
+  switchBase: {
+    color: '#E8471E',
+    '&$checked': {
+      color: '#A83316'
+    },
+    '&$checked + $track': {
+      backgroundColor: '#A83316'
+    }
+  },
+  checked: {},
+  track: {}
+})(Switch);
 
 const EditIdeaModal = ({
   ideaToEdit,
@@ -41,6 +59,12 @@ const EditIdeaModal = ({
   const handleWeather = (e, newWeather) => {
     setUpdatedInfo({ ...updatedInfo, weather: newWeather });
   };
+
+  const [completed, setCompleted] = useState(false);
+  const handleCompleted = (event) => {
+    setCompleted(!completed);
+  };
+  console.log(completed);
 
   const [updatedInfo, setUpdatedInfo] = useState({
     id: '',
@@ -226,7 +250,6 @@ const EditIdeaModal = ({
       <Typography variant='h4' component='h1' className={classes.title}>
         Update This Idea
       </Typography>
-
       <form className={classes.formContainer} autoComplete='off'>
         <TextField
           required
@@ -304,6 +327,7 @@ const EditIdeaModal = ({
             />
           </ToggleButton>
         </ToggleButtonGroup>
+        <Divider />
         <ToggleButtonGroup
           name='indoor_outdoor'
           value={indoor_outdoor}
@@ -333,6 +357,7 @@ const EditIdeaModal = ({
             />
           </ToggleButton>
         </ToggleButtonGroup>
+        <Divider />
         <ToggleButtonGroup
           name='weather'
           value={weather}
@@ -415,6 +440,23 @@ const EditIdeaModal = ({
             </Button>
           </div>
         </div>
+        <Divider />
+        <div className={classes.completed}>
+          <FormGroup row>
+            <FormControlLabel
+              control={
+                <CustomSwitch
+                  checked={completed}
+                  onChange={handleCompleted}
+                  name='completed'
+                  size='normal'
+                  color='primary'
+                />
+              }
+              label='Completed'
+            />
+          </FormGroup>
+        </div>
       </form>
       <Divider />
       <div className={classes.updateDeleteBtns}>
@@ -442,7 +484,6 @@ const EditIdeaModal = ({
 const useStyles = makeStyles({
   container: {
     textAlign: 'center',
-    // backgroundColor: '#F7FFF2',
     minWidth: '600px',
     width: '100%',
     margin: '0 auto'
@@ -471,18 +512,22 @@ const useStyles = makeStyles({
     display: 'none'
   },
   uploadBtn: {
-    backgroundColor: '#E75734',
-    color: '#fff',
+    backgroundColor: '#fff',
+    border: '2px solid #E75734',
+    color: '#000',
     '&:hover': {
-      backgroundColor: '#CF4F30'
+      backgroundColor: '#fff',
+      border: '2px solid #CF4F30'
     }
   },
   deleteBtn: {
-    backgroundColor: '#65B5B4',
-    color: '#fff',
+    backgroundColor: '#fff',
+    border: '2px solid #65B5B4',
+    color: '#000',
     margin: '1rem',
     '&:hover': {
-      backgroundColor: '#579C9A'
+      backgroundColor: '#fff',
+      border: '2px solid #737373'
     }
   },
   image: {
@@ -508,10 +553,10 @@ const useStyles = makeStyles({
     margin: '1rem auto'
   },
   deleteIdeaBtn: {
-    backgroundColor: '#147E9C',
+    backgroundColor: '#8C8C8C',
     color: '#fff',
     '&:hover': {
-      backgroundColor: '#116A82'
+      backgroundColor: '#737373'
     }
   },
   updateIdeaBtn: {
@@ -520,6 +565,9 @@ const useStyles = makeStyles({
     '&:hover': {
       backgroundColor: '#8F2B13'
     }
+  },
+  completed: {
+    margin: '1rem auto'
   }
 });
 
