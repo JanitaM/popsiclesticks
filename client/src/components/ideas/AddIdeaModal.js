@@ -28,6 +28,7 @@ export default function AddIdeaModal({ signedInUser }) {
 
   const handleClose = () => {
     setOpen(false);
+    setIdeaForm({});
   };
 
   const [ideaForm, setIdeaForm] = useState({

@@ -79,21 +79,12 @@ const DisplayRandomIdea = ({
 
   useEffect(() => {
     (async () => {
-      if (await randomIdea.idea.cost) {
-        getCostImg();
-      } else {
-        return;
-      }
-      if (await randomIdea.idea.indoor_outdoor) {
+      if (randomIdea.idea && randomIdea.idea.cost) getCostImg();
+
+      if (randomIdea.idea && randomIdea.idea.indoor_outdoor)
         getIndoorOutdoorImg();
-      } else {
-        return;
-      }
-      if (await randomIdea.idea.weather) {
-        getWeatherImg();
-      } else {
-        return;
-      }
+
+      if (randomIdea.idea && randomIdea.idea.weather) getWeatherImg();
     })();
   }, [randomIdea]);
 
@@ -104,7 +95,7 @@ const DisplayRandomIdea = ({
     try {
       const res = await axios({
         method: 'post',
-        url: `http://localhost:4000/complete`,
+        url: `http://localhost:4000/completed`,
         headers: {
           'Content-Type': 'application/json'
         },
@@ -112,7 +103,7 @@ const DisplayRandomIdea = ({
           email: username,
           token: token,
           id: randomIdea.idea.id,
-          isCompleted: true
+          isCompleted: 1
         }
       });
     } catch (error) {
@@ -121,7 +112,6 @@ const DisplayRandomIdea = ({
 
     handleClose();
     getCompletedIdeas();
-    alert('Go have fun!');
   };
 
   const handleDecline = (e) => {
@@ -155,7 +145,7 @@ const DisplayRandomIdea = ({
 
   return (
     <>
-      {!randomIdea.idea.title ? (
+      {!randomIdea.idea || !randomIdea.idea.title ? (
         <Preloader />
       ) : (
         <Card className={classes.paper}>

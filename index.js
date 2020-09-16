@@ -261,7 +261,7 @@ app.delete('/user', authorizeUser, async (request, response) => {
   }
 });
 
-// POST Idea Only
+// POST Idea
 app.post('/user/idea', authorizeUser, async (request, response) => {
   try {
     console.log('POST IDEA');
@@ -293,7 +293,7 @@ app.post('/user/idea', authorizeUser, async (request, response) => {
     );
     con.release();
 
-    console.log(queryIdeaResponse);
+    // console.log(queryIdeaResponse);
 
     response.status(200).send({ message: queryIdeaResponse });
   } catch (error) {
@@ -438,7 +438,7 @@ app.delete('/user/idea', authorizeUser, async (request, response) => {
   }
 });
 
-// GET Idea Pic - Needs to be POST to get uuid in
+// GET Idea Pic - Needs to be POST to get uuid in?
 app.post('/idea/pic', authorizeUser, async (request, response) => {
   console.log('GET IDEA PIC');
   // console.log(request.body.picUuid);
@@ -630,10 +630,10 @@ app.delete('/idea/pic', authorizeUser, async (request, response) => {
 });
 
 // POST Idea to Completed - Done
-app.post('/complete', authorizeUser, async (request, response) => {
+app.post('/completed', authorizeUser, async (request, response) => {
   try {
     console.log('POST IDEA TO COMPLETE');
-
+    console.log(request.body);
     const email = request.decodedToken.email;
 
     if (!email) {
@@ -668,12 +668,38 @@ app.get('/completedIdeas', authorizeUser, async (request, response) => {
 
     const con = await pool.getConnection();
     const recordset = await con.execute(
-      'SELECT title FROM popsicle_stick.idea INNER JOIN popsicle_stick.completed ON popsicle_stick.idea.id = popsicle_stick.completed.id WHERE popsicle_stick.idea.email=?',
+      'SELECT title FROM popsicle_stick.idea INNER JOIN popsicle_stick.completed ON popsicle_stick.idea.id = popsicle_stick.completed.id WHERE popsicle_stick.idea.email=? ORDER BY popsicle_stick.idea.title ASC ',
       [email]
     );
     con.release();
 
     // console.log(recordset[0]);
+
+    response.status(200).send({ message: recordset[0] });
+  } catch (error) {
+    console.log(error);
+    response.status(500).send({ error: error.message, message: error });
+  }
+});
+
+// GET One Completed Idea
+app.get('/completedIdea', authorizeUser, async (request, response) => {
+  try {
+    console.log('GET ONE COMPLETED IDEA');
+
+    const email = request.decodedToken.email;
+    if (!email) {
+      response.status(400).send({ message: 'access denied' });
+    }
+
+    const con = await pool.getConnection();
+    const recordset = await con.execute(
+      'SELECT * FROM popsicle_stick.completed WHERE id = ? AND email = ?',
+      [request.query.id, email]
+    );
+    con.release();
+    // console.log(recordset[0]);
+    console.log(recordset[0].isCompleted);
 
     response.status(200).send({ message: recordset[0] });
   } catch (error) {

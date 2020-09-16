@@ -74,9 +74,12 @@ const useStyles = makeStyles({
     display: 'none'
   },
   uploadBtn: {
-    backgroundColor: '#65B5B4',
+    backgroundColor: '#fff',
+    border: '2px solid #E75734',
+    color: '#000',
     '&:hover': {
-      backgroundColor: '#579C9A'
+      backgroundColor: '#fff',
+      border: '2px solid #CF4F30'
     }
   },
   image: {

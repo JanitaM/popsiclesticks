@@ -507,15 +507,13 @@ const Dashboard = () => {
                         >
                           {row.title}
                         </TableCell>
-                        <TableCell align='right'>{row.location}</TableCell>
-                        <TableCell align='right'>{row.description}</TableCell>
-                        <TableCell align='right'>{row.cost}</TableCell>
-                        <TableCell align='right'>
-                          {row.indoor_outdoor}
-                        </TableCell>
-                        <TableCell align='right'>{row.category}</TableCell>
-                        <TableCell align='right'>{row.weather}</TableCell>
-                        <TableCell align='right'>{row.url}</TableCell>
+                        <TableCell align='left'>{row.location}</TableCell>
+                        <TableCell align='left'>{row.description}</TableCell>
+                        <TableCell align='left'>{row.cost}</TableCell>
+                        <TableCell align='left'>{row.indoor_outdoor}</TableCell>
+                        <TableCell align='left'>{row.category}</TableCell>
+                        <TableCell align='left'>{row.weather}</TableCell>
+                        <TableCell align='left'>{row.url}</TableCell>
                       </TableRow>
                     );
                   })}

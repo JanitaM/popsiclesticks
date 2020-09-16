@@ -60,11 +60,13 @@ const EditIdeaModal = ({
     setUpdatedInfo({ ...updatedInfo, weather: newWeather });
   };
 
-  const [completed, setCompleted] = useState(false);
+  const [completedValue, setCompletedValue] = useState(undefined);
+  console.log(completedValue);
+
   const handleCompleted = (event) => {
-    setCompleted(!completed);
+    setCompletedValue(!completedValue);
+    // update the database
   };
-  console.log(completed);
 
   const [updatedInfo, setUpdatedInfo] = useState({
     id: '',
@@ -95,6 +97,7 @@ const EditIdeaModal = ({
     weather
   } = updatedInfo;
 
+  // GET the idea pic
   useEffect(() => {
     (async () => {
       const res = await axios({
@@ -121,6 +124,34 @@ const EditIdeaModal = ({
     })();
 
     setUpdatedInfo(ideaToEdit);
+  }, []);
+
+  // Check if the idea is in the completed table
+  useEffect(() => {
+    (async () => {
+      const res = await axios({
+        method: 'get',
+        url: `http://localhost:4000/completedIdea`,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        params: {
+          email: signedInUser.username,
+          token: signedInUser.token,
+          id: ideaToEdit.id
+        }
+      });
+      let response = await res.data.message[0];
+      console.log(response);
+
+      if (response === undefined) {
+        return setCompletedValue(false);
+      } else if (response !== 'undefined') {
+        if (response.isCompleted === 1) {
+          return setCompletedValue(true);
+        }
+      }
+    })();
   }, []);
 
   const onChange = (e) => {
@@ -446,7 +477,7 @@ const EditIdeaModal = ({
             <FormControlLabel
               control={
                 <CustomSwitch
-                  checked={completed}
+                  checked={completedValue ? completedValue : false}
                   onChange={handleCompleted}
                   name='completed'
                   size='normal'
