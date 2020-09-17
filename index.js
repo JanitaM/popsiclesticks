@@ -668,11 +668,10 @@ app.get('/completedIdeas', authorizeUser, async (request, response) => {
 
     const con = await pool.getConnection();
     const recordset = await con.execute(
-      'SELECT title FROM popsicle_stick.idea INNER JOIN popsicle_stick.completed ON popsicle_stick.idea.id = popsicle_stick.completed.id WHERE popsicle_stick.idea.email=? ORDER BY popsicle_stick.idea.title ASC ',
+      'SELECT title FROM popsicle_stick.idea INNER JOIN popsicle_stick.completed ON popsicle_stick.idea.id = popsicle_stick.completed.id WHERE popsicle_stick.completed.isCompleted = "1" AND popsicle_stick.idea.email = ? ORDER BY popsicle_stick.idea.title ASC ',
       [email]
     );
     con.release();
-
     // console.log(recordset[0]);
 
     response.status(200).send({ message: recordset[0] });
@@ -682,7 +681,7 @@ app.get('/completedIdeas', authorizeUser, async (request, response) => {
   }
 });
 
-// GET One Completed Idea
+// GET One Completed Idea - Done
 app.get('/completedIdea', authorizeUser, async (request, response) => {
   try {
     console.log('GET ONE COMPLETED IDEA');
@@ -698,10 +697,40 @@ app.get('/completedIdea', authorizeUser, async (request, response) => {
       [request.query.id, email]
     );
     con.release();
-    // console.log(recordset[0]);
-    console.log(recordset[0].isCompleted);
+    // console.log(recordset[0].isCompleted);
 
     response.status(200).send({ message: recordset[0] });
+  } catch (error) {
+    console.log(error);
+    response.status(500).send({ error: error.message, message: error });
+  }
+});
+
+// UPDATE Completed Status - Done
+app.put('/completedIdea', authorizeUser, async (request, response) => {
+  try {
+    console.log('UPDATE ONE PIC');
+
+    if (request.body.isCompleted === true) {
+      request.body.isCompleted = 1;
+    } else {
+      request.body.isCompleted = 0;
+    }
+
+    const email = request.decodedToken.email;
+    if (!email) {
+      response.status(400).send({ message: 'access denied' });
+    }
+
+    const con = await pool.getConnection();
+    const queryResponse = await con.execute(
+      'UPDATE popsicle_stick.completed SET isCompleted = ? WHERE id = ? AND email = ?',
+      [request.body.isCompleted, request.body.id, request.body.email]
+    );
+    con.release();
+    console.log(queryResponse);
+
+    response.status(200).send({ message: queryResponse });
   } catch (error) {
     console.log(error);
     response.status(500).send({ error: error.message, message: error });

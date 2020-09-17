@@ -17,11 +17,14 @@ const Landing = () => {
       </Typography> */}
       <div className={classes.heroImg2}>
         <div className={classes.heroText2}>
-          <Typography variant='h3'>2nd hero</Typography>
+          <Typography variant='h3'>
+            Choose your next adventure, date night, book, resturant, country,
+            etc.
+          </Typography>
         </div>
       </div>
 
-      <div className={classes.bodyContainer}>
+      {/* <div className={classes.bodyContainer}>
         <Typography variant='h4' className={classes.whatIsTitle}>
           What Is Popsicle Sticks
         </Typography>
@@ -86,7 +89,7 @@ const Landing = () => {
           ipsum, dolor sit amet consectetur adipisicing elit. Ex, alias.
           Tempore, enim nemo! Culpa, dicta esse hic soluta non eaqu
         </p>
-      </div>
+      </div> */}
     </div>
   );
 };
@@ -129,6 +132,7 @@ const useStyles = makeStyles({
     backgroundBlendMode: 'overlay'
   },
   heroText2: {
+    color: '#000',
     textAlign: 'center',
     position: 'absolute',
     top: 'calc(100vh-30%)',

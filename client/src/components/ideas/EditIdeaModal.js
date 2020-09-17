@@ -64,8 +64,31 @@ const EditIdeaModal = ({
   console.log(completedValue);
 
   const handleCompleted = (event) => {
+    event.preventDefault();
+
     setCompletedValue(!completedValue);
-    // update the database
+    updateCompleted();
+  };
+
+  const updateCompleted = async () => {
+    // console.log(completedValue);
+    try {
+      const res = await axios({
+        method: 'put',
+        url: `http://localhost:4000/completedIdea`,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        data: {
+          email: signedInUser.username,
+          token: signedInUser.token,
+          id: ideaToEdit.id,
+          isCompleted: !completedValue
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const [updatedInfo, setUpdatedInfo] = useState({
@@ -126,7 +149,6 @@ const EditIdeaModal = ({
     setUpdatedInfo(ideaToEdit);
   }, []);
 
-  // Check if the idea is in the completed table
   useEffect(() => {
     (async () => {
       const res = await axios({

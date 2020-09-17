@@ -205,9 +205,6 @@ const EnhancedTableToolbar = (props) => {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
   const handleClose = () => {
     setIdeaToEdit({});
     setSelected([]);
