@@ -200,7 +200,7 @@ const EnhancedTableToolbar = (props) => {
     ideaToEdit,
     setIdeaToEdit
   } = props;
-  console.log('props', props);
+  // console.log('props', props);
 
   const theme = useTheme();
   const [open, setOpen] = useState(false);
@@ -441,100 +441,95 @@ const Dashboard = () => {
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
-  // console.log(rows);
-  if (rows.length === 0) {
-    return <Preloader />;
-  } else {
-    return (
-      <div className={classes.root}>
-        <Paper className={classes.paper}>
-          <EnhancedTableToolbar
-            numSelected={selected.length}
-            signedInUser={signedInUser}
-            selectedId={selectedId}
-            setSelected={setSelected}
-            getData={getData}
-            ideaToEdit={ideaToEdit}
-            setIdeaToEdit={setIdeaToEdit}
-          />
-          <TableContainer>
-            <Table
-              className={classes.table}
-              aria-labelledby='tableTitle'
-              size='medium'
-              aria-label='enhanced table'
-            >
-              <EnhancedTableHead
-                classes={classes}
-                numSelected={selected.length}
-                order={order}
-                orderBy={orderBy}
-                onSelectAllClick={handleSelectAllClick}
-                onRequestSort={handleRequestSort}
-                rowCount={rows.length}
-              />
-              <TableBody>
-                {stableSort(rows, getComparator(order, orderBy))
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row, index) => {
-                    const isItemSelected = isSelected(row.title);
-                    const labelId = `enhanced-table-checkbox-${index}`;
+  return (
+    <div className={classes.root}>
+      <Paper className={classes.paper}>
+        <EnhancedTableToolbar
+          numSelected={selected.length}
+          signedInUser={signedInUser}
+          selectedId={selectedId}
+          setSelected={setSelected}
+          getData={getData}
+          ideaToEdit={ideaToEdit}
+          setIdeaToEdit={setIdeaToEdit}
+        />
+        <TableContainer>
+          <Table
+            className={classes.table}
+            aria-labelledby='tableTitle'
+            size='medium'
+            aria-label='enhanced table'
+          >
+            <EnhancedTableHead
+              classes={classes}
+              numSelected={selected.length}
+              order={order}
+              orderBy={orderBy}
+              onSelectAllClick={handleSelectAllClick}
+              onRequestSort={handleRequestSort}
+              rowCount={rows.length}
+            />
+            <TableBody>
+              {stableSort(rows, getComparator(order, orderBy))
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, index) => {
+                  const isItemSelected = isSelected(row.title);
+                  const labelId = `enhanced-table-checkbox-${index}`;
 
-                    return (
-                      <TableRow
-                        hover
-                        onClick={(event) => handleClick(event, row)}
-                        role='checkbox'
-                        aria-checked={isItemSelected}
-                        tabIndex={-1}
-                        key={row.title}
-                        selected={isItemSelected}
+                  return (
+                    <TableRow
+                      hover
+                      onClick={(event) => handleClick(event, row)}
+                      role='checkbox'
+                      aria-checked={isItemSelected}
+                      tabIndex={-1}
+                      key={row.title}
+                      selected={isItemSelected}
+                    >
+                      <TableCell padding='checkbox'>
+                        <Checkbox
+                          checked={isItemSelected}
+                          inputProps={{ 'aria-labelledby': labelId }}
+                        />
+                      </TableCell>
+                      <TableCell
+                        component='th'
+                        id={labelId}
+                        scope='row'
+                        padding='none'
                       >
-                        <TableCell padding='checkbox'>
-                          <Checkbox
-                            checked={isItemSelected}
-                            inputProps={{ 'aria-labelledby': labelId }}
-                          />
-                        </TableCell>
-                        <TableCell
-                          component='th'
-                          id={labelId}
-                          scope='row'
-                          padding='none'
-                        >
-                          {row.title}
-                        </TableCell>
-                        <TableCell align='left'>{row.location}</TableCell>
-                        <TableCell align='left'>{row.description}</TableCell>
-                        <TableCell align='left'>{row.cost}</TableCell>
-                        <TableCell align='left'>{row.indoor_outdoor}</TableCell>
-                        <TableCell align='left'>{row.category}</TableCell>
-                        <TableCell align='left'>{row.weather}</TableCell>
-                        <TableCell align='left'>{row.url}</TableCell>
-                      </TableRow>
-                    );
-                  })}
-                {emptyRows > 0 && (
-                  <TableRow style={{ height: 53 * emptyRows }}>
-                    <TableCell colSpan={6} />
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component='div'
-            count={rows.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onChangePage={handleChangePage}
-            onChangeRowsPerPage={handleChangeRowsPerPage}
-          />
-        </Paper>
-      </div>
-    );
-  }
+                        {row.title}
+                      </TableCell>
+                      <TableCell align='left'>{row.location}</TableCell>
+                      <TableCell align='left'>{row.description}</TableCell>
+                      <TableCell align='left'>{row.cost}</TableCell>
+                      <TableCell align='left'>{row.indoor_outdoor}</TableCell>
+                      <TableCell align='left'>{row.category}</TableCell>
+                      <TableCell align='left'>{row.weather}</TableCell>
+                      <TableCell align='left'>{row.url}</TableCell>
+                    </TableRow>
+                  );
+                })}
+              {emptyRows > 0 && (
+                <TableRow style={{ height: 53 * emptyRows }}>
+                  <TableCell colSpan={6} />
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component='div'
+          count={rows.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onChangePage={handleChangePage}
+          onChangeRowsPerPage={handleChangeRowsPerPage}
+        />
+      </Paper>
+    </div>
+  );
 };
 
 const useStyles = makeStyles((theme) => ({

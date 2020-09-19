@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Storage } from 'aws-amplify';
 import {
   Button,
   FormGroup,
@@ -16,7 +15,6 @@ import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
-import Preloader from '../layout/Preloader';
 
 function convertImg(binArr) {
   let arrayBufferView = new Uint8Array(binArr);
@@ -48,7 +46,6 @@ const EditIdeaModal = ({
 }) => {
   console.log('ideaToEdit', ideaToEdit);
   const classes = useStyles();
-  const [open, setOpen] = useState(false);
 
   const handleCost = (e, newCost) => {
     setUpdatedInfo({ ...updatedInfo, cost: newCost });
@@ -121,34 +118,37 @@ const EditIdeaModal = ({
   } = updatedInfo;
 
   // GET the idea pic
+
   useEffect(() => {
-    (async () => {
-      const res = await axios({
-        method: 'post',
-        url: 'http://localhost:4000/idea/pic',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        data: {
-          email: signedInUser.username,
-          token: signedInUser.token,
-          picUuid: ideaToEdit.picture
-        }
-      });
-
-      let response = await res.data[0];
-      // console.log(response);
-      if (response) {
-        setIdeaToEdit({
-          ...ideaToEdit,
-          picture: convertImg(response.Body.data) //set to oldPicture to preserve uuid of old picture?
+    if (ideaToEdit.picture) {
+      (async () => {
+        const res = await axios({
+          method: 'post',
+          url: 'http://localhost:4000/idea/pic',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          data: {
+            email: signedInUser.username,
+            token: signedInUser.token,
+            picUuid: ideaToEdit.picture
+          }
         });
-      }
-    })();
 
+        let response = await res.data[0];
+        // console.log(response.Body.data);
+        if (response) {
+          setIdeaToEdit({
+            ...ideaToEdit,
+            picture: convertImg(response.Body.data) //blob of existing pic
+          });
+        }
+      })();
+    }
     setUpdatedInfo(ideaToEdit);
   }, []);
 
+  // Get the completed value
   useEffect(() => {
     (async () => {
       const res = await axios({
@@ -182,8 +182,9 @@ const EditIdeaModal = ({
   };
 
   const renderPic = () => {
+    console.log(ideaToEdit.picture);
+    console.log(convertIdeaPic);
     if (ideaToEdit.picture && !convertIdeaPic) {
-      //ideaToEdit.oldPicture?
       return ideaToEdit.picture;
     }
     if (convertIdeaPic) {
@@ -203,24 +204,59 @@ const EditIdeaModal = ({
     renderPic();
   };
 
-  const deleteIdeaPictureFromUI = (e) => {
-    setUpdatedInfo({ ...updatedInfo, convertIdeaPic: '', picture: undefined });
+  const handleDeletePicture = (e) => {
+    deletePictureFromS3();
+    setUpdatedInfo({
+      ...updatedInfo,
+      convertIdeaPic: '',
+      picture: undefined
+    });
     setIdeaToEdit({ ...ideaToEdit, picture: undefined });
     renderPic();
   };
-  // Delete Idea Pic from S3
-  {
-    /* https://docs.amplify.aws/lib/storage/remove/q/platform/js */
-  }
+
+  const deletePictureFromS3 = async (e) => {
+    try {
+      const res = await axios({
+        method: 'delete',
+        url: `http://localhost:4000/idea/pic`,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        data: {
+          email: signedInUser.username,
+          token: signedInUser.token,
+          uuid: updatedInfo.picture
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleUpdateIdea = (e) => {
     e.preventDefault();
     console.log('update idea');
     console.log(typeof updatedInfo.picture);
     console.log(typeof ideaToEdit.picture);
+    let pic;
 
     if (updatedInfo.title) {
       async function uploadToSql(myUuid) {
+        if (
+          typeof updatedInfo.picture === 'string' ||
+          typeof updatedInfo.picture === 'undefined'
+        ) {
+          console.log(
+            'you have the old pic or the pic was deleted, do nothing'
+          );
+          pic = null;
+        } else if (typeof updatedInfo.picture === 'object') {
+          console.log('you have a new pic');
+          // delete existing picture OR pull the latest picture on the displayRandomIdeaModal
+          // pic = updatedInfo.myUuid;
+        }
+
         return await axios({
           method: 'patch',
           url: `http://localhost:4000/user/idea`,
@@ -235,7 +271,8 @@ const EditIdeaModal = ({
             indoor_outdoor: updatedInfo.indoor_outdoor,
             category: updatedInfo.category,
             url: updatedInfo.url,
-            picture: updatedInfo.myUuid, //set this to undefined if type is string, else updatedInfo.myUuid
+            picture: pic,
+            // picture: updatedInfo.myUuid,
             weather: updatedInfo.weather
           },
           headers: {
@@ -246,28 +283,30 @@ const EditIdeaModal = ({
 
       try {
         if (signedInUser && typeof updatedInfo.picture === 'string') {
-          console.log('you have the old pic'); //old pic is still not a match with new pic
-          //       uploadToSql();
-          //       handleClose();
+          console.log('you have the old pic');
+          uploadToSql();
+          handleClose();
         } else if (signedInUser && typeof updatedInfo.picture === 'object') {
           console.log('you have a new pic'); //update everything
-          //       const myUuid = uuidv4();
-          //       const type = updatedInfo.picture.type.split('/'); //when there is an old picture (uuid), this fails
 
-          //       Storage.put(
-          //         `${signedInUser.username}/ideaPictures/${myUuid}.${type[1]}`,
-          //         updatedInfo.picture,
-          //         {
-          //           contentType: 'image/*'
-          //         }
-          //       )
-          //         .then((result) => console.log(result))
-          //         .then(() => uploadToSql(myUuid))
-          //         .then(() => handleClose())
-          //         .catch((error) => console.log(error));
-        } else if (signedInUser && typeof updatedInfo.picture === 'undefined') {
-          console.log('picture was deleted'); //need to remove from S3 storage and update idea. picture will be undefined/null
+          const myUuid = uuidv4();
+          // const type = updatedInfo.picture.type.split('/'); //when there is an old picture (uuid), this fails
+
+          // Storage.put(
+          //   `${signedInUser.username}/ideaPictures/${myUuid}.${type[1]}`,
+          //   updatedInfo.picture,
+          //   {
+          //     contentType: 'image/*'
+          //   }
+          // )
+          //   .then((result) => console.log(result))
+          //   .then(() => uploadToSql(myUuid))
+          //   .then(() => handleClose())
+          //   .catch((error) => console.log(error));
         }
+        // else if (signedInUser && typeof updatedInfo.picture === 'undefined') {
+        // console.log('picture was deleted'); //need to remove from S3 storage and update idea. picture will be undefined/null
+        // }
       } catch (error) {
         console.log(error);
       }
@@ -276,7 +315,8 @@ const EditIdeaModal = ({
     }
   };
 
-  const handleDelete = async (e) => {
+  // DELETE Idea
+  const handleDeleteIdea = async (e) => {
     e.preventDefault();
 
     try {
@@ -487,7 +527,7 @@ const EditIdeaModal = ({
               className={classes.deleteBtn}
               component='span'
               startIcon={<PhotoCamera />}
-              onClick={deleteIdeaPictureFromUI}
+              onClick={handleDeletePicture}
             >
               Delete Picture
             </Button>
@@ -524,7 +564,7 @@ const EditIdeaModal = ({
         <Button
           variant='outlined'
           color='primary'
-          onClick={handleDelete}
+          onClick={handleDeleteIdea}
           className={classes.deleteIdeaBtn}
         >
           Delete Idea

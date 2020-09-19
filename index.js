@@ -359,43 +359,43 @@ app.get('/user/idea', authorizeUser, async (request, response) => {
 app.patch('/user/idea', authorizeUser, async (request, response) => {
   try {
     console.log('UPDATE ONE IDEA');
-    console.log(request.body);
+    // console.log(request.body);
 
     const email = request.decodedToken.email;
     if (!email) {
       response.status(400).send({ message: 'access denied' });
     }
 
-    const selectQuery = await pool.execute(
-      'SELECT * FROM popsicle_stick.idea WHERE id = ? AND email = ?',
-      [request.body.id, email]
-    );
-    console.log(selectQuery[0][0]);
-    const selectedUser = selectQuery[0][0];
+    // const selectQuery = await pool.execute(
+    //   'SELECT * FROM popsicle_stick.idea WHERE id = ? AND email = ?',
+    //   [request.body.id, email]
+    // );
+    // console.log(selectQuery[0][0]);
+    // const selectedUser = selectQuery[0][0];
 
-    const con = await pool.getConnection();
-    const queryResponse = await con.execute(
-      'UPDATE popsicle_stick.idea SET title = ?, location = ?, description = ?, cost = ?, indoor_outdoor = ?, category = ?, url = ?, weather = ?, isCompleted = ? WHERE id = ? AND email = ?',
-      [
-        request.body.title,
-        request.body.location ? request.body.location : null,
-        request.body.description ? request.body.description : null,
-        request.body.cost ? request.body.cost : null,
-        request.body.indoor_outdoor ? request.body.indoor_outdoor : null,
-        request.body.category ? request.body.category : null,
-        request.body.url ? request.body.url : null,
-        request.body.picture ? request.body.picture : null,
-        request.body.weather ? request.body.weather : null,
-        request.body.isCompleted ? request.body.isCompleted : null,
-        request.body.id,
-        email
-      ]
-    );
-    con.release();
+    // const con = await pool.getConnection();
+    // const queryResponse = await con.execute(
+    //   'UPDATE popsicle_stick.idea SET title = ?, location = ?, description = ?, cost = ?, indoor_outdoor = ?, category = ?, url = ?, weather = ?, isCompleted = ? WHERE id = ? AND email = ?',
+    //   [
+    //     request.body.title,
+    //     request.body.location ? request.body.location : null,
+    //     request.body.description ? request.body.description : null,
+    //     request.body.cost ? request.body.cost : null,
+    //     request.body.indoor_outdoor ? request.body.indoor_outdoor : null,
+    //     request.body.category ? request.body.category : null,
+    //     request.body.url ? request.body.url : null,
+    //     request.body.picture ? request.body.picture : null,
+    //     request.body.weather ? request.body.weather : null,
+    //     request.body.isCompleted ? request.body.isCompleted : null,
+    //     request.body.id,
+    //     email
+    //   ]
+    // );
+    // con.release();
 
-    console.log(queryResponse);
+    // console.log(queryResponse);
 
-    response.status(200).send({ message: queryResponse });
+    // response.status(200).send({ message: queryResponse });
   } catch (error) {
     console.log(error);
     response.status(500).send({ error: error.message, message: error });
@@ -414,7 +414,22 @@ app.delete('/user/idea', authorizeUser, async (request, response) => {
     }
 
     const con = await pool.getConnection();
+    // If ideas are marked completed
+    if (typeof request.body.id === 'number') {
+      con.execute(
+        'DELETE FROM popsicle_stick.completed WHERE id = ? AND email = ?',
+        [request.body.id, email]
+      );
+    } else {
+      request.body.id.map((id) => {
+        con.execute(
+          'DELETE FROM popsicle_stick.completed WHERE id = ? AND email = ?',
+          [id, email]
+        );
+      });
+    }
 
+    // then delete from idea table
     if (typeof request.body.id === 'number') {
       con.execute(
         'DELETE FROM popsicle_stick.idea WHERE id = ? AND email = ?',
@@ -428,7 +443,6 @@ app.delete('/user/idea', authorizeUser, async (request, response) => {
         );
       });
     }
-
     con.release();
 
     response.status(200).send('success');
@@ -441,7 +455,7 @@ app.delete('/user/idea', authorizeUser, async (request, response) => {
 // GET Idea Pic - Needs to be POST to get uuid in?
 app.post('/idea/pic', authorizeUser, async (request, response) => {
   console.log('GET IDEA PIC');
-  // console.log(request.body.picUuid);
+  console.log(request.body.picUuid);
 
   const email = request.decodedToken.email;
   if (!email) {
@@ -455,7 +469,7 @@ app.post('/idea/pic', authorizeUser, async (request, response) => {
         Prefix: `public/${email}/ideaPictures`
       })
       .promise();
-    // console.log(s3Response.Contents);
+    console.log(s3Response.Contents);
 
     const matchingFile = [];
     s3Response.Contents.map((file) => {
@@ -463,7 +477,7 @@ app.post('/idea/pic', authorizeUser, async (request, response) => {
         return matchingFile.push(file);
       }
     });
-    // console.log('matchingfile', matchingFile);
+    console.log('matchingfile', matchingFile);
 
     try {
       const resolvedFile = await asyncMap(
@@ -476,7 +490,7 @@ app.post('/idea/pic', authorizeUser, async (request, response) => {
             .promise()
         )
       );
-      // console.log('resolvedFile', resolvedFile);
+      console.log('resolvedFile', resolvedFile);
 
       response.status(200).send(resolvedFile);
     } catch (error) {
@@ -488,141 +502,164 @@ app.post('/idea/pic', authorizeUser, async (request, response) => {
 });
 
 // POST Idea Pic
-app.post('/idea/pic', authorizeUser, async (request, response) => {
-  try {
-    console.log('POST PIC');
+// app.post('/idea/pic', authorizeUser, async (request, response) => {
+//   try {
+//     console.log('POST PIC');
 
-    const email = request.decodedToken.email;
-    if (!email) {
-      response.status(400).send({ message: 'access denied' });
-    }
+//     const email = request.decodedToken.email;
+//     if (!email) {
+//       response.status(400).send({ message: 'access denied' });
+//     }
 
-    if (!request.body.s3uuid || !request.body.idea) {
-      response.status(400).send({ message: 'missing s3uuid or email' });
-    }
-    const con = await pool.getConnection();
-    const queryResponse = await con.execute(
-      'INSERT INTO popsicle_stick.ideapic (s3uuid, email) VALUES (?, ?)',
-      [request.body.s3uuid, request.body.email]
-    );
-    con.release();
+//     if (!request.body.s3uuid || !request.body.idea) {
+//       response.status(400).send({ message: 'missing s3uuid or email' });
+//     }
+//     const con = await pool.getConnection();
+//     const queryResponse = await con.execute(
+//       'INSERT INTO popsicle_stick.ideapic (s3uuid, email) VALUES (?, ?)',
+//       [request.body.s3uuid, request.body.email]
+//     );
+//     con.release();
 
-    console.log(queryResponse);
+//     console.log(queryResponse);
 
-    response.status(200).send({ messge: queryResponse });
-  } catch (error) {
-    console.log(error);
-    response.status(500).send({ error: error.message, message: error });
-  }
-});
+//     response.status(200).send({ messge: queryResponse });
+//   } catch (error) {
+//     console.log(error);
+//     response.status(500).send({ error: error.message, message: error });
+//   }
+// });
 
 // GET All Idea Pics
-app.get('/idea/pics', authorizeUser, async (request, response) => {
-  try {
-    console.log('GET ALL PICS');
+// app.get('/idea/pics', authorizeUser, async (request, response) => {
+//   try {
+//     console.log('GET ALL PICS');
 
-    const email = request.decodedToken.email;
-    if (!email) {
-      response.status(400).send({ message: 'access denied' });
-    }
+//     const email = request.decodedToken.email;
+//     if (!email) {
+//       response.status(400).send({ message: 'access denied' });
+//     }
 
-    const con = await pool.getConnection();
-    const recordset = await con.query('SELECT * FROM popsicle_stick.ideapic');
-    con.release();
+//     const con = await pool.getConnection();
+//     const recordset = await con.query('SELECT * FROM popsicle_stick.ideapic');
+//     con.release();
 
-    console.log(recordset[0]);
+//     console.log(recordset[0]);
 
-    response.status(200).send({ message: recordset[0] });
-  } catch (error) {
-    console.log(error);
-    response.status(500).send({ error: error.message, message: error });
-  }
-});
+//     response.status(200).send({ message: recordset[0] });
+//   } catch (error) {
+//     console.log(error);
+//     response.status(500).send({ error: error.message, message: error });
+//   }
+// });
 
 // GET One Idea Pic
-app.get('/idea/pic', authorizeUser, async (request, response) => {
-  try {
-    console.log('GET ONE PIC');
+// app.get('/idea/pic', authorizeUser, async (request, response) => {
+//   try {
+//     console.log('GET ONE PIC');
 
-    const email = request.decodedToken.email;
-    if (!email) {
-      response.status(400).send({ message: 'access denied' });
-    }
+//     const email = request.decodedToken.email;
+//     if (!email) {
+//       response.status(400).send({ message: 'access denied' });
+//     }
 
-    const con = await pool.getConnection();
-    const recordset = await con.execute(
-      'SELECT * FROM popsicle_stick.ideapic WHERE s3uuid = ? AND email = ?',
-      [request.body.s3uuid, request.body.email]
-    );
-    con.release();
+//     const con = await pool.getConnection();
+//     const recordset = await con.execute(
+//       'SELECT * FROM popsicle_stick.ideapic WHERE s3uuid = ? AND email = ?',
+//       [request.body.s3uuid, request.body.email]
+//     );
+//     con.release();
 
-    console.log(recordset[0]);
+//     console.log(recordset[0]);
 
-    response.status(200).send({ message: recordset[0] });
-  } catch (error) {
-    console.log(error);
-    response.status(500).send({ error: error.message, message: error });
-  }
-});
+//     response.status(200).send({ message: recordset[0] });
+//   } catch (error) {
+//     console.log(error);
+//     response.status(500).send({ error: error.message, message: error });
+//   }
+// });
 
 // UPDATE Idea Pic
-app.put('/idea/pic', authorizeUser, async (request, response) => {
-  try {
-    console.log('UPDATE ONE PIC');
+// app.put('/idea/pic', authorizeUser, async (request, response) => {
+//   try {
+//     console.log('UPDATE ONE PIC');
 
-    const email = request.decodedToken.email;
-    if (!email) {
-      response.status(400).send({ message: 'access denied' });
-    }
+//     const email = request.decodedToken.email;
+//     if (!email) {
+//       response.status(400).send({ message: 'access denied' });
+//     }
 
-    const selectQuery = await pool.execute(
-      'SELECT * FROM popsicle_stick.ideapic WHERE s3uuid = ? AND email = ?',
-      [request.body.s3uuid, request.body.email]
-    );
+//     const selectQuery = await pool.execute(
+//       'SELECT * FROM popsicle_stick.ideapic WHERE s3uuid = ? AND email = ?',
+//       [request.body.s3uuid, request.body.email]
+//     );
 
-    console.log(selectQuery[0][0]);
+//     console.log(selectQuery[0][0]);
 
-    const selectedUser = selectQuery[0][0];
-    const con = await pool.getConnection();
-    const queryResponse = await con.execute(
-      'UPDATE popsicle_stick.ideapic SET s3uuid = ? WHERE s3uuid = ? AND email = ?',
-      [
-        request.body.s3uuid ? request.body.s3uuid : selectedUser.s3uuid,
-        request.body.s3uuid,
-        request.body.email
-      ]
-    );
-    con.release();
+//     const selectedUser = selectQuery[0][0];
+//     const con = await pool.getConnection();
+//     const queryResponse = await con.execute(
+//       'UPDATE popsicle_stick.ideapic SET s3uuid = ? WHERE s3uuid = ? AND email = ?',
+//       [
+//         request.body.s3uuid ? request.body.s3uuid : selectedUser.s3uuid,
+//         request.body.s3uuid,
+//         request.body.email
+//       ]
+//     );
+//     con.release();
 
-    console.log(queryResponse);
+//     console.log(queryResponse);
 
-    response.status(200).send({ message: queryResponse });
-  } catch (error) {
-    console.log(error);
-    response.status(500).send({ error: error.message, message: error });
-  }
-});
+//     response.status(200).send({ message: queryResponse });
+//   } catch (error) {
+//     console.log(error);
+//     response.status(500).send({ error: error.message, message: error });
+//   }
+// });
 
 // DELETE Idea Pic
 app.delete('/idea/pic', authorizeUser, async (request, response) => {
   try {
     console.log('DELETE A PIC');
+    // console.log(request.body);
 
     const email = request.decodedToken.email;
     if (!email) {
       response.status(400).send({ message: 'access denied' });
     }
 
-    const con = await pool.getConnection();
-    const recordset = await con.execute(
-      'DELETE FROM popsicle_stick.ideapic WHERE s3uuid = ? AND email = ?',
-      [request.body.s3uuid, request.body.email]
-    );
-    con.release();
+    // Get the file type
+    const s3Response = await s3
+      .listObjectsV2({
+        Bucket: bucket,
+        Prefix: `public/${email}/ideaPictures`
+      })
+      .promise();
+    // console.log('s3Res', s3Response.Contents);
 
-    console.log(recordset[0]);
+    const matchingFile = [];
+    s3Response.Contents.map((file) => {
+      if (file.Key.includes(request.body.uuid)) {
+        return matchingFile.push(file);
+      }
+    });
+    // console.log('matchFileKey', matchingFile[0].Key);
+    let fileName = matchingFile[0].Key;
+    let type = fileName.split('.');
+    // console.log(type[2]);
 
-    response.status(200).send({ message: recordset[0] });
+    // Delete the pic
+    var params = {
+      Bucket: bucket,
+      Key: `public/${email}/ideaPictures/${request.body.uuid}.${type[2]}`
+    };
+    s3.deleteObject(params, function (err, data) {
+      if (err) {
+        console.log('err', err.stack);
+      } else {
+        console.log('succes', data);
+      }
+    });
   } catch (error) {
     console.log(error);
     response.status(500).send({ error: error.message, message: error });

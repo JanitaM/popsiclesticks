@@ -30,7 +30,6 @@ const Step3 = ({ ideaForm, setIdeaForm }) => {
             accept='image/*'
             className={classes.uploadInput}
             id='upload-btn'
-            multiple
             type='file'
             name='picture'
             label='picture'

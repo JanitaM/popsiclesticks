@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from '@reach/router';
-import { useMediaQuery, Fab } from '@material-ui/core';
+import { Fab } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import { useTheme, makeStyles } from '@material-ui/core/styles';
 
@@ -13,7 +13,6 @@ const useStyles = makeStyles((theme) => ({
 
 export default function EditIdea() {
   const classes = useStyles();
-  const theme = useTheme();
 
   return (
     <div>

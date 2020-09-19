@@ -126,8 +126,8 @@ const Register = () => {
                 accept='image/*'
                 className={classes.uploadInput}
                 id='upload-btn'
-                multiple
                 type='file'
+                accept='image/png, image/jpeg'
                 name='profilepic'
                 label='profilepic'
                 onChange={(e) => onChange(e)}
