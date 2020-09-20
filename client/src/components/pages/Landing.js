@@ -20,7 +20,7 @@ const Landing = () => {
       <div className={classes.heroImg3}>
         <div className={classes.heroText3}>
           <Typography variant='h3'>
-            Your next adventure, date night, book, restaurant, country...
+            Your next adventure, date night, book...
           </Typography>
         </div>
       </div>
@@ -95,18 +95,6 @@ const useStyles = makeStyles({
     left: '75%',
     transform: 'translate(-50%, -50%)',
     width: '450px'
-  },
-  bodyContainer: {
-    maxWidth: '90vw',
-    margin: '0 auto'
-  },
-  whatIsTitle: {
-    marginTop: '2rem',
-    textAlign: 'center'
-  },
-  whatIsBody: {
-    marginTop: '1rem',
-    textAlign: 'center'
   }
 });
 

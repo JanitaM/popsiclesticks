@@ -10,7 +10,6 @@ import axios from 'axios';
 const Home = ({ signedInUser }) => {
   const classes = useStyles();
   const [completedIdeas, setCompletedIdeas] = useState([]);
-  console.log(completedIdeas);
 
   useEffect(() => {
     getCompletedIdeas();

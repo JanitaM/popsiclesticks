@@ -295,8 +295,7 @@ const EditIdeaModal = ({
           headers: {
             'Content-Type': 'application/json'
           }
-        });
-        handleClose();
+        }).then(() => handleClose());
       }
 
       try {
@@ -515,7 +514,7 @@ const EditIdeaModal = ({
           className={classes.m1}
         />
         <div className={classes.imageContainer}>
-          <img className={classes.image} src={renderPic()} alt='idea picture' />
+          <img className={classes.image} src={renderPic()} alt='idea' />
           <div className={classes.imageBtnContainer}>
             <Input
               accept='image/*'

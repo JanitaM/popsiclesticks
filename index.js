@@ -37,9 +37,6 @@ const pool = mysql.createPool({
   password: process.env.AWS_PASSWORD
 });
 
-// const jwtIdToken =
-//   '"eyJraWQiOiI5WkZSQlVDU2JrUnpzbWxZZHBYenEzdCtTK0hac2hnYzFLXC9DQkViRlBjST0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI2YmFkY2M5Mi04MjJhLTRmYWYtYTQ4ZS0wOTgzM2NjYWVkZWUiLCJhdWQiOiI0ZzhvbnMwZ25kbWprNGQ0dXVnZmFmMzZiYiIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJldmVudF9pZCI6ImQ1NWM4ODc4LWFmYjgtNDI4OC1hZTk4LWY4OTFhMGEzZmI1MyIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNTk5MzM2MTQ5LCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0xLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMV9WcDVnNW1qbEwiLCJjb2duaXRvOnVzZXJuYW1lIjoianZtc3VyZnNAZ21haWwuY29tIiwiZXhwIjoxNTk5MzM5NzQ5LCJpYXQiOjE1OTkzMzYxNTAsImVtYWlsIjoianZtc3VyZnNAZ21haWwuY29tIn0.H7Hyp-XQgdCs_A1VYdU49ajCrPRBDQ1IbvzYL02wUWhG7Hp4r4OCImrGW-CSL1DKIWjVJLXzTZ8TjRYy2WCnTEDN77vTGA0yZt5sjXdAUlLGsKgs1GyusVnYreyej38z3r6IaZrb6AQN6Z6klOEdgG8zonywi6ZndFcviUXUKWmiyFIr84iw33tXC845PItjjhn-OyGIbAfPYUZAzX5CDOLt_cftfR33wVxiCcLA3vhZNIMPP8vrJgYnDw-UjVVd5msVJeQW-VAXsbR-zeXKCbvv1DMpQFLV-kehxV7wH1yaqlvMSGIdqDKvoX5OJinD1RFsW85j0b9AYVTYsDp4OQ"';
-
 const jwks = {
   keys: [
     {
@@ -331,11 +328,11 @@ app.get('/user/idea', authorizeUser, async (request, response) => {
   }
 });
 
-// UPDATE Idea
+// UPDATE Idea - Done
 app.put('/user/idea', authorizeUser, async (request, response) => {
   try {
     console.log('UPDATE ONE IDEA');
-    console.log(request.body);
+    // console.log('rb', request.body);
 
     const email = request.decodedToken.email;
     if (!email) {
@@ -346,12 +343,12 @@ app.put('/user/idea', authorizeUser, async (request, response) => {
       'SELECT * FROM popsicle_stick.idea WHERE id = ? AND email = ?',
       [request.body.id, email]
     );
-    console.log('existing info', selectQuery[0][0]);
+    // console.log('existing info', selectQuery[0][0]);
     const selectedUser = selectQuery[0][0];
 
     const con = await pool.getConnection();
     const queryResponse = await con.execute(
-      'UPDATE popsicle_stick.idea SET title = ?, location = ?, description = ?, cost = ?, indoor_outdoor = ?, category = ?, url = ?, weather = ?, isCompleted = ? WHERE id = ? AND email = ?',
+      'UPDATE popsicle_stick.idea SET title = ?, location = ?, description = ?, cost = ?, indoor_outdoor = ?, category = ?, url = ?, picture = ?, weather = ? WHERE id = ? AND email = ?',
       [
         request.body.title,
         request.body.location ? request.body.location : selectedUser.location,
@@ -366,9 +363,6 @@ app.put('/user/idea', authorizeUser, async (request, response) => {
         request.body.url ? request.body.url : selectedUser.url,
         request.body.picture ? request.body.picture : selectedUser.picture,
         request.body.weather ? request.body.weather : selectedUser.weather,
-        request.body.isCompleted
-          ? request.body.isCompleted
-          : selectedUser.isCompleted,
         request.body.id,
         email
       ]
