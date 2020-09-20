@@ -15,6 +15,7 @@ import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
+import { Storage } from 'aws-amplify';
 
 function convertImg(binArr) {
   let arrayBufferView = new Uint8Array(binArr);
@@ -120,6 +121,7 @@ const EditIdeaModal = ({
     category: '',
     url: '',
     picture: undefined,
+    newPicture: undefined,
     convertIdeaPic: '',
     weather: ''
   });
@@ -135,6 +137,7 @@ const EditIdeaModal = ({
     category,
     url,
     picture,
+    newPicture,
     convertIdeaPic,
     weather
   } = updatedInfo;
@@ -218,7 +221,7 @@ const EditIdeaModal = ({
     setUpdatedInfo({
       ...updatedInfo,
       convertIdeaPic: URL.createObjectURL(e.target.files[0]),
-      picture: e.target.files[0]
+      newPicture: e.target.files[0]
     });
     renderPic();
   };
@@ -256,28 +259,24 @@ const EditIdeaModal = ({
   const handleUpdateIdea = (e) => {
     e.preventDefault();
     console.log('update idea');
-    console.log(typeof updatedInfo.picture);
-    console.log(typeof ideaToEdit.picture);
-    let pic;
 
     if (updatedInfo.title) {
       async function uploadToSql(myUuid) {
-        if (
-          typeof updatedInfo.picture === 'string' ||
-          typeof updatedInfo.picture === 'undefined'
-        ) {
-          console.log(
-            'you have the old pic or the pic was deleted, do nothing'
-          );
-          pic = null;
-        } else if (typeof updatedInfo.picture === 'object') {
-          console.log('you have a new pic');
-          // delete existing picture OR pull the latest picture on the displayRandomIdeaModal
-          // pic = updatedInfo.myUuid;
+        let pic;
+        console.log('newuuid', myUuid);
+        if (typeof updatedInfo.picture === 'string') {
+          pic = updatedInfo.picture;
         }
+        if (typeof updatedInfo.picture === 'undefined') {
+          pic = null;
+        }
+        if (typeof updatedInfo.newPicture === 'object') {
+          pic = myUuid;
+        }
+        console.log(pic);
 
         return await axios({
-          method: 'patch',
+          method: 'put',
           url: `http://localhost:4000/user/idea`,
           data: {
             email: signedInUser.email,
@@ -291,41 +290,36 @@ const EditIdeaModal = ({
             category: updatedInfo.category,
             url: updatedInfo.url,
             picture: pic,
-            // picture: updatedInfo.myUuid,
             weather: updatedInfo.weather
           },
           headers: {
             'Content-Type': 'application/json'
           }
         });
+        handleClose();
       }
 
       try {
-        if (signedInUser && typeof updatedInfo.picture === 'string') {
-          console.log('you have the old pic');
+        if (signedInUser && typeof updatedInfo.newPicture === 'undefined') {
           uploadToSql();
-          handleClose();
-        } else if (signedInUser && typeof updatedInfo.picture === 'object') {
-          console.log('you have a new pic'); //update everything
+        } else if (signedInUser && typeof updatedInfo.newPicture === 'object') {
+          deletePictureFromS3();
 
           const myUuid = uuidv4();
-          // const type = updatedInfo.picture.type.split('/'); //when there is an old picture (uuid), this fails
+          const type = updatedInfo.newPicture.type.split('/');
 
-          // Storage.put(
-          //   `${signedInUser.username}/ideaPictures/${myUuid}.${type[1]}`,
-          //   updatedInfo.picture,
-          //   {
-          //     contentType: 'image/*'
-          //   }
-          // )
-          //   .then((result) => console.log(result))
-          //   .then(() => uploadToSql(myUuid))
-          //   .then(() => handleClose())
-          //   .catch((error) => console.log(error));
+          Storage.put(
+            `${signedInUser.username}/ideaPictures/${myUuid}.${type[1]}`,
+            updatedInfo.newPicture,
+            {
+              contentType: 'image/*'
+            }
+          )
+            .then((result) => console.log(result))
+            .then(() => uploadToSql(myUuid))
+            .then(() => handleClose())
+            .catch((error) => console.log(error));
         }
-        // else if (signedInUser && typeof updatedInfo.picture === 'undefined') {
-        // console.log('picture was deleted'); //need to remove from S3 storage and update idea. picture will be undefined/null
-        // }
       } catch (error) {
         console.log(error);
       }

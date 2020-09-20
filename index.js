@@ -37,9 +37,8 @@ const pool = mysql.createPool({
   password: process.env.AWS_PASSWORD
 });
 
-// later comes from currentAuthenticatedUser-the one that says token_use: id
-const jwtIdToken =
-  '"eyJraWQiOiI5WkZSQlVDU2JrUnpzbWxZZHBYenEzdCtTK0hac2hnYzFLXC9DQkViRlBjST0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI2YmFkY2M5Mi04MjJhLTRmYWYtYTQ4ZS0wOTgzM2NjYWVkZWUiLCJhdWQiOiI0ZzhvbnMwZ25kbWprNGQ0dXVnZmFmMzZiYiIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJldmVudF9pZCI6ImQ1NWM4ODc4LWFmYjgtNDI4OC1hZTk4LWY4OTFhMGEzZmI1MyIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNTk5MzM2MTQ5LCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0xLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMV9WcDVnNW1qbEwiLCJjb2duaXRvOnVzZXJuYW1lIjoianZtc3VyZnNAZ21haWwuY29tIiwiZXhwIjoxNTk5MzM5NzQ5LCJpYXQiOjE1OTkzMzYxNTAsImVtYWlsIjoianZtc3VyZnNAZ21haWwuY29tIn0.H7Hyp-XQgdCs_A1VYdU49ajCrPRBDQ1IbvzYL02wUWhG7Hp4r4OCImrGW-CSL1DKIWjVJLXzTZ8TjRYy2WCnTEDN77vTGA0yZt5sjXdAUlLGsKgs1GyusVnYreyej38z3r6IaZrb6AQN6Z6klOEdgG8zonywi6ZndFcviUXUKWmiyFIr84iw33tXC845PItjjhn-OyGIbAfPYUZAzX5CDOLt_cftfR33wVxiCcLA3vhZNIMPP8vrJgYnDw-UjVVd5msVJeQW-VAXsbR-zeXKCbvv1DMpQFLV-kehxV7wH1yaqlvMSGIdqDKvoX5OJinD1RFsW85j0b9AYVTYsDp4OQ"';
+// const jwtIdToken =
+//   '"eyJraWQiOiI5WkZSQlVDU2JrUnpzbWxZZHBYenEzdCtTK0hac2hnYzFLXC9DQkViRlBjST0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI2YmFkY2M5Mi04MjJhLTRmYWYtYTQ4ZS0wOTgzM2NjYWVkZWUiLCJhdWQiOiI0ZzhvbnMwZ25kbWprNGQ0dXVnZmFmMzZiYiIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJldmVudF9pZCI6ImQ1NWM4ODc4LWFmYjgtNDI4OC1hZTk4LWY4OTFhMGEzZmI1MyIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNTk5MzM2MTQ5LCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0xLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMV9WcDVnNW1qbEwiLCJjb2duaXRvOnVzZXJuYW1lIjoianZtc3VyZnNAZ21haWwuY29tIiwiZXhwIjoxNTk5MzM5NzQ5LCJpYXQiOjE1OTkzMzYxNTAsImVtYWlsIjoianZtc3VyZnNAZ21haWwuY29tIn0.H7Hyp-XQgdCs_A1VYdU49ajCrPRBDQ1IbvzYL02wUWhG7Hp4r4OCImrGW-CSL1DKIWjVJLXzTZ8TjRYy2WCnTEDN77vTGA0yZt5sjXdAUlLGsKgs1GyusVnYreyej38z3r6IaZrb6AQN6Z6klOEdgG8zonywi6ZndFcviUXUKWmiyFIr84iw33tXC845PItjjhn-OyGIbAfPYUZAzX5CDOLt_cftfR33wVxiCcLA3vhZNIMPP8vrJgYnDw-UjVVd5msVJeQW-VAXsbR-zeXKCbvv1DMpQFLV-kehxV7wH1yaqlvMSGIdqDKvoX5OJinD1RFsW85j0b9AYVTYsDp4OQ"';
 
 const jwks = {
   keys: [
@@ -67,29 +66,6 @@ const jwks = {
 const jwkIdToken = jwks.keys[0];
 const jwkAccessToken = jwks.keys[1];
 const pem = jwkToPem(jwkIdToken);
-
-// GET All Users
-// app.get('/users', authorizeUser, async (request, response) => {
-//   try {
-//     console.log('GET ALL USERS');
-
-//     const email = request.decodedToken.email;
-//     if (!email) {
-//       response.status(400).send({ message: 'access denied' });
-//     }
-
-//     const con = await pool.getConnection();
-//     const recordset = await con.query('SELECT * FROM popsicle_stick.user');
-//     con.release();
-
-//     console.log(recordset[0]);
-
-//     response.status(200).send({ message: recordset[0] });
-//   } catch (error) {
-//     console.log(error);
-//     response.status(500).send({ error: error.message, message: error });
-//   }
-// });
 
 // POST User - Done
 app.post('/user', async (request, response) => {
@@ -121,32 +97,32 @@ app.post('/user', async (request, response) => {
 });
 
 // GET One User
-app.get('/user', authorizeUser, async (request, response) => {
-  try {
-    console.log('GET ONE USER');
+// app.get('/user', authorizeUser, async (request, response) => {
+//   try {
+//     console.log('GET ONE USER');
 
-    const email = request.decodedToken.email;
-    if (!email) {
-      response.status(400).send({ message: 'access denied' });
-    }
+//     const email = request.decodedToken.email;
+//     if (!email) {
+//       response.status(400).send({ message: 'access denied' });
+//     }
 
-    const con = await pool.getConnection();
-    const recordset = await con.execute(
-      'SELECT * FROM popsicle_stick.user WHERE email=?',
-      [email]
-    );
-    con.release();
+//     const con = await pool.getConnection();
+//     const recordset = await con.execute(
+//       'SELECT * FROM popsicle_stick.user WHERE email=?',
+//       [email]
+//     );
+//     con.release();
 
-    console.log(recordset[0]);
+//     console.log(recordset[0]);
 
-    response.status(200).send({ message: recordset[0] });
-  } catch (error) {
-    console.log(error);
-    response.status(500).send({ error: error.message, message: error });
-  }
-});
+//     response.status(200).send({ message: recordset[0] });
+//   } catch (error) {
+//     console.log(error);
+//     response.status(500).send({ error: error.message, message: error });
+//   }
+// });
 
-// GET User Profile Pic - Done
+// GET User Profile Pic From S3 - Done
 app.get('/user/profilepic', authorizeUser, async (request, response) => {
   console.log('GET USER PROFILE PIC');
 
@@ -196,72 +172,72 @@ app.get('/user/profilepic', authorizeUser, async (request, response) => {
 });
 
 // UPDATE User
-app.put('/user', authorizeUser, async (request, response) => {
-  try {
-    console.log('UPDATE ONE USER');
+// app.put('/user', authorizeUser, async (request, response) => {
+//   try {
+//     console.log('UPDATE ONE USER');
 
-    const email = request.decodedToken.email;
-    if (!email) {
-      response.status(400).send({ message: 'access denied' });
-    }
+//     const email = request.decodedToken.email;
+//     if (!email) {
+//       response.status(400).send({ message: 'access denied' });
+//     }
 
-    const selectQuery = await pool.execute(
-      'SELECT * FROM popsicle_stick.user WHERE email = ?',
-      [email]
-    );
+//     const selectQuery = await pool.execute(
+//       'SELECT * FROM popsicle_stick.user WHERE email = ?',
+//       [email]
+//     );
 
-    console.log(selectQuery[0][0]);
+//     console.log(selectQuery[0][0]);
 
-    const selectedUser = selectQuery[0][0];
-    const con = await pool.getConnection();
-    const queryResponse = await con.execute(
-      'UPDATE popsicle_stick.user SET email = ?, profilepic = ? WHERE email = ?',
-      [
-        email ? request.body.email : selectedUser.email,
-        request.body.profilepic
-          ? request.body.profilepic
-          : selectedUser.profilepic,
-        email
-      ]
-    );
-    con.release();
+//     const selectedUser = selectQuery[0][0];
+//     const con = await pool.getConnection();
+//     const queryResponse = await con.execute(
+//       'UPDATE popsicle_stick.user SET email = ?, profilepic = ? WHERE email = ?',
+//       [
+//         email ? request.body.email : selectedUser.email,
+//         request.body.profilepic
+//           ? request.body.profilepic
+//           : selectedUser.profilepic,
+//         email
+//       ]
+//     );
+//     con.release();
 
-    console.log(queryResponse);
+//     console.log(queryResponse);
 
-    response.status(200).send({ message: queryResponse });
-  } catch (error) {
-    console.log(error);
-    response.status(500).send({ error: error.message, message: error });
-  }
-});
+//     response.status(200).send({ message: queryResponse });
+//   } catch (error) {
+//     console.log(error);
+//     response.status(500).send({ error: error.message, message: error });
+//   }
+// });
 
 // DELETE User
-app.delete('/user', authorizeUser, async (request, response) => {
-  try {
-    console.log('DELETE USER');
+// app.delete('/user', authorizeUser, async (request, response) => {
+//   try {
+//     console.log('DELETE USER');
 
-    const email = request.decodedToken.email;
-    if (!email) {
-      response.status(400).send({ message: 'access denied' });
-    }
+//     const email = request.decodedToken.email;
+//     if (!email) {
+//       response.status(400).send({ message: 'access denied' });
+//     }
 
-    const con = await pool.getConnection();
-    const recordset = await con.execute(
-      'DELETE FROM popsicle_stick.user WHERE email = ?',
-      [email]
-    );
-    con.release();
+//     const con = await pool.getConnection();
+//     const recordset = await con.execute(
+//       'DELETE FROM popsicle_stick.user WHERE email = ?',
+//       [email]
+//     );
+//     con.release();
 
-    console.log(recordset[0]);
+//     console.log(recordset[0]);
 
-    response.status(200).send({ message: recordset[0] });
-  } catch (error) {
-    console.log(error);
-    response.status(500).send({ error: error.message, message: error });
-  }
-});
+//     response.status(200).send({ message: recordset[0] });
+//   } catch (error) {
+//     console.log(error);
+//     response.status(500).send({ error: error.message, message: error });
+//   }
+// });
 
-// POST Idea
+// POST Idea - Done
 app.post('/user/idea', authorizeUser, async (request, response) => {
   try {
     console.log('POST IDEA');
@@ -302,7 +278,7 @@ app.post('/user/idea', authorizeUser, async (request, response) => {
   }
 });
 
-// GET ALL Ideas by User
+// GET ALL Ideas by User - Done
 app.get('/user/ideas', authorizeUser, async (request, response) => {
   try {
     console.log('GET ALL IDEAS');
@@ -328,7 +304,7 @@ app.get('/user/ideas', authorizeUser, async (request, response) => {
   }
 });
 
-// GET One Idea
+// GET One Idea - Done
 app.get('/user/idea', authorizeUser, async (request, response) => {
   try {
     console.log('GET ONE IDEA');
@@ -356,46 +332,52 @@ app.get('/user/idea', authorizeUser, async (request, response) => {
 });
 
 // UPDATE Idea
-app.patch('/user/idea', authorizeUser, async (request, response) => {
+app.put('/user/idea', authorizeUser, async (request, response) => {
   try {
     console.log('UPDATE ONE IDEA');
-    // console.log(request.body);
+    console.log(request.body);
 
     const email = request.decodedToken.email;
     if (!email) {
       response.status(400).send({ message: 'access denied' });
     }
 
-    // const selectQuery = await pool.execute(
-    //   'SELECT * FROM popsicle_stick.idea WHERE id = ? AND email = ?',
-    //   [request.body.id, email]
-    // );
-    // console.log(selectQuery[0][0]);
-    // const selectedUser = selectQuery[0][0];
+    const selectQuery = await pool.execute(
+      'SELECT * FROM popsicle_stick.idea WHERE id = ? AND email = ?',
+      [request.body.id, email]
+    );
+    console.log('existing info', selectQuery[0][0]);
+    const selectedUser = selectQuery[0][0];
 
-    // const con = await pool.getConnection();
-    // const queryResponse = await con.execute(
-    //   'UPDATE popsicle_stick.idea SET title = ?, location = ?, description = ?, cost = ?, indoor_outdoor = ?, category = ?, url = ?, weather = ?, isCompleted = ? WHERE id = ? AND email = ?',
-    //   [
-    //     request.body.title,
-    //     request.body.location ? request.body.location : null,
-    //     request.body.description ? request.body.description : null,
-    //     request.body.cost ? request.body.cost : null,
-    //     request.body.indoor_outdoor ? request.body.indoor_outdoor : null,
-    //     request.body.category ? request.body.category : null,
-    //     request.body.url ? request.body.url : null,
-    //     request.body.picture ? request.body.picture : null,
-    //     request.body.weather ? request.body.weather : null,
-    //     request.body.isCompleted ? request.body.isCompleted : null,
-    //     request.body.id,
-    //     email
-    //   ]
-    // );
-    // con.release();
+    const con = await pool.getConnection();
+    const queryResponse = await con.execute(
+      'UPDATE popsicle_stick.idea SET title = ?, location = ?, description = ?, cost = ?, indoor_outdoor = ?, category = ?, url = ?, weather = ?, isCompleted = ? WHERE id = ? AND email = ?',
+      [
+        request.body.title,
+        request.body.location ? request.body.location : selectedUser.location,
+        request.body.description
+          ? request.body.description
+          : selectedUser.description,
+        request.body.cost ? request.body.cost : selectedUser.cost,
+        request.body.indoor_outdoor
+          ? request.body.indoor_outdoor
+          : selectedUser.indoor_outdoor,
+        request.body.category ? request.body.category : selectedUser.category,
+        request.body.url ? request.body.url : selectedUser.url,
+        request.body.picture ? request.body.picture : selectedUser.picture,
+        request.body.weather ? request.body.weather : selectedUser.weather,
+        request.body.isCompleted
+          ? request.body.isCompleted
+          : selectedUser.isCompleted,
+        request.body.id,
+        email
+      ]
+    );
+    con.release();
 
-    // console.log(queryResponse);
+    console.log(queryResponse);
 
-    // response.status(200).send({ message: queryResponse });
+    response.status(200).send({ message: queryResponse });
   } catch (error) {
     console.log(error);
     response.status(500).send({ error: error.message, message: error });
@@ -452,7 +434,7 @@ app.delete('/user/idea', authorizeUser, async (request, response) => {
   }
 });
 
-// GET Idea Pic - Needs to be POST to get uuid in?
+// GET Idea Pic From S3 - Needs to be POST to get uuid in?
 app.post('/idea/pic', authorizeUser, async (request, response) => {
   console.log('GET IDEA PIC');
 
@@ -499,123 +481,7 @@ app.post('/idea/pic', authorizeUser, async (request, response) => {
   getS3Data();
 });
 
-// POST Idea Pic
-// app.post('/idea/pic', authorizeUser, async (request, response) => {
-//   try {
-//     console.log('POST PIC');
-
-//     const email = request.decodedToken.email;
-//     if (!email) {
-//       response.status(400).send({ message: 'access denied' });
-//     }
-
-//     if (!request.body.s3uuid || !request.body.idea) {
-//       response.status(400).send({ message: 'missing s3uuid or email' });
-//     }
-//     const con = await pool.getConnection();
-//     const queryResponse = await con.execute(
-//       'INSERT INTO popsicle_stick.ideapic (s3uuid, email) VALUES (?, ?)',
-//       [request.body.s3uuid, request.body.email]
-//     );
-//     con.release();
-
-//     console.log(queryResponse);
-
-//     response.status(200).send({ messge: queryResponse });
-//   } catch (error) {
-//     console.log(error);
-//     response.status(500).send({ error: error.message, message: error });
-//   }
-// });
-
-// GET All Idea Pics
-// app.get('/idea/pics', authorizeUser, async (request, response) => {
-//   try {
-//     console.log('GET ALL PICS');
-
-//     const email = request.decodedToken.email;
-//     if (!email) {
-//       response.status(400).send({ message: 'access denied' });
-//     }
-
-//     const con = await pool.getConnection();
-//     const recordset = await con.query('SELECT * FROM popsicle_stick.ideapic');
-//     con.release();
-
-//     console.log(recordset[0]);
-
-//     response.status(200).send({ message: recordset[0] });
-//   } catch (error) {
-//     console.log(error);
-//     response.status(500).send({ error: error.message, message: error });
-//   }
-// });
-
-// GET One Idea Pic
-// app.get('/idea/pic', authorizeUser, async (request, response) => {
-//   try {
-//     console.log('GET ONE PIC');
-
-//     const email = request.decodedToken.email;
-//     if (!email) {
-//       response.status(400).send({ message: 'access denied' });
-//     }
-
-//     const con = await pool.getConnection();
-//     const recordset = await con.execute(
-//       'SELECT * FROM popsicle_stick.ideapic WHERE s3uuid = ? AND email = ?',
-//       [request.body.s3uuid, request.body.email]
-//     );
-//     con.release();
-
-//     console.log(recordset[0]);
-
-//     response.status(200).send({ message: recordset[0] });
-//   } catch (error) {
-//     console.log(error);
-//     response.status(500).send({ error: error.message, message: error });
-//   }
-// });
-
-// UPDATE Idea Pic
-// app.put('/idea/pic', authorizeUser, async (request, response) => {
-//   try {
-//     console.log('UPDATE ONE PIC');
-
-//     const email = request.decodedToken.email;
-//     if (!email) {
-//       response.status(400).send({ message: 'access denied' });
-//     }
-
-//     const selectQuery = await pool.execute(
-//       'SELECT * FROM popsicle_stick.ideapic WHERE s3uuid = ? AND email = ?',
-//       [request.body.s3uuid, request.body.email]
-//     );
-
-//     console.log(selectQuery[0][0]);
-
-//     const selectedUser = selectQuery[0][0];
-//     const con = await pool.getConnection();
-//     const queryResponse = await con.execute(
-//       'UPDATE popsicle_stick.ideapic SET s3uuid = ? WHERE s3uuid = ? AND email = ?',
-//       [
-//         request.body.s3uuid ? request.body.s3uuid : selectedUser.s3uuid,
-//         request.body.s3uuid,
-//         request.body.email
-//       ]
-//     );
-//     con.release();
-
-//     console.log(queryResponse);
-
-//     response.status(200).send({ message: queryResponse });
-//   } catch (error) {
-//     console.log(error);
-//     response.status(500).send({ error: error.message, message: error });
-//   }
-// });
-
-// DELETE Idea Pic
+// DELETE Idea Pic From S3
 app.delete('/idea/pic', authorizeUser, async (request, response) => {
   try {
     console.log('DELETE A PIC');
@@ -772,32 +638,7 @@ app.put('/completedIdea', authorizeUser, async (request, response) => {
   }
 });
 
-// GET Everything
-// app.get('/everything', authorizeUser, async (request, response) => {
-//   try {
-//     console.log('GET EVERYTHING');
-
-//     const email = request.decodedToken.email;
-//     if (!email) {
-//       response.status(400).send({ message: 'access denied' });
-//     }
-
-//     const con = await pool.getConnection();
-//     const queryResponse = await con.execute(
-//       'SELECT * FROM popsicle_stick.ideapic JOIN popsicle_stick.idea ON popsicle_stick.idea.id = popsicle_stick.ideapic.idea JOIN popsicle_stick.user ON popsicle_stick.idea.email = popsicle_stick.user.email'
-//     );
-//     con.release();
-
-//     console.log(queryResponse[0]);
-
-//     response.status(200).send({ message: queryResponse[0] });
-//   } catch (error) {
-//     console.log(error);
-//     response.status(500).send({ error: error.message, message: error });
-//   }
-// });
-
-// GET Everything By User - Done
+// GET Everything By User - On Home Screen?
 // app.get('/everythingbyuser', authorizeUser, async (request, response) => {
 //   try {
 //     console.log('GET EVERYTHING');

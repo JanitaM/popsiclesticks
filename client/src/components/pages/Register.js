@@ -84,6 +84,10 @@ const Register = () => {
           <Typography component='h1' variant='h4'>
             Register
           </Typography>
+          <Typography variant='body2' className={classes.m1}>
+            Keep track of your next adventure, date night, book, resturant,
+            country...
+          </Typography>
           <form className={classes.form} onSubmit={registerUser}>
             <TextField
               required

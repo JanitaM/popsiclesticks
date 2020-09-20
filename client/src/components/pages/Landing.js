@@ -12,91 +12,25 @@ const Landing = () => {
           <Typography variant='h3'>What Are You Doing Today?</Typography>
         </div>
       </div>
-      {/* <Typography variant='h4' className={classes.whatIsTitle}>
-        What Is Popsicle Sticks
-      </Typography> */}
       <div className={classes.heroImg2}>
         <div className={classes.heroText2}>
+          <Typography variant='h3'>Feeling indecisive?</Typography>
+        </div>
+      </div>
+      <div className={classes.heroImg3}>
+        <div className={classes.heroText3}>
           <Typography variant='h3'>
-            Choose your next adventure, date night, book, resturant, country,
-            etc.
+            Your next adventure, date night, book, restaurant, country...
           </Typography>
         </div>
       </div>
-
-      {/* <div className={classes.bodyContainer}>
-        <Typography variant='h4' className={classes.whatIsTitle}>
-          What Is Popsicle Sticks
-        </Typography>
-        <Typography variant='body1' className={classes.whatIsBody}>
-          It's a way to keep track of your next adventure, date night, book,
-          resturant, country, etc.
-        </Typography>
-
-        <Typography variant='body1' className={classes.whatIsBody}>
-          If you Googled{' '}
-          <span>
-            "
-            <Link
-              href='https://www.google.com/search?q=popsicle+sticks+mason+jar&rlz=1C1SQJL_enUS806US806&oq=popsicle+sticks+mason+jar&aqs=chrome..69i57j0.6913j0j7&sourceid=chrome&ie=UTF-8'
-              color='secondary'
-            >
-              {'popsicle sticks mason jar'}
-            </Link>
-          </span>
-          " you'll find creative ideas of keeping a bucket list.
-        </Typography>
-        <p className={classes.whatIsBody}>
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ex, alias.
-          Tempore, enim nemo! Culpa, dicta esse hic soluta non eaqu Lorem ipsum,
-          dolor sit amet consectetur adipisicing elit. Ex, alias. Tempore, enim
-          nemo! Culpa, dicta esse hic soluta non eaqu Lorem ipsum, dolor sit
-          amet consectetur adipisicing elit. Ex, alias. Tempore, enim nemo!
-          Culpa, dicta esse hic soluta non eaqu Lorem ipsum, dolor sit amet
-          consectetur adipisicing elit. Ex, alias. Tempore, enim nemo! Culpa,
-          dicta esse hic soluta non eaqu Lorem ipsum, dolor sit amet consectetur
-          adipisicing elit. Ex, alias. Tempore, enim nemo! Culpa, dicta esse hic
-          soluta non eaqu Lorem ipsum, dolor sit amet consectetur adipisicing
-          elit. Ex, alias. Tempore, enim nemo! Culpa, dicta esse hic soluta non
-          eaqu Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ex,
-          alias. Tempore, enim nemo! Culpa, dicta esse hic soluta non eaqu Lorem
-          ipsum, dolor sit amet consectetur adipisicing elit. Ex, alias.
-          Tempore, enim nemo! Culpa, dicta esse hic soluta non eaqu Lorem ipsum,
-          dolor sit amet consectetur adipisicing elit. Ex, alias. Tempore, enim
-          nemo! Culpa, dicta esse hic soluta non eaqu Lorem ipsum, dolor sit
-          amet consectetur adipisicing elit. Ex, alias. Tempore, enim nemo!
-          Culpa, dicta esse hic soluta non eaqu Lorem ipsum, dolor sit amet
-          consectetur adipisicing elit. Ex, alias. Tempore, enim nemo! Culpa,
-          dicta esse hic soluta non eaqu Lorem ipsum, dolor sit amet consectetur
-          adipisicing elit. Ex, alias. Tempore, enim nemo! Culpa, dicta esse hic
-          soluta non eaqu Lorem ipsum, dolor sit amet consectetur adipisicing
-          elit. Ex, alias. Tempore, enim nemo! Culpa, dicta esse hic soluta non
-          eaqu Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ex,
-          alias. Tempore, enim nemo! Culpa, dicta esse hic soluta non eaqu Lorem
-          ipsum, dolor sit amet consectetur adipisicing elit. Ex, alias.
-          Tempore, enim nemo! Culpa, dicta esse hic soluta non eaqu Lorem ipsum,
-          dolor sit amet consectetur adipisicing elit. Ex, alias. Tempore, enim
-          nemo! Culpa, dicta esse hic soluta non eaqu Lorem ipsum, dolor sit
-          amet consectetur adipisicing elit. Ex, alias. Tempore, enim nemo!
-          Culpa, dicta esse hic soluta non eaqu Lorem ipsum, dolor sit amet
-          consectetur adipisicing elit. Ex, alias. Tempore, enim nemo! Culpa,
-          dicta esse hic soluta non eaqu Lorem ipsum, dolor sit amet consectetur
-          adipisicing elit. Ex, alias. Tempore, enim nemo! Culpa, dicta esse hic
-          soluta non eaqu Lorem ipsum, dolor sit amet consectetur adipisicing
-          elit. Ex, alias. Tempore, enim nemo! Culpa, dicta esse hic soluta non
-          eaqu Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ex,
-          alias. Tempore, enim nemo! Culpa, dicta esse hic soluta non eaqu Lorem
-          ipsum, dolor sit amet consectetur adipisicing elit. Ex, alias.
-          Tempore, enim nemo! Culpa, dicta esse hic soluta non eaqu
-        </p>
-      </div> */}
     </div>
   );
 };
 
 const useStyles = makeStyles({
   container: {
-    color: '#023E4F'
+    color: '#171721'
   },
   heroImg: {
     height: '100vh',
@@ -109,12 +43,13 @@ const useStyles = makeStyles({
     backgroundSize: 'cover',
     backgroundAttachment: 'fixed',
     backgroundPosition: 'center',
-    backgroundBlendMode: 'overlay'
+    backgroundBlendMode: 'overlay',
+    position: 'relative'
   },
   heroText: {
     textAlign: 'center',
     position: 'absolute',
-    top: '30%',
+    top: '20%',
     left: '50%',
     transform: 'translate(-50%, -50%)'
   },
@@ -125,19 +60,41 @@ const useStyles = makeStyles({
     alignItems: 'center',
     justifyContent: 'center',
     background:
-      'rgba(0,0,0,0.2) url("https://images.pexels.com/photos/2542012/pexels-photo-2542012.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940")',
+      'rgba(0,0,0,0.2) url("https://images.pexels.com/photos/1251852/pexels-photo-1251852.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260")',
     backgroundSize: 'cover',
     backgroundAttachment: 'fixed',
     backgroundPosition: 'center',
-    backgroundBlendMode: 'overlay'
+    backgroundBlendMode: 'overlay',
+    position: 'relative'
   },
   heroText2: {
-    color: '#000',
     textAlign: 'center',
     position: 'absolute',
-    top: 'calc(100vh-30%)',
-    left: '50%',
+    top: '25%',
+    left: '20%',
     transform: 'translate(-50%, -50%)'
+  },
+  heroImg3: {
+    height: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background:
+      'rgba(0,0,0,0.2) url("https://datenightguide.com/wp-content/uploads/2017/10/personal.jpg")',
+    backgroundSize: 'cover',
+    backgroundAttachment: 'fixed',
+    backgroundPosition: 'center',
+    backgroundBlendMode: 'overlay',
+    position: 'relative'
+  },
+  heroText3: {
+    textAlign: 'center',
+    position: 'absolute',
+    top: '20%',
+    left: '75%',
+    transform: 'translate(-50%, -50%)',
+    width: '450px'
   },
   bodyContainer: {
     maxWidth: '90vw',
