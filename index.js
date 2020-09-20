@@ -455,7 +455,6 @@ app.delete('/user/idea', authorizeUser, async (request, response) => {
 // GET Idea Pic - Needs to be POST to get uuid in?
 app.post('/idea/pic', authorizeUser, async (request, response) => {
   console.log('GET IDEA PIC');
-  console.log(request.body.picUuid);
 
   const email = request.decodedToken.email;
   if (!email) {
@@ -469,7 +468,7 @@ app.post('/idea/pic', authorizeUser, async (request, response) => {
         Prefix: `public/${email}/ideaPictures`
       })
       .promise();
-    console.log(s3Response.Contents);
+    // console.log(s3Response.Contents);
 
     const matchingFile = [];
     s3Response.Contents.map((file) => {
@@ -477,7 +476,7 @@ app.post('/idea/pic', authorizeUser, async (request, response) => {
         return matchingFile.push(file);
       }
     });
-    console.log('matchingfile', matchingFile);
+    // console.log('matchingfile', matchingFile);
 
     try {
       const resolvedFile = await asyncMap(
@@ -490,8 +489,7 @@ app.post('/idea/pic', authorizeUser, async (request, response) => {
             .promise()
         )
       );
-      console.log('resolvedFile', resolvedFile);
-
+      // console.log('resolvedFile', resolvedFile);
       response.status(200).send(resolvedFile);
     } catch (error) {
       console.log(error);

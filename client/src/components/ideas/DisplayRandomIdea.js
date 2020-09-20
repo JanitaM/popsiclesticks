@@ -21,7 +21,7 @@ const DisplayRandomIdea = ({
   getCompletedIdeas
 }) => {
   const classes = useStyles();
-  // console.log(randomIdea);
+  console.log(randomIdea);
   const [username, setUsername] = useState('');
   const [token, setToken] = useState('');
 
@@ -119,9 +119,28 @@ const DisplayRandomIdea = ({
     handleClose();
   };
 
+  const deletePictureFromS3 = async (e) => {
+    try {
+      const res = await axios({
+        method: 'delete',
+        url: `http://localhost:4000/idea/pic`,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        data: {
+          email: username,
+          token: token,
+          uuid: randomIdea.idea.picture
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleDelete = async (e) => {
     e.preventDefault();
-    console.log(randomIdea.idea);
+    deletePictureFromS3();
 
     try {
       const res = await axios({

@@ -62,13 +62,35 @@ const EditIdeaModal = ({
 
   const handleCompleted = (event) => {
     event.preventDefault();
-
+    if (completedValue === false) {
+      postCompleted();
+    } else {
+      updateCompleted();
+    }
     setCompletedValue(!completedValue);
-    updateCompleted();
+  };
+
+  const postCompleted = async () => {
+    try {
+      const res = await axios({
+        method: 'post',
+        url: `http://localhost:4000/completed`,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        data: {
+          email: signedInUser.username,
+          token: signedInUser.token,
+          id: ideaToEdit.id,
+          isCompleted: 1
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const updateCompleted = async () => {
-    // console.log(completedValue);
     try {
       const res = await axios({
         method: 'put',
@@ -117,8 +139,6 @@ const EditIdeaModal = ({
     weather
   } = updatedInfo;
 
-  // GET the idea pic
-
   useEffect(() => {
     if (ideaToEdit.picture) {
       (async () => {
@@ -136,11 +156,10 @@ const EditIdeaModal = ({
         });
 
         let response = await res.data[0];
-        // console.log(response.Body.data);
         if (response) {
           setIdeaToEdit({
             ...ideaToEdit,
-            picture: convertImg(response.Body.data) //blob of existing pic
+            picture: convertImg(response.Body.data)
           });
         }
       })();
@@ -318,6 +337,8 @@ const EditIdeaModal = ({
   // DELETE Idea
   const handleDeleteIdea = async (e) => {
     e.preventDefault();
+
+    deletePictureFromS3();
 
     try {
       const res = await axios({

@@ -50,7 +50,6 @@ const MasonJar = ({ signedInUser, getCompletedIdeas }) => {
             token: token
           }
         });
-        // console.log(res.data.message);
         const ideaArr = res.data.message;
 
         if (ideaArr.length > 0) {
@@ -80,8 +79,8 @@ const MasonJar = ({ signedInUser, getCompletedIdeas }) => {
   };
 
   const getIdeaPic = async (idea) => {
-    // console.log(idea);
-
+    if (idea.picture) {
+    }
     const res = await axios({
       method: 'post',
       url: 'http://localhost:4000/idea/pic',
@@ -95,11 +94,13 @@ const MasonJar = ({ signedInUser, getCompletedIdeas }) => {
       }
     });
     // console.log(await res.data[0].Body.data);
-    setRandomIdea({
-      ...randomIdea,
-      idea: idea,
-      ideaPic: convertImg(res.data[0].Body.data)
-    });
+    if (res.data[0]) {
+      setRandomIdea({
+        ...randomIdea,
+        idea: idea,
+        ideaPic: convertImg(res.data[0].Body.data)
+      });
+    }
   };
 
   const handleOpen = () => {
