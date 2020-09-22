@@ -13,7 +13,7 @@ const PrivateRoutes = ({ signedInUser, signOut }) => {
       <Router>
         <Home path='/' signedInUser={signedInUser} />
         <Dashboard path='/dashboard' />
-        <AccountSettings path='/account' signedInUser={signedInUser} />
+        <AccountSettings path='/account' />
         <NotFound default />
       </Router>
     </>

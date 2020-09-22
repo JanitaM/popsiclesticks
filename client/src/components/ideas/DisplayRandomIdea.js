@@ -155,11 +155,13 @@ const DisplayRandomIdea = ({
           id: randomIdea.idea.id
         }
       });
-      handleClose();
-      alert('Idea deleted');
     } catch (error) {
       console.log(error);
     }
+
+    handleClose();
+    getCompletedIdeas();
+    alert('Idea deleted');
   };
 
   return (

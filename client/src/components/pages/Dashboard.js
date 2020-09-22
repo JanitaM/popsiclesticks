@@ -20,9 +20,7 @@ import {
   Checkbox,
   IconButton,
   Tooltip,
-  Dialog,
-  useMediaQuery,
-  useTheme
+  Dialog
 } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
@@ -107,6 +105,7 @@ function EnhancedTableHead(props) {
     rowCount,
     onRequestSort
   } = props;
+
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
@@ -200,9 +199,8 @@ const EnhancedTableToolbar = (props) => {
     ideaToEdit,
     setIdeaToEdit
   } = props;
-  // console.log('props', props);
+  console.log('props', props);
 
-  const theme = useTheme();
   const [open, setOpen] = useState(false);
 
   const handleClose = () => {
@@ -218,9 +216,28 @@ const EnhancedTableToolbar = (props) => {
     setOpen(true);
   };
 
+  const deletePictureFromS3 = async (e) => {
+    try {
+      const res = await axios({
+        method: 'delete',
+        url: `http://localhost:4000/idea/pic`,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        data: {
+          email: signedInUser.username,
+          token: signedInUser.token,
+          uuid: ideaToEdit.picture
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleDeleteIdea = async (e) => {
     e.preventDefault();
-    console.log('delete idea');
+    deletePictureFromS3();
 
     if (signedInUser.token) {
       try {
@@ -338,6 +355,7 @@ const Dashboard = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rows, setRows] = useState([]);
+  console.log(rows);
   const [selectedId, setSelectedId] = useState([]);
   const [signedInUser, setSignedInUser] = useState({
     token: '',
@@ -378,13 +396,13 @@ const Dashboard = () => {
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
+    setOrder(isAsc ? 'desccmc' : 'asc');
     setOrderBy(property);
   };
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      // console.log(rows);
+      console.log(rows);
 
       const newSelecteds = rows.map((n) => n.title);
       const newSelectedIds = rows.map((n) => n.id);

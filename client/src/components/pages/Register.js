@@ -85,7 +85,7 @@ const Register = () => {
             Register
           </Typography>
           <Typography variant='body2' className={classes.m1}>
-            Keep track of your next adventure, date night, book, resturant,
+            Keep track of your next adventure, date night, book, restaurant,
             country...
           </Typography>
           <form className={classes.form} onSubmit={registerUser}>
@@ -133,7 +133,6 @@ const Register = () => {
                 type='file'
                 accept='image/png, image/jpeg'
                 name='profilepic'
-                label='profilepic'
                 onChange={(e) => onChange(e)}
               />
               <label htmlFor='upload-btn'>

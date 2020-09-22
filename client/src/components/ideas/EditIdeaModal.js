@@ -109,6 +109,8 @@ const EditIdeaModal = ({
     } catch (error) {
       console.log(error);
     }
+
+    alert('Status updated!');
   };
 
   const [updatedInfo, setUpdatedInfo] = useState({

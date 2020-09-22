@@ -19,7 +19,6 @@ import MenuIcon from '@material-ui/icons/Menu';
 import clsx from 'clsx';
 import UserMobileNavBar from '../user/UserMobileNavbar';
 import UserDesktopNavbar from '../user/UserDesktopNavbar';
-import { Auth } from 'aws-amplify';
 import axios from 'axios';
 
 const drawerWidth = 265;

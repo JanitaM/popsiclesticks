@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Typography, Link, Paper, IconButton } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 const Landing = () => {
@@ -9,7 +9,7 @@ const Landing = () => {
     <div className={classes.container}>
       <div className={classes.heroImg}>
         <div className={classes.heroText}>
-          <Typography variant='h3'>What Are You Doing Today?</Typography>
+          <Typography variant='h3'>What are you doing today?</Typography>
         </div>
       </div>
       <div className={classes.heroImg2}>
@@ -20,7 +20,7 @@ const Landing = () => {
       <div className={classes.heroImg3}>
         <div className={classes.heroText3}>
           <Typography variant='h3'>
-            Your next adventure, date night, book...
+            Select your next adventure, date night, book...
           </Typography>
         </div>
       </div>
@@ -29,72 +29,71 @@ const Landing = () => {
 };
 
 const useStyles = makeStyles({
-  container: {
-    color: '#171721'
-  },
   heroImg: {
-    height: '100vh',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
     background:
-      'rgba(0,0,0,0.2) url("https://images.pexels.com/photos/869258/pexels-photo-869258.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940")',
-    backgroundSize: 'cover',
+      'url("https://images.pexels.com/photos/869258/pexels-photo-869258.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940") no-repeat center center/cover',
+    height: '100vh',
+    color: '#fff',
     backgroundAttachment: 'fixed',
-    backgroundPosition: 'center',
     backgroundBlendMode: 'overlay',
     position: 'relative'
   },
   heroText: {
-    textAlign: 'center',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: '0 2rem 24rem',
     position: 'absolute',
-    top: '20%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)'
+    top: '0',
+    left: '0',
+    right: '0',
+    bottom: '0',
+    height: '100vh',
+    backgroundColor: 'rgba(0,0,0,0.5)'
   },
   heroImg2: {
-    height: '100vh',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
     background:
-      'rgba(0,0,0,0.2) url("https://images.pexels.com/photos/1251852/pexels-photo-1251852.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260")',
-    backgroundSize: 'cover',
+      'url("https://images.pexels.com/photos/1251852/pexels-photo-1251852.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260") no-repeat center center/cover',
+    height: '100vh',
+    color: '#fff',
     backgroundAttachment: 'fixed',
-    backgroundPosition: 'center',
     backgroundBlendMode: 'overlay',
     position: 'relative'
   },
   heroText2: {
-    textAlign: 'center',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: '0 30rem 2rem 0',
     position: 'absolute',
-    top: '25%',
-    left: '20%',
-    transform: 'translate(-50%, -50%)'
+    top: '0',
+    left: '0',
+    right: '0',
+    bottom: '0',
+    height: '100vh',
+    backgroundColor: 'rgba(0,0,0,0.5)'
   },
   heroImg3: {
-    height: '100vh',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
     background:
-      'rgba(0,0,0,0.2) url("https://datenightguide.com/wp-content/uploads/2017/10/personal.jpg")',
-    backgroundSize: 'cover',
+      'url("https://datenightguide.com/wp-content/uploads/2017/10/personal.jpg") no-repeat center center/cover',
+    height: '100vh',
+    color: '#fff',
     backgroundAttachment: 'fixed',
-    backgroundPosition: 'center',
     backgroundBlendMode: 'overlay',
     position: 'relative'
   },
   heroText3: {
-    textAlign: 'center',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: '0 2rem',
     position: 'absolute',
-    top: '20%',
-    left: '75%',
-    transform: 'translate(-50%, -50%)',
-    width: '450px'
+    top: '0',
+    left: '0',
+    right: '0',
+    bottom: '0',
+    height: '100vh',
+    backgroundColor: 'rgba(0,0,0,0.5)'
   }
 });
 
