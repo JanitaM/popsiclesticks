@@ -1,21 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Divider,
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
-  Link,
-  Typography,
-  Button,
-  Paper
-} from '@material-ui/core';
-import EditIcon from '@material-ui/icons/Edit';
-import DeleteIcon from '@material-ui/icons/Delete';
+import { Typography, Button, Paper } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { Auth } from 'aws-amplify';
 import axios from 'axios';
+import ChangePassword from '../pages/ChangePassword';
 
 function convertImg(binArr) {
   let arrayBufferView = new Uint8Array(binArr);
@@ -32,6 +20,7 @@ const AccountSettings = () => {
     email: ''
   });
   const [profilePic, setProfilePic] = useState([]);
+  const [date, setDate] = useState('');
 
   useEffect(() => {
     (async () => {
@@ -41,6 +30,7 @@ const AccountSettings = () => {
       setSignedInUser({ token, username });
 
       if (token) getPhotos(token, username);
+      if (token) getUserInfo(token, username);
     })();
   }, []);
 
@@ -50,34 +40,67 @@ const AccountSettings = () => {
         `http://localhost:4000/user/profilepic?email=${username}&token=${token}`
       );
       // console.log(res.data.Body.data);
-      setProfilePic(convertImg(res.data.Body.data));
+      if (res.data) setProfilePic(convertImg(res.data.Body.data));
     } catch (error) {
       console.log(error);
     }
   };
 
+  const getUserInfo = async (token, username) => {
+    if (token) {
+      try {
+        const res = await axios.get(
+          `http://localhost:4000/user?email=${username}&token=${token}`
+        );
+        // console.log(res.data.message[0]);
+        const fullInfo = res.data.message[0];
+        const date = fullInfo.date.split('T');
+        setDate(date[0]);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+  const [isAccountSettingsPage, setIsAccountSettingsPage] = useState(true);
+
+  if (!isAccountSettingsPage) {
+    return (
+      <ChangePassword setIsAccountSettingsPage={setIsAccountSettingsPage} />
+    );
+  }
+
+  const handleChangePassword = (e) => {
+    e.preventDefault();
+
+    setIsAccountSettingsPage(false);
+  };
+
   return (
     <div className={classes.container}>
-      <Typography variant='h4' component='h1'>
-        Account Settings
-      </Typography>
       <Paper className={classes.content}>
-        <img src={profilePic} className={classes.profilePic} />
+        <img
+          src={
+            profilePic.length > 0
+              ? profilePic
+              : 'https://pagehardware.files.wordpress.com/2018/07/popsicle.jpg'
+          }
+          className={classes.profilePic}
+        />
 
         <div className={classes.userInfo}>
           <Typography variant='h6' component='h6' className={classes.item}>
-            Email: {signedInUser.username}
+            Hello, {signedInUser.username}!
           </Typography>
           <Typography variant='h6' component='h6' className={classes.item}>
-            Member since:{' '}
+            Member since: {date}
           </Typography>
           <Button
-            variant='outlined'
-            color='secondary'
+            onClick={handleChangePassword}
+            className={classes.updateBtn}
             fullWidth
-            style={{ padding: '10px' }}
           >
-            Reset Password
+            Change Password
           </Button>
         </div>
       </Paper>
@@ -86,35 +109,44 @@ const AccountSettings = () => {
 };
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    width: '100%',
-    maxWidth: 360,
-    backgroundColor: theme.palette.background.paper
-  },
   container: {
-    maxWidth: '1100px',
+    maxWidth: '400px',
     margin: '2rem auto',
     textAlign: 'center'
   },
   content: {
-    border: '2px solid blue',
+    border: '2px solid #65B5B4',
+    borderRadius: '6px',
     display: 'flex',
-    flexDirection: 'row',
+    flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: '2rem',
-    marginTop: '2rem'
+    paddingTop: '2rem',
+    marginTop: '6rem',
+    position: 'relative'
   },
   profilePic: {
-    width: '400px',
-    margin: '0 2rem'
+    border: '2px solid #65B5B4',
+    borderRadius: '6px',
+    maxWidth: '150px',
+    minHeight: '150px',
+    position: 'absolute',
+    top: '-50px'
+  },
+  userInfo: {
+    margin: '6rem 0 2rem'
   },
   item: {
-    border: '1px solid #000',
-    borderRadius: '4px',
-    padding: '10px',
     margin: '1rem 0',
     width: '100%'
+  },
+  updateBtn: {
+    backgroundColor: '#E75734',
+    color: '#fff',
+    margin: '1rem 0',
+    '&:hover': {
+      backgroundColor: '#CF4F30'
+    }
   }
 }));
 

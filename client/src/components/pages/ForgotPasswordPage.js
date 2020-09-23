@@ -11,7 +11,7 @@ import {
 } from '@material-ui/core';
 import ResetPasswordPage from './ResetPasswordPage';
 
-const ForgotPasswordPage = ({ setIsSignInPage }) => {
+const ForgotPasswordPage = ({ setIsSignInPage, setSignInForm }) => {
   const classes = useStyles();
 
   const [userInfo, setUserInfo] = useState({
@@ -34,7 +34,11 @@ const ForgotPasswordPage = ({ setIsSignInPage }) => {
 
   const sendCode = async (e) => {
     e.preventDefault();
-    console.log(userInfo);
+
+    if (!userInfo.username) {
+      alert('Please enter your email');
+      return;
+    }
 
     try {
       await Auth.forgotPassword(userInfo.username)
@@ -45,6 +49,13 @@ const ForgotPasswordPage = ({ setIsSignInPage }) => {
     }
 
     setIsForgotPasswordPage(false);
+  };
+
+  const handleCancel = (e) => {
+    e.preventDefault();
+
+    setIsSignInPage(true);
+    setSignInForm({});
   };
 
   return (
@@ -72,6 +83,9 @@ const ForgotPasswordPage = ({ setIsSignInPage }) => {
         <Button onClick={sendCode} className={classes.resetBtn}>
           Send Reset Code
         </Button>
+        <Button onClick={handleCancel} className={classes.cancelBtn} fullWidth>
+          Cancel
+        </Button>
       </form>
     </Container>
   );
@@ -83,11 +97,19 @@ const useStyles = makeStyles((theme) => ({
     margin: '2rem'
   },
   resetBtn: {
+    color: '#fff',
     width: '100%',
-    margin: '2rem 0',
+    margin: '1rem 0',
     backgroundColor: '#E75734',
     '&:hover': {
       backgroundColor: '#EC795D'
+    }
+  },
+  cancelBtn: {
+    backgroundColor: '#8C8C8C',
+    color: '#fff',
+    '&:hover': {
+      backgroundColor: '#737373'
     }
   }
 }));

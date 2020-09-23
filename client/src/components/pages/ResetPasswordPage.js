@@ -15,7 +15,11 @@ const ResetPasswordPage = ({ userInfo, setUserInfo, setIsSignInPage }) => {
 
   const resetPassword = async (e) => {
     e.preventDefault();
-    console.log(userInfo);
+
+    if (!userInfo.username || !userInfo.code || !userInfo.new_password) {
+      alert('Please enter all info');
+      return;
+    }
 
     try {
       await Auth.forgotPasswordSubmit(
@@ -97,8 +101,9 @@ const useStyles = makeStyles((theme) => ({
     margin: '2rem'
   },
   resetBtn: {
+    color: '#fff',
     width: '100%',
-    margin: '2rem 0',
+    margin: '1rem 0',
     backgroundColor: '#E75734',
     '&:hover': {
       backgroundColor: '#EC795D'

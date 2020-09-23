@@ -28,7 +28,7 @@ const Home = ({ signedInUser }) => {
           token: token
         }
       });
-      console.log(res.data.message);
+      // console.log(res.data.message);
       const ideaArr = res.data.message;
       setCompletedIdeas(ideaArr);
     }

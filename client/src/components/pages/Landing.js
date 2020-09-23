@@ -49,7 +49,7 @@ const useStyles = makeStyles({
     right: '0',
     bottom: '0',
     height: '100vh',
-    backgroundColor: 'rgba(0,0,0,0.5)'
+    backgroundColor: 'rgba(0,0,0,0.4)'
   },
   heroImg2: {
     background:
@@ -71,7 +71,7 @@ const useStyles = makeStyles({
     right: '0',
     bottom: '0',
     height: '100vh',
-    backgroundColor: 'rgba(0,0,0,0.5)'
+    backgroundColor: 'rgba(0,0,0,0.4)'
   },
   heroImg3: {
     background:

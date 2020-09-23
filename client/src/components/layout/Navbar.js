@@ -33,7 +33,6 @@ function convertImg(binArr) {
 
 function HideOnScroll({ children, window }) {
   const trigger = useScrollTrigger(window);
-
   return (
     <Slide appear={false} direction='down' in={!trigger}>
       {children}
@@ -44,7 +43,6 @@ function HideOnScroll({ children, window }) {
 const Navbar = ({ props, signedInUser, signOut }) => {
   const classes = useStyles();
   const [profilePic, setProfilePic] = useState([]);
-
   useEffect(() => {
     async function getPhotos() {
       if (signedInUser) {
@@ -55,7 +53,7 @@ const Navbar = ({ props, signedInUser, signOut }) => {
           `http://localhost:4000/user/profilepic?email=${username}&token=${token}`
         );
         // console.log(res.data.Body.data);
-        setProfilePic(convertImg(res.data.Body.data));
+        if (res.data) setProfilePic(convertImg(res.data.Body.data));
         // setProfilePic(res.data.map((item) => convertImg(item.Body.data)));
       }
     }

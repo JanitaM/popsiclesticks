@@ -113,7 +113,7 @@ const useStyles = makeStyles((theme) => ({
     margin: '2rem 0',
     backgroundColor: '#E75734',
     '&:hover': {
-      backgroundColor: '#EC795D'
+      backgroundColor: '#CF4F30'
     }
   }
 }));

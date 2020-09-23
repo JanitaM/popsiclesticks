@@ -28,7 +28,11 @@ const UserMobileNavbar = ({ signedInUser, signOut, profilePic }) => {
         }}
       >
         <Avatar
-          src={signedInUser && profilePic}
+          src={
+            signedInUser && profilePic.length > 0
+              ? profilePic
+              : 'https://pagehardware.files.wordpress.com/2018/07/popsicle.jpg'
+          }
           alt='user profile picture'
           className={classes.image}
           variant='rounded'

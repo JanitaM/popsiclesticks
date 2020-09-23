@@ -15,12 +15,18 @@ const App = () => {
   async function signIn(e) {
     e.preventDefault();
 
+    if (!signInForm.username || !signInForm.password) {
+      alert('Please enter all information');
+      return;
+    }
+
     try {
       const user = await Auth.signIn(signInForm.username, signInForm.password);
       setSignedInUser(user);
       navigate('/');
     } catch (error) {
       console.log(error);
+      alert(error.message);
     }
   }
 

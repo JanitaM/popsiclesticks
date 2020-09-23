@@ -27,7 +27,6 @@ const Register = () => {
     confirmationCode: ''
   });
 
-  console.log(signUpForm);
   const [signUpUser, setSignUpUser] = useState(undefined);
 
   if (!isRegisterPage) {
@@ -215,10 +214,13 @@ const useStyles = makeStyles((theme) => ({
     display: 'none'
   },
   uploadBtn: {
-    backgroundColor: '#65B5B4',
+    backgroundColor: '#fff',
+    border: '2px solid #E75734',
+    color: '#000',
     marginLeft: '1rem',
     '&:hover': {
-      backgroundColor: '#579C9A'
+      backgroundColor: '#fff',
+      border: '2px solid #CF4F30'
     }
   },
   avatarImage: {

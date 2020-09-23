@@ -16,7 +16,12 @@ const SignInPage = ({ signInForm, setSignInForm, signIn }) => {
   const [isSignInPage, setIsSignInPage] = useState(true);
 
   if (!isSignInPage) {
-    return <ForgotPasswordPage setIsSignInPage={setIsSignInPage} />;
+    return (
+      <ForgotPasswordPage
+        setIsSignInPage={setIsSignInPage}
+        setSignInForm={setSignInForm}
+      />
+    );
   }
 
   const handleForgotPassword = (e) => {

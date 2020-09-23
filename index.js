@@ -94,30 +94,29 @@ app.post('/user', async (request, response) => {
 });
 
 // GET One User
-// app.get('/user', authorizeUser, async (request, response) => {
-//   try {
-//     console.log('GET ONE USER');
+app.get('/user', authorizeUser, async (request, response) => {
+  try {
+    console.log('GET ONE USER');
 
-//     const email = request.decodedToken.email;
-//     if (!email) {
-//       response.status(400).send({ message: 'access denied' });
-//     }
+    const email = request.decodedToken.email;
+    if (!email) {
+      response.status(400).send({ message: 'access denied' });
+    }
 
-//     const con = await pool.getConnection();
-//     const recordset = await con.execute(
-//       'SELECT * FROM popsicle_stick.user WHERE email=?',
-//       [email]
-//     );
-//     con.release();
+    const con = await pool.getConnection();
+    const recordset = await con.execute(
+      'SELECT * FROM popsicle_stick.user WHERE email=?',
+      [email]
+    );
+    con.release();
+    console.log(recordset[0]);
 
-//     console.log(recordset[0]);
-
-//     response.status(200).send({ message: recordset[0] });
-//   } catch (error) {
-//     console.log(error);
-//     response.status(500).send({ error: error.message, message: error });
-//   }
-// });
+    response.status(200).send({ message: recordset[0] });
+  } catch (error) {
+    console.log(error);
+    response.status(500).send({ error: error.message, message: error });
+  }
+});
 
 // GET User Profile Pic From S3 - Done
 app.get('/user/profilepic', authorizeUser, async (request, response) => {
