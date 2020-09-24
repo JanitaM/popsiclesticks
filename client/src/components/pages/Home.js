@@ -3,7 +3,7 @@ import { Divider, Grid, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Preloader from '../layout/Preloader';
 import MasonJar from '../layout/MasonJar';
-import FilterIdeas from '../ideas/FilterIdeasBtn';
+import FilterIdeasBtn from '../ideas/FilterIdeasBtn';
 import AddEditIdeaBtns from '../ideas/AddEditIdeaBtns';
 import axios from 'axios';
 
@@ -41,7 +41,7 @@ const Home = ({ signedInUser }) => {
       <>
         <div className={classes.mainContainer}>
           <div className={classes.topContainer}>
-            <FilterIdeas />
+            <FilterIdeasBtn signedInUser={signedInUser} />
           </div>
 
           <Grid container spacing={2} direction='row'>
