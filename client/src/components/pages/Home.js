@@ -10,7 +10,6 @@ import axios from 'axios';
 const Home = ({ signedInUser }) => {
   const classes = useStyles();
   const [filteredIdeas, setFilteredIdeas] = useState([]);
-  console.log(filteredIdeas);
 
   const [completedIdeas, setCompletedIdeas] = useState([]);
 
@@ -60,7 +59,11 @@ const Home = ({ signedInUser }) => {
 
               {completedIdeas.map((idea) => {
                 return (
-                  <Typography variant='body1' className={classes.ideaTitle}>
+                  <Typography
+                    key={idea.id}
+                    variant='body1'
+                    className={classes.ideaTitle}
+                  >
                     {idea.title}
                   </Typography>
                 );
@@ -72,6 +75,7 @@ const Home = ({ signedInUser }) => {
                 signedInUser={signedInUser}
                 getCompletedIdeas={getCompletedIdeas}
                 filteredIdeas={filteredIdeas}
+                setFilteredIdeas={setFilteredIdeas}
               />
             </Grid>
 

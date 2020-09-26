@@ -260,10 +260,11 @@ app.get('/user/idea', authorizeUser, async (request, response) => {
   }
 });
 
-// GET Filtered Ideas - Done
+// GET Filtered Ideas
 app.post('/filteredIdeas', authorizeUser, async (request, response) => {
   try {
     console.log('GET FILTERED IDEAS');
+    console.log(request.body.data);
 
     const email = request.decodedToken.email;
     if (!email) {
@@ -272,7 +273,7 @@ app.post('/filteredIdeas', authorizeUser, async (request, response) => {
 
     const con = await pool.getConnection();
     const recordset = await con.execute(
-      'SELECT * FROM popsicle_stick.idea WHERE email = ? AND cost = ? AND indoor_outdoor = ? AND weather = ?',
+      'SELECT * FROM popsicle_stick.idea WHERE email = ? AND cost = ? OR indoor_outdoor = ? OR weather = ?',
       [
         email,
         request.body.data.cost ? request.body.data.cost : null,
@@ -283,9 +284,7 @@ app.post('/filteredIdeas', authorizeUser, async (request, response) => {
       ]
     );
     con.release();
-
     console.log('recordset', recordset[0]);
-
     response.status(200).send({ message: recordset[0] });
   } catch (error) {
     console.log(error);
@@ -355,7 +354,7 @@ app.delete('/user/idea', authorizeUser, async (request, response) => {
     }
 
     const con = await pool.getConnection();
-    // If ideas are marked completed
+
     if (typeof request.body.id === 'number') {
       con.execute(
         'DELETE FROM popsicle_stick.completed WHERE id = ? AND email = ?',
@@ -370,7 +369,6 @@ app.delete('/user/idea', authorizeUser, async (request, response) => {
       });
     }
 
-    // then delete from idea table
     if (typeof request.body.id === 'number') {
       con.execute(
         'DELETE FROM popsicle_stick.idea WHERE id = ? AND email = ?',
@@ -528,7 +526,7 @@ app.get('/completedIdeas', authorizeUser, async (request, response) => {
 
     const con = await pool.getConnection();
     const recordset = await con.execute(
-      'SELECT title FROM popsicle_stick.idea INNER JOIN popsicle_stick.completed ON popsicle_stick.idea.id = popsicle_stick.completed.id WHERE popsicle_stick.completed.isCompleted = "1" AND popsicle_stick.idea.email = ? ORDER BY popsicle_stick.idea.title ASC ',
+      'SELECT * FROM popsicle_stick.idea INNER JOIN popsicle_stick.completed ON popsicle_stick.idea.id = popsicle_stick.completed.id WHERE popsicle_stick.completed.isCompleted = "1" AND popsicle_stick.idea.email = ? ORDER BY popsicle_stick.idea.title ASC ',
       [email]
     );
     con.release();

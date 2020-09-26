@@ -15,12 +15,14 @@ const FilterModal = ({
   setFilteredIdeas
 }) => {
   const classes = useStyles();
+  console.log(filteredIdeas);
 
   const [filterValues, setFilterValues] = useState({
     cost: '',
     indoor_outdoor: '',
     weather: ''
   });
+  console.log(filterValues);
 
   const handleChange = (event) => {
     setFilterValues({

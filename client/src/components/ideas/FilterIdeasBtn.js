@@ -5,7 +5,6 @@ import FilterModal from '../ideas/FilterModal';
 import axios from 'axios';
 
 const FilterIdeasBtn = ({ signedInUser, filteredIdeas, setFilteredIdeas }) => {
-  console.log(signedInUser);
   const classes = useStyles();
   const [open, setOpen] = useState(false);
 
@@ -15,7 +14,6 @@ const FilterIdeasBtn = ({ signedInUser, filteredIdeas, setFilteredIdeas }) => {
 
   const handleClose = () => {
     setOpen(false);
-    // setIdeaForm({});
   };
 
   return (

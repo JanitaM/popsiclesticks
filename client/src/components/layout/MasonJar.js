@@ -15,12 +15,18 @@ function convertImg(binArr) {
   return imgUrl;
 }
 
-const MasonJar = ({ signedInUser, getCompletedIdeas, filteredIdeas }) => {
+const MasonJar = ({
+  signedInUser,
+  getCompletedIdeas,
+  filteredIdeas,
+  setFilteredIdeas
+}) => {
   const classes = useStyles();
   const [username, setUsername] = useState('');
   const [token, setToken] = useState('');
+  const [open, setOpen] = useState(false);
 
-  console.log(filteredIdeas);
+  // console.log(filteredIdeas);
 
   useEffect(() => {
     (async () => {
@@ -36,37 +42,44 @@ const MasonJar = ({ signedInUser, getCompletedIdeas, filteredIdeas }) => {
     ideaPic: []
   });
 
-  const [open, setOpen] = useState(false);
-
   const getUserIdeas = async (e) => {
     e.preventDefault();
 
-    try {
-      if (token) {
-        // GET all of the user's ideas
-        const res = await axios({
-          method: 'get',
-          url: `http://localhost:4000/user/ideas`,
-          params: {
-            email: username,
-            token: token
-          }
-        });
-        const ideaArr = res.data.message;
+    console.log(filteredIdeas);
+    if (filteredIdeas.length > 0) {
+      console.log('filteredideas');
+      getRandomIdea(filteredIdeas);
+    } else {
+      console.log('no filteredIdeas');
+      try {
+        if (token) {
+          // GET all of the user's ideas
+          const res = await axios({
+            method: 'get',
+            url: `http://localhost:4000/user/ideas`,
+            params: {
+              email: username,
+              token: token
+            }
+          });
+          const ideaArr = res.data.message;
 
-        if (ideaArr.length > 0) {
-          getRandomIdea(ideaArr);
-        } else {
-          alert('no ideas in the db');
-          return;
+          if (ideaArr.length > 0) {
+            getRandomIdea(ideaArr);
+          } else {
+            alert('no ideas in the db');
+            return;
+          }
         }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
     }
   };
 
   const getRandomIdea = (ideaArr) => {
+    console.log(ideaArr);
+
     let randomIndex = Math.floor(Math.random() * ideaArr.length);
     checkForIdeaPicture(ideaArr[randomIndex]);
     handleOpen();
@@ -111,6 +124,7 @@ const MasonJar = ({ signedInUser, getCompletedIdeas, filteredIdeas }) => {
   const handleClose = () => {
     setOpen(false);
     setRandomIdea({});
+    setFilteredIdeas({});
   };
 
   if (!signedInUser) {
