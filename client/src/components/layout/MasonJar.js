@@ -15,10 +15,12 @@ function convertImg(binArr) {
   return imgUrl;
 }
 
-const MasonJar = ({ signedInUser, getCompletedIdeas }) => {
+const MasonJar = ({ signedInUser, getCompletedIdeas, filteredIdeas }) => {
   const classes = useStyles();
   const [username, setUsername] = useState('');
   const [token, setToken] = useState('');
+
+  console.log(filteredIdeas);
 
   useEffect(() => {
     (async () => {

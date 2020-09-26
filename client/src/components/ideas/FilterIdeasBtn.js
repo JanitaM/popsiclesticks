@@ -4,7 +4,7 @@ import { Fab, makeStyles, Dialog } from '@material-ui/core';
 import FilterModal from '../ideas/FilterModal';
 import axios from 'axios';
 
-const FilterIdeasBtn = ({ signedInUser }) => {
+const FilterIdeasBtn = ({ signedInUser, filteredIdeas, setFilteredIdeas }) => {
   console.log(signedInUser);
   const classes = useStyles();
   const [open, setOpen] = useState(false);
@@ -16,37 +16,6 @@ const FilterIdeasBtn = ({ signedInUser }) => {
   const handleClose = () => {
     setOpen(false);
     // setIdeaForm({});
-  };
-
-  const getUserIdeas = async (e) => {
-    e.preventDefault();
-
-    try {
-      if (signedInUser) {
-        const token = await signedInUser.signInUserSession.idToken.jwtToken;
-        const username = signedInUser.username;
-
-        // GET all of the user's ideas
-        // const res = await axios({
-        //   method: 'get',
-        //   url: `http://localhost:4000/user/ideas`,
-        //   params: {
-        //     email: username,
-        //     token: token
-        //   }
-        // });
-        // console.log(res.data.message);
-        // const ideaArr = res.data.message;
-        // if (ideaArr.length > 0) {
-        //   getRandomIdea(ideaArr);
-        // } else {
-        //   alert('no ideas in the db');
-        //   return;
-        // }
-      }
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   return (
@@ -69,7 +38,12 @@ const FilterIdeasBtn = ({ signedInUser }) => {
         onClose={handleClose}
         aria-labelledby='add-idea-to-database'
       >
-        <FilterModal handleClose={handleClose} />
+        <FilterModal
+          signedInUser={signedInUser}
+          handleClose={handleClose}
+          filteredIdeas={filteredIdeas}
+          setFilteredIdeas={setFilteredIdeas}
+        />
       </Dialog>
     </div>
   );

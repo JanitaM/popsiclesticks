@@ -9,6 +9,9 @@ import axios from 'axios';
 
 const Home = ({ signedInUser }) => {
   const classes = useStyles();
+  const [filteredIdeas, setFilteredIdeas] = useState([]);
+  console.log(filteredIdeas);
+
   const [completedIdeas, setCompletedIdeas] = useState([]);
 
   useEffect(() => {
@@ -41,7 +44,11 @@ const Home = ({ signedInUser }) => {
       <>
         <div className={classes.mainContainer}>
           <div className={classes.topContainer}>
-            <FilterIdeasBtn signedInUser={signedInUser} />
+            <FilterIdeasBtn
+              signedInUser={signedInUser}
+              setFilteredIdeas={setFilteredIdeas}
+              filteredIdeas={filteredIdeas}
+            />
           </div>
 
           <Grid container spacing={2} direction='row'>
@@ -64,6 +71,7 @@ const Home = ({ signedInUser }) => {
               <MasonJar
                 signedInUser={signedInUser}
                 getCompletedIdeas={getCompletedIdeas}
+                filteredIdeas={filteredIdeas}
               />
             </Grid>
 

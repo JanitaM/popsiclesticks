@@ -42,23 +42,25 @@ function HideOnScroll({ children, window }) {
 
 const Navbar = ({ props, signedInUser, signOut }) => {
   const classes = useStyles();
-  const [profilePic, setProfilePic] = useState([]);
-  useEffect(() => {
-    async function getPhotos() {
-      if (signedInUser) {
-        const token = await signedInUser.signInUserSession.idToken.jwtToken;
-        const username = signedInUser.username;
 
-        const res = await axios.get(
-          `http://localhost:4000/user/profilepic?email=${username}&token=${token}`
-        );
-        // console.log(res.data.Body.data);
-        if (res.data) setProfilePic(convertImg(res.data.Body.data));
-        // setProfilePic(res.data.map((item) => convertImg(item.Body.data)));
-      }
-    }
-    getPhotos();
-  }, []);
+  const [profilePic, setProfilePic] = useState([]);
+
+  // useEffect(() => {
+  //   async function getPhotos() {
+  //     if (signedInUser) {
+  //       const token = await signedInUser.signInUserSession.idToken.jwtToken;
+  //       const username = signedInUser.username;
+
+  //       const res = await axios.get(
+  //         `http://localhost:4000/user/profilepic?email=${username}&token=${token}`
+  //       );
+  //       // console.log(res.data.Body.data);
+  //       if (res.data) setProfilePic(convertImg(res.data.Body.data));
+  //       // setProfilePic(res.data.map((item) => convertImg(item.Body.data)));
+  //     }
+  //   }
+  //   getPhotos();
+  // }, []);
 
   const [open, setOpen] = useState(false);
   const handleDrawerOpen = () => {

@@ -93,7 +93,7 @@ app.post('/user', async (request, response) => {
   }
 });
 
-// GET One User
+// GET One User - Done
 app.get('/user', authorizeUser, async (request, response) => {
   try {
     console.log('GET ONE USER');
@@ -105,7 +105,7 @@ app.get('/user', authorizeUser, async (request, response) => {
 
     const con = await pool.getConnection();
     const recordset = await con.execute(
-      'SELECT * FROM popsicle_stick.user WHERE email=?',
+      'SELECT * FROM popsicle_stick.user WHERE email = ?',
       [email]
     );
     con.release();
@@ -166,72 +166,6 @@ app.get('/user/profilepic', authorizeUser, async (request, response) => {
   }
   getS3Data();
 });
-
-// UPDATE User
-// app.put('/user', authorizeUser, async (request, response) => {
-//   try {
-//     console.log('UPDATE ONE USER');
-
-//     const email = request.decodedToken.email;
-//     if (!email) {
-//       response.status(400).send({ message: 'access denied' });
-//     }
-
-//     const selectQuery = await pool.execute(
-//       'SELECT * FROM popsicle_stick.user WHERE email = ?',
-//       [email]
-//     );
-
-//     console.log(selectQuery[0][0]);
-
-//     const selectedUser = selectQuery[0][0];
-//     const con = await pool.getConnection();
-//     const queryResponse = await con.execute(
-//       'UPDATE popsicle_stick.user SET email = ?, profilepic = ? WHERE email = ?',
-//       [
-//         email ? request.body.email : selectedUser.email,
-//         request.body.profilepic
-//           ? request.body.profilepic
-//           : selectedUser.profilepic,
-//         email
-//       ]
-//     );
-//     con.release();
-
-//     console.log(queryResponse);
-
-//     response.status(200).send({ message: queryResponse });
-//   } catch (error) {
-//     console.log(error);
-//     response.status(500).send({ error: error.message, message: error });
-//   }
-// });
-
-// DELETE User
-// app.delete('/user', authorizeUser, async (request, response) => {
-//   try {
-//     console.log('DELETE USER');
-
-//     const email = request.decodedToken.email;
-//     if (!email) {
-//       response.status(400).send({ message: 'access denied' });
-//     }
-
-//     const con = await pool.getConnection();
-//     const recordset = await con.execute(
-//       'DELETE FROM popsicle_stick.user WHERE email = ?',
-//       [email]
-//     );
-//     con.release();
-
-//     console.log(recordset[0]);
-
-//     response.status(200).send({ message: recordset[0] });
-//   } catch (error) {
-//     console.log(error);
-//     response.status(500).send({ error: error.message, message: error });
-//   }
-// });
 
 // POST Idea - Done
 app.post('/user/idea', authorizeUser, async (request, response) => {
@@ -312,13 +246,45 @@ app.get('/user/idea', authorizeUser, async (request, response) => {
 
     const con = await pool.getConnection();
     const recordset = await con.execute(
-      'SELECT * FROM popsicle_stick.idea WHERE id = ? AND email = ?',
-      // [request.query.id, email]
+      'SELECT * FROM popsicle_stick.idea WHERE email = ?',
       [request.body.id, email]
     );
     con.release();
 
     console.log(recordset[0]);
+
+    response.status(200).send({ message: recordset[0] });
+  } catch (error) {
+    console.log(error);
+    response.status(500).send({ error: error.message, message: error });
+  }
+});
+
+// GET Filtered Ideas - Done
+app.post('/filteredIdeas', authorizeUser, async (request, response) => {
+  try {
+    console.log('GET FILTERED IDEAS');
+
+    const email = request.decodedToken.email;
+    if (!email) {
+      response.status(400).send({ message: 'access denied' });
+    }
+
+    const con = await pool.getConnection();
+    const recordset = await con.execute(
+      'SELECT * FROM popsicle_stick.idea WHERE email = ? AND cost = ? AND indoor_outdoor = ? AND weather = ?',
+      [
+        email,
+        request.body.data.cost ? request.body.data.cost : null,
+        request.body.data.indoor_outdoor
+          ? request.body.data.indoor_outdoor
+          : null,
+        request.body.data.weather ? request.body.data.weather : null
+      ]
+    );
+    con.release();
+
+    console.log('recordset', recordset[0]);
 
     response.status(200).send({ message: recordset[0] });
   } catch (error) {

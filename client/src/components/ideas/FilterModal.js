@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   makeStyles,
@@ -6,11 +6,46 @@ import {
   FormControl,
   InputLabel
 } from '@material-ui/core';
+import Axios from 'axios';
 
-const FilterModal = ({ handleClose }) => {
+const FilterModal = ({
+  signedInUser,
+  handleClose,
+  filteredIdeas,
+  setFilteredIdeas
+}) => {
   const classes = useStyles();
 
-  const handleSearch = () => {
+  const [filterValues, setFilterValues] = useState({
+    cost: '',
+    indoor_outdoor: '',
+    weather: ''
+  });
+
+  const handleChange = (event) => {
+    setFilterValues({
+      ...filterValues,
+      [event.target.name]: event.target.value
+    });
+  };
+
+  const handleApply = async () => {
+    if (signedInUser) {
+      const token = await signedInUser.signInUserSession.idToken.jwtToken;
+      const username = signedInUser.username;
+
+      const res = await Axios({
+        method: 'post',
+        url: 'http://localhost:4000/filteredIdeas',
+        data: {
+          email: username,
+          token: token,
+          data: filterValues
+        }
+      });
+      setFilteredIdeas(res.data.message);
+    }
+
     handleClose();
   };
 
@@ -18,71 +53,58 @@ const FilterModal = ({ handleClose }) => {
     <div className={classes.container}>
       <div className={classes.items}>
         <FormControl className={classes.formControl}>
-          <InputLabel htmlFor='age-native-simple'>Cost</InputLabel>
+          <InputLabel htmlFor='cost'>Cost</InputLabel>
           <Select
             native
-            labelId='demo-simple-select-label'
-            id='demo-simple-select'
-            // value={cost}
-            // onChange={handleChange}
+            value={filterValues.cost}
+            onChange={handleChange}
+            inputProps={{
+              name: 'cost',
+              id: 'cost'
+            }}
           >
             <option aria-label='None' value='' />
-            {/* map through database and list options */}
-            <option value={10}>Ten</option>
-            <option value={20}>Twenty</option>
-            <option value={30}>Thirty</option>
+            <option value='cheap'>Cheap</option>
+            <option value='average'>Average</option>
+            <option value='expensive'>Expensive</option>
+          </Select>
+        </FormControl>
+
+        <FormControl className={classes.formControl}>
+          <InputLabel htmlFor='indoor_outdoor'>Location</InputLabel>
+          <Select
+            native
+            value={filterValues.indoorOutdoor}
+            onChange={handleChange}
+            inputProps={{
+              name: 'indoor_outdoor',
+              id: 'indoor_outdoor'
+            }}
+          >
+            <option aria-label='None' value='' />
+            <option value='indoor'>Indoor</option>
+            <option value='outdoor'>Outdoor</option>
           </Select>
         </FormControl>
         <FormControl className={classes.formControl}>
-          <InputLabel htmlFor='age-native-simple'>Location</InputLabel>
+          <InputLabel htmlFor='weather'>Weather</InputLabel>
           <Select
             native
-            labelId='demo-simple-select-label'
-            id='demo-simple-select'
-            // value={indoorOutdoor}
-            // onChange={handleChange}
+            value={filterValues.weather}
+            onChange={handleChange}
+            inputProps={{
+              name: 'weather',
+              id: 'weather'
+            }}
           >
             <option aria-label='None' value='' />
-            {/* map through database and list options */}
-            <option value={10}>Ten</option>
-            <option value={20}>Twenty</option>
-            <option value={30}>Thirty</option>
+            <option value='sunny'>Sunny</option>
+            <option value='rain'>Rain</option>
+            <option value='snow'>Snow</option>
           </Select>
         </FormControl>
-        <FormControl className={classes.formControl}>
-          <InputLabel htmlFor='age-native-simple'>Weather</InputLabel>
-          <Select
-            native
-            labelId='demo-simple-select-label'
-            id='demo-simple-select'
-            // value={weather}
-            // onChange={handleChange}
-          >
-            <option aria-label='None' value='' />
-            {/* map through database and list options */}
-            <option value={10}>Ten</option>
-            <option value={20}>Twenty</option>
-            <option value={30}>Thirty</option>
-          </Select>
-        </FormControl>
-        <FormControl className={classes.formControl}>
-          <InputLabel htmlFor='age-native-simple'>Category</InputLabel>
-          <Select
-            native
-            labelId='demo-simple-select-label'
-            id='demo-simple-select'
-            // value={category}
-            // onChange={handleChange}
-          >
-            <option aria-label='None' value='' />
-            {/* map through database and list options */}
-            <option value={10}>Ten</option>
-            <option value={20}>Twenty</option>
-            <option value={30}>Thirty</option>
-          </Select>
-        </FormControl>
-        <Button onClick={handleSearch} className={classes.searchBtn}>
-          Search
+        <Button onClick={handleApply} className={classes.applyBtn}>
+          Apply
         </Button>
       </div>
     </div>
@@ -106,7 +128,7 @@ const useStyles = makeStyles({
   selectEmpty: {
     marginTop: '2rem'
   },
-  searchBtn: {
+  applyBtn: {
     backgroundColor: '#E75734',
     color: '#fff',
     margin: '2rem',
