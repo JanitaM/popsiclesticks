@@ -271,19 +271,26 @@ app.post('/filteredIdeas', authorizeUser, async (request, response) => {
       response.status(400).send({ message: 'access denied' });
     }
 
+    const params = [];
+    let sql = `SELECT * FROM popsicle_stick.idea WHERE email = "${email}"`;
+
+    if (request.body.data.cost) {
+      sql += ` AND cost = "${request.body.data.cost}"`;
+    }
+
+    if (request.body.data.indoor_outdoor) {
+      sql += ` AND indoor_outdoor = "${request.body.data.indoor_outdoor}"`;
+    }
+
+    if (request.body.data.weather) {
+      sql += ` AND weather = "${request.body.data.weather}"`;
+    }
+
+    console.log(sql);
     const con = await pool.getConnection();
-    const recordset = await con.execute(
-      'SELECT * FROM popsicle_stick.idea WHERE email = ? AND cost = ? OR indoor_outdoor = ? OR weather = ?',
-      [
-        email,
-        request.body.data.cost ? request.body.data.cost : null,
-        request.body.data.indoor_outdoor
-          ? request.body.data.indoor_outdoor
-          : null,
-        request.body.data.weather ? request.body.data.weather : null
-      ]
-    );
+    const recordset = await con.execute(sql);
     con.release();
+
     console.log('recordset', recordset[0]);
     response.status(200).send({ message: recordset[0] });
   } catch (error) {
@@ -296,7 +303,6 @@ app.post('/filteredIdeas', authorizeUser, async (request, response) => {
 app.put('/user/idea', authorizeUser, async (request, response) => {
   try {
     console.log('UPDATE ONE IDEA');
-    // console.log('rb', request.body);
 
     const email = request.decodedToken.email;
     if (!email) {
