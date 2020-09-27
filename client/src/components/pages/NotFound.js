@@ -1,13 +1,17 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, Typography } from '@material-ui/core';
 
 const NotFound = () => {
   const classes = useStyles();
 
   return (
     <div className={classes.notFoundContainer}>
-      <h1>Page Not Found</h1>
-      <p>This page does not exist on the app.</p>
+      <Typography component='h1' variant='h4' gutterBottom>
+        Page Not Found
+      </Typography>
+      <Typography variant='body1' gutterBottom>
+        This page does not exist on the app.
+      </Typography>
       <img
         src='https://live.staticflickr.com/970/41169508644_c21f5d8aff_b.jpg'
         alt='melting popsicle'
@@ -23,7 +27,8 @@ const useStyles = makeStyles({
     textAlign: 'center'
   },
   image: {
-    width: '250px'
+    width: '250px',
+    marginTop: '1rem'
   }
 });
 

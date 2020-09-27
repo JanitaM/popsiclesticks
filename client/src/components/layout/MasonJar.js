@@ -47,10 +47,10 @@ const MasonJar = ({
 
     console.log(filteredIdeas);
     if (filteredIdeas.length > 0) {
-      console.log('filteredideas');
+      console.log('there are the filtered ideas');
       getRandomIdea(filteredIdeas);
     } else {
-      console.log('no filteredIdeas');
+      console.log('not using filter');
       try {
         if (token) {
           // GET all of the user's ideas

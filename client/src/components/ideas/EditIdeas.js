@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link } from '@reach/router';
-import { Fab } from '@material-ui/core';
+import { Fab, makeStyles } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
-import { useTheme, makeStyles } from '@material-ui/core/styles';
+import { navigate } from '@reach/router';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   btn: {
     margin: '.5rem'
   },
@@ -14,6 +14,10 @@ const useStyles = makeStyles((theme) => ({
 export default function EditIdea() {
   const classes = useStyles();
 
+  const handleNavigate = () => {
+    navigate('/dashboard');
+  };
+
   return (
     <div>
       <Fab
@@ -21,6 +25,7 @@ export default function EditIdea() {
         color='primary'
         aria-label='add'
         className={classes.btn}
+        onClick={handleNavigate}
       >
         <Link to='/dashboard'>
           <EditIcon className={classes.icon} />

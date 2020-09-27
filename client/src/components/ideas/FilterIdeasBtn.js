@@ -1,12 +1,27 @@
 import React, { useState } from 'react';
 import FilterListIcon from '@material-ui/icons/FilterList';
-import { Fab, makeStyles, Dialog } from '@material-ui/core';
+import { Fab, makeStyles, Dialog, Typography } from '@material-ui/core';
 import FilterModal from '../ideas/FilterModal';
-import axios from 'axios';
 
 const FilterIdeasBtn = ({ signedInUser, filteredIdeas, setFilteredIdeas }) => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
+
+  const [filterValues, setFilterValues] = useState({
+    cost: '',
+    indoor_outdoor: '',
+    weather: ''
+  });
+  console.log(filterValues);
+
+  const val = [];
+  for (const value in filterValues) {
+    val.push(
+      <Typography variant='h6' style={{ margin: '0 10px', color: '#CF4F30' }}>
+        {filterValues[value]}{' '}
+      </Typography>
+    );
+  }
 
   const handleOpen = () => {
     setOpen(true);
@@ -41,8 +56,15 @@ const FilterIdeasBtn = ({ signedInUser, filteredIdeas, setFilteredIdeas }) => {
           handleClose={handleClose}
           filteredIdeas={filteredIdeas}
           setFilteredIdeas={setFilteredIdeas}
+          filterValues={filterValues}
+          setFilterValues={setFilterValues}
         />
       </Dialog>
+
+      <div className={classes.filterParams}>
+        <Typography variant='h6'>Filtering on: </Typography>
+        <div className={classes.items}>{val}</div>
+      </div>
     </div>
   );
 };
@@ -54,6 +76,18 @@ const useStyles = makeStyles(() => ({
   },
   btn: {
     margin: '.5rem'
+  },
+  filterParams: {
+    alignSelf: 'center',
+    marginLeft: '1rem',
+    display: 'flex',
+    flexDirection: 'row'
+  },
+  items: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 }));
 

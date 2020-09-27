@@ -12,17 +12,13 @@ const FilterModal = ({
   signedInUser,
   handleClose,
   filteredIdeas,
-  setFilteredIdeas
+  setFilteredIdeas,
+  filterValues,
+  setFilterValues
 }) => {
   const classes = useStyles();
-  console.log(filteredIdeas);
-
-  const [filterValues, setFilterValues] = useState({
-    cost: '',
-    indoor_outdoor: '',
-    weather: ''
-  });
-  console.log(filterValues);
+  // console.log(filteredIdeas);
+  // console.log(filterValues);
 
   const handleChange = (event) => {
     setFilterValues({
@@ -45,7 +41,13 @@ const FilterModal = ({
           data: filterValues
         }
       });
-      setFilteredIdeas(res.data.message);
+
+      if (res.data.message.length === 0) {
+        console.log('no ideas match your filter params');
+        alert('no matches found');
+      } else {
+        setFilteredIdeas(res.data.message);
+      }
     }
 
     handleClose();

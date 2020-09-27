@@ -32,7 +32,10 @@ const App = () => {
 
   function signOut() {
     try {
-      Auth.signOut({ global: true }).then(() => setSignedInUser(undefined));
+      Auth.signOut({ global: true }).then(() => {
+        setSignedInUser(undefined);
+        setSignInForm({});
+      });
     } catch (error) {
       console.log(error);
     }

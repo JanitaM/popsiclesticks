@@ -56,7 +56,9 @@ const ConfirmSignUp = ({ signUpForm, setSignUpForm }) => {
             .then(() => uploadToSql(myUuid))
             .then(() => navigate('/signin'))
             .catch((error) => console.log(error));
-        } else {
+        }
+
+        if (!signUpForm.profilepic) {
           uploadToSql();
           navigate('/signin');
         }
@@ -111,6 +113,7 @@ const useStyles = makeStyles((theme) => ({
   confirmBtn: {
     width: '100%',
     margin: '2rem 0',
+    color: '#fff',
     backgroundColor: '#E75734',
     '&:hover': {
       backgroundColor: '#CF4F30'

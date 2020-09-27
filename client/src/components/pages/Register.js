@@ -52,25 +52,31 @@ const Register = () => {
 
     if (signUpForm.email === '' || signUpForm.password === '') {
       alert('Please enter an email and password');
-    } else {
-      try {
-        console.log(signUpForm);
+      return;
+    }
 
-        async function signUp() {
-          const user = await Auth.signUp({
-            username: signUpForm.email, //use username but pass in email
-            password: signUpForm.password,
-            attributes: {
-              email: signUpForm.email
-            }
-          });
-          setSignUpUser(user);
-        }
-        signUp();
-        setIsRegisterPage(false);
-      } catch (error) {
-        console.log(error);
+    if (signUpForm.password.length < 9) {
+      alert('Password must be at least nine characters');
+      return;
+    }
+
+    try {
+      console.log(signUpForm);
+
+      async function signUp() {
+        const user = await Auth.signUp({
+          username: signUpForm.email, //use username but pass in email
+          password: signUpForm.password,
+          attributes: {
+            email: signUpForm.email
+          }
+        });
+        setSignUpUser(user);
       }
+      signUp();
+      setIsRegisterPage(false);
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -117,7 +123,11 @@ const Register = () => {
               id='password'
               autoComplete='current-password'
             />
-            <Typography gutterBottom className={classes.m1}>
+            <Typography variant='body2'>
+              <span className={classes.req}>*</span>
+              Password must be at least nine characters long
+            </Typography>
+            <Typography variant='body2' className={classes.m1}>
               Optional - Upload a profile pic
             </Typography>
             <div className={classes.uploadContainer}>
@@ -230,6 +240,10 @@ const useStyles = makeStyles((theme) => ({
     backgroundRepeat: 'no-repeat',
     height: '90px',
     width: '90px'
+  },
+  req: {
+    color: '#CF4F30',
+    fontSize: '20px'
   }
 }));
 

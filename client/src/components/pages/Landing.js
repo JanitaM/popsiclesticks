@@ -1,6 +1,6 @@
 import React from 'react';
-import { Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Typography, Button, makeStyles } from '@material-ui/core';
+import { Link } from '@reach/router';
 
 const Landing = () => {
   const classes = useStyles();
@@ -22,6 +22,11 @@ const Landing = () => {
           <Typography variant='h3'>
             Select your next adventure, date night, book...
           </Typography>
+          <Button className={classes.registerBtn}>
+            <Link to='/register' className={classes.registerLink}>
+              Register
+            </Link>
+          </Button>
         </div>
       </div>
     </div>
@@ -84,6 +89,7 @@ const useStyles = makeStyles({
   },
   heroText3: {
     display: 'flex',
+    flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     padding: '0 2rem',
@@ -94,6 +100,19 @@ const useStyles = makeStyles({
     bottom: '0',
     height: '100vh',
     backgroundColor: 'rgba(0,0,0,0.5)'
+  },
+  registerBtn: {
+    backgroundColor: '#E75734',
+    color: '#fff',
+    margin: '1rem',
+    padding: '10px',
+    '&:hover': {
+      backgroundColor: '#CF4F30',
+      color: '#fff'
+    }
+  },
+  registerLink: {
+    color: '#fff'
   }
 });
 
