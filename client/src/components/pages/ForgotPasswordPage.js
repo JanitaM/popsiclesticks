@@ -10,9 +10,12 @@ import {
   Button
 } from '@material-ui/core';
 import ResetPasswordPage from './ResetPasswordPage';
+import { useDispatch } from 'react-redux';
+import { setSnackbar } from '../../redux/ducks/snackbar';
 
 const ForgotPasswordPage = ({ setIsSignInPage, setSignInForm }) => {
   const classes = useStyles();
+  const dispatch = useDispatch();
 
   const [userInfo, setUserInfo] = useState({
     username: '',
@@ -36,7 +39,7 @@ const ForgotPasswordPage = ({ setIsSignInPage, setSignInForm }) => {
     e.preventDefault();
 
     if (!userInfo.username) {
-      alert('Please enter your email');
+      dispatch(setSnackbar(true, 'error', 'Please enter your email'));
       return;
     }
 

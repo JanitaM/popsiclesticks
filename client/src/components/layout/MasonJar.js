@@ -6,6 +6,8 @@ import Modal from '@material-ui/core/Modal';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
 import Preloader from '../layout/Preloader';
+import { useDispatch } from 'react-redux';
+import { setSnackbar } from '../../redux/ducks/snackbar';
 
 function convertImg(binArr) {
   let arrayBufferView = new Uint8Array(binArr);
@@ -22,6 +24,8 @@ const MasonJar = ({
   setFilteredIdeas
 }) => {
   const classes = useStyles();
+  const dispatch = useDispatch();
+
   const [username, setUsername] = useState('');
   const [token, setToken] = useState('');
   const [open, setOpen] = useState(false);
@@ -67,7 +71,9 @@ const MasonJar = ({
           if (ideaArr.length > 0) {
             getRandomIdea(ideaArr);
           } else {
-            alert('no ideas in the db');
+            dispatch(
+              setSnackbar(true, 'error', 'There are no ideas in the database')
+            );
             return;
           }
         }

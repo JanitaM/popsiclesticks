@@ -26,7 +26,8 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import { Link } from '@reach/router';
 import EditIdeaModal from '../ideas/EditIdeaModal';
-import Preloader from '../layout/Preloader';
+import { useDispatch } from 'react-redux';
+import { setSnackbar } from '../../redux/ducks/snackbar';
 
 function descendingComparator(a, b, orderBy) {
   let value = 0;
@@ -200,6 +201,7 @@ const EnhancedTableToolbar = (props) => {
     setIdeaToEdit
   } = props;
   console.log('props', props);
+  const dispatch = useDispatch();
 
   const [open, setOpen] = useState(false);
 
@@ -253,7 +255,7 @@ const EnhancedTableToolbar = (props) => {
             id: selectedId
           }
         });
-        alert('Idea deleted');
+        dispatch(setSnackbar(true, 'success', 'Idea deleted'));
         getData(signedInUser.username, signedInUser.token);
         setSelected([]);
       } catch (error) {

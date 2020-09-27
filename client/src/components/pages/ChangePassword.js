@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Auth } from 'aws-amplify';
-import { Link } from '@reach/router';
 import {
   TextField,
   Grid,
@@ -8,9 +7,13 @@ import {
   Container,
   Button
 } from '@material-ui/core';
+import { useDispatch } from 'react-redux';
+import { setSnackbar } from '../../redux/ducks/snackbar';
 
 const ChangePassword = ({ setIsAccountSettingsPage }) => {
   const classes = useStyles();
+  const dispatch = useDispatch();
+
   const [userInfo, setUserInfo] = useState({
     oldPassword: '',
     newPassword: ''
@@ -32,7 +35,7 @@ const ChangePassword = ({ setIsAccountSettingsPage }) => {
         .then((data) => console.log(data))
         .then(() => {
           setIsAccountSettingsPage(true);
-          alert('Password changed!');
+          dispatch(setSnackbar(true, 'success', 'Password changed!'));
         })
         .catch((err) => console.log(err));
     } catch (error) {

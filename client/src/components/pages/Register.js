@@ -13,9 +13,12 @@ import {
   Input
 } from '@material-ui/core';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
+import { useDispatch } from 'react-redux';
+import { setSnackbar } from '../../redux/ducks/snackbar';
 
 const Register = () => {
   const classes = useStyles();
+  const dispatch = useDispatch();
 
   const [isRegisterPage, setIsRegisterPage] = useState(true);
 
@@ -51,12 +54,16 @@ const Register = () => {
     e.preventDefault();
 
     if (signUpForm.email === '' || signUpForm.password === '') {
-      alert('Please enter an email and password');
+      dispatch(
+        setSnackbar(true, 'error', 'Please enter an email and password')
+      );
       return;
     }
 
     if (signUpForm.password.length < 9) {
-      alert('Password must be at least nine characters');
+      dispatch(
+        setSnackbar(true, 'error', 'Password must be at least nine characters')
+      );
       return;
     }
 

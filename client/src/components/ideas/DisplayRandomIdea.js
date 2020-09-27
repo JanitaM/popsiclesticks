@@ -13,6 +13,8 @@ import {
   Button
 } from '@material-ui/core';
 import Preloader from '../layout/Preloader';
+import { useDispatch } from 'react-redux';
+import { setSnackbar } from '../../redux/ducks/snackbar';
 
 const DisplayRandomIdea = ({
   handleClose,
@@ -21,7 +23,8 @@ const DisplayRandomIdea = ({
   getCompletedIdeas
 }) => {
   const classes = useStyles();
-  console.log(randomIdea);
+  const dispatch = useDispatch();
+  // console.log(randomIdea);
   const [username, setUsername] = useState('');
   const [token, setToken] = useState('');
 
@@ -161,7 +164,7 @@ const DisplayRandomIdea = ({
 
     handleClose();
     getCompletedIdeas();
-    alert('Idea deleted');
+    dispatch(setSnackbar(true, 'success', 'Idea deleted'));
   };
 
   return (

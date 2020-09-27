@@ -16,6 +16,8 @@ import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 import { Storage } from 'aws-amplify';
+import { useDispatch } from 'react-redux';
+import { setSnackbar } from '../../redux/ducks/snackbar';
 
 function convertImg(binArr) {
   let arrayBufferView = new Uint8Array(binArr);
@@ -45,8 +47,9 @@ const EditIdeaModal = ({
   signedInUser,
   handleClose
 }) => {
-  console.log('ideaToEdit', ideaToEdit);
+  // console.log('ideaToEdit', ideaToEdit);
   const classes = useStyles();
+  const dispatch = useDispatch();
 
   const handleCost = (e, newCost) => {
     setUpdatedInfo({ ...updatedInfo, cost: newCost });
@@ -110,7 +113,7 @@ const EditIdeaModal = ({
       console.log(error);
     }
 
-    alert('Status updated!');
+    dispatch(setSnackbar(true, 'success', 'Status updated!'));
   };
 
   const [updatedInfo, setUpdatedInfo] = useState({
@@ -325,7 +328,7 @@ const EditIdeaModal = ({
         console.log(error);
       }
     } else {
-      alert('A title is required');
+      dispatch(setSnackbar(true, 'error', 'A title is required'));
     }
   };
 

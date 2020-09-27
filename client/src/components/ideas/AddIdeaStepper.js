@@ -11,6 +11,8 @@ import Typography from '@material-ui/core/Typography';
 import Step1 from './addIdea/Step1';
 import Step2 from './addIdea/Step2';
 import Step3 from './addIdea/Step3';
+import { useDispatch } from 'react-redux';
+import { setSnackbar } from '../../redux/ducks/snackbar';
 
 function getSteps() {
   return ['Step 1', 'Step 2', 'Step 3'];
@@ -36,6 +38,8 @@ const AddIdeaStepper = ({
   signedInUser
 }) => {
   const classes = useStyles();
+  const dispatch = useDispatch();
+
   const [username, setUsername] = useState('');
   const [token, setToken] = useState('');
 
@@ -137,7 +141,7 @@ const AddIdeaStepper = ({
         console.log(error);
       }
     } else {
-      alert('A title is required');
+      dispatch(setSnackbar(true, 'error', 'A title is required'));
     }
 
     setIdeaForm({});

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Button,
   makeStyles,
@@ -7,16 +7,18 @@ import {
   InputLabel
 } from '@material-ui/core';
 import Axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { setSnackbar } from '../../redux/ducks/snackbar';
 
 const FilterModal = ({
   signedInUser,
   handleClose,
-  filteredIdeas,
   setFilteredIdeas,
   filterValues,
   setFilterValues
 }) => {
   const classes = useStyles();
+  const dispatch = useDispatch();
   // console.log(filteredIdeas);
   // console.log(filterValues);
 
@@ -44,7 +46,7 @@ const FilterModal = ({
 
       if (res.data.message.length === 0) {
         console.log('no ideas match your filter params');
-        alert('no matches found');
+        dispatch(setSnackbar(true, 'error', 'No matches found'));
       } else {
         setFilteredIdeas(res.data.message);
       }

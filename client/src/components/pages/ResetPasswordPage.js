@@ -9,15 +9,18 @@ import {
   Container,
   Button
 } from '@material-ui/core';
+import { useDispatch } from 'react-redux';
+import { setSnackbar } from '../../redux/ducks/snackbar';
 
 const ResetPasswordPage = ({ userInfo, setUserInfo, setIsSignInPage }) => {
   const classes = useStyles();
+  const dispatch = useDispatch();
 
   const resetPassword = async (e) => {
     e.preventDefault();
 
     if (!userInfo.username || !userInfo.code || !userInfo.new_password) {
-      alert('Please enter all info');
+      dispatch(setSnackbar(true, 'error', 'Please enter all information'));
       return;
     }
 

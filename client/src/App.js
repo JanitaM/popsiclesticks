@@ -4,8 +4,13 @@ import PublicRoutes from './routes/PublicRoutes';
 import PrivateRoutes from './routes/PrivateRoutes';
 import './App.css';
 import { navigate } from '@reach/router';
+import Snackbar from '../src/components/layout/Snackbar';
+import { useDispatch } from 'react-redux';
+import { setSnackbar } from '../src/redux/ducks/snackbar';
 
 const App = () => {
+  const dispatch = useDispatch();
+
   const [signedInUser, setSignedInUser] = useState(undefined);
   const [signInForm, setSignInForm] = useState({
     username: '',
@@ -16,7 +21,7 @@ const App = () => {
     e.preventDefault();
 
     if (!signInForm.username || !signInForm.password) {
-      alert('Please enter all information');
+      dispatch(setSnackbar(true, 'error', 'Please enter all information'));
       return;
     }
 
@@ -26,7 +31,7 @@ const App = () => {
       navigate('/');
     } catch (error) {
       console.log(error);
-      alert(error.message);
+      dispatch(setSnackbar(true, 'error', error.message));
     }
   }
 
@@ -50,6 +55,7 @@ const App = () => {
 
   return (
     <>
+      <Snackbar />
       {signedInUser ? (
         <PrivateRoutes signedInUser={signedInUser} signOut={signOut} />
       ) : (
