@@ -20,7 +20,8 @@ const DisplayRandomIdea = ({
   handleClose,
   randomIdea,
   signedInUser,
-  getCompletedIdeas
+  getCompletedIdeas,
+  setFilterValues
 }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -114,12 +115,17 @@ const DisplayRandomIdea = ({
     }
 
     handleClose();
+    setFilterValues({});
     getCompletedIdeas();
+    dispatch(setSnackbar(true, 'success', 'Go have fun!'));
   };
 
   const handleDecline = (e) => {
     e.preventDefault();
+
     handleClose();
+    setFilterValues({});
+    dispatch(setSnackbar(true, 'warning', 'Pick another stick'));
   };
 
   const deletePictureFromS3 = async (e) => {
@@ -163,6 +169,7 @@ const DisplayRandomIdea = ({
     }
 
     handleClose();
+    setFilterValues({});
     getCompletedIdeas();
     dispatch(setSnackbar(true, 'success', 'Idea deleted'));
   };

@@ -3,16 +3,15 @@ import FilterListIcon from '@material-ui/icons/FilterList';
 import { Fab, makeStyles, Dialog, Typography } from '@material-ui/core';
 import FilterModal from '../ideas/FilterModal';
 
-const FilterIdeasBtn = ({ signedInUser, filteredIdeas, setFilteredIdeas }) => {
+const FilterIdeasBtn = ({
+  signedInUser,
+  filteredIdeas,
+  setFilteredIdeas,
+  filterValues,
+  setFilterValues
+}) => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
-
-  const [filterValues, setFilterValues] = useState({
-    cost: '',
-    indoor_outdoor: '',
-    weather: ''
-  });
-  console.log(filterValues);
 
   const val = [];
   for (const value in filterValues) {

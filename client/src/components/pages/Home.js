@@ -9,7 +9,15 @@ import axios from 'axios';
 
 const Home = ({ signedInUser }) => {
   const classes = useStyles();
+
   const [filteredIdeas, setFilteredIdeas] = useState([]);
+
+  const [filterValues, setFilterValues] = useState({
+    cost: '',
+    indoor_outdoor: '',
+    weather: ''
+  });
+  // console.log(filterValues);
 
   const [completedIdeas, setCompletedIdeas] = useState([]);
 
@@ -47,6 +55,8 @@ const Home = ({ signedInUser }) => {
               signedInUser={signedInUser}
               setFilteredIdeas={setFilteredIdeas}
               filteredIdeas={filteredIdeas}
+              filterValues={filterValues}
+              setFilterValues={setFilterValues}
             />
           </div>
 
@@ -76,6 +86,7 @@ const Home = ({ signedInUser }) => {
                 getCompletedIdeas={getCompletedIdeas}
                 filteredIdeas={filteredIdeas}
                 setFilteredIdeas={setFilteredIdeas}
+                setFilterValues={setFilterValues}
               />
             </Grid>
 

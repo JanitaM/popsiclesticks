@@ -21,7 +21,8 @@ const MasonJar = ({
   signedInUser,
   getCompletedIdeas,
   filteredIdeas,
-  setFilteredIdeas
+  setFilteredIdeas,
+  setFilterValues
 }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -51,7 +52,7 @@ const MasonJar = ({
 
     console.log(filteredIdeas);
     if (filteredIdeas.length > 0) {
-      console.log('there are the filtered ideas');
+      console.log('there are filtered ideas');
       getRandomIdea(filteredIdeas);
     } else {
       console.log('not using filter');
@@ -162,6 +163,7 @@ const MasonJar = ({
             handleClose={handleClose}
             randomIdea={randomIdea}
             getCompletedIdeas={getCompletedIdeas}
+            setFilterValues={setFilterValues}
           />
         </Modal>
       </div>

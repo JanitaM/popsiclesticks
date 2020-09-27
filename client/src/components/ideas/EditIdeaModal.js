@@ -92,6 +92,8 @@ const EditIdeaModal = ({
     } catch (error) {
       console.log(error);
     }
+
+    dispatch(setSnackbar(true, 'success', 'Idea Updated'));
   };
 
   const updateCompleted = async () => {
@@ -112,8 +114,6 @@ const EditIdeaModal = ({
     } catch (error) {
       console.log(error);
     }
-
-    dispatch(setSnackbar(true, 'success', 'Status updated!'));
   };
 
   const [updatedInfo, setUpdatedInfo] = useState({
@@ -300,7 +300,10 @@ const EditIdeaModal = ({
           headers: {
             'Content-Type': 'application/json'
           }
-        }).then(() => handleClose());
+        }).then(() => {
+          handleClose();
+          dispatch(setSnackbar(true, 'success', 'Status updated!'));
+        });
       }
 
       try {
