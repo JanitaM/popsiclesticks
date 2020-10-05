@@ -239,7 +239,6 @@ const DisplayRandomIdea = ({
                       href={randomIdea.idea.url}
                       rel='noreferrer'
                       size='large'
-                      className={classes.webLink}
                     >
                       <Button
                         variant='contained'
@@ -288,7 +287,7 @@ const DisplayRandomIdea = ({
 
 const useStyles = makeStyles((theme) => ({
   media: {
-    height: '250px',
+    height: '200px',
     margin: '1rem'
   },
   paper: {
@@ -304,7 +303,11 @@ const useStyles = makeStyles((theme) => ({
   },
   imagePaper: {
     textAlign: 'center',
-    color: theme.palette.text.secondary
+    color: theme.palette.text.secondary,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   yesBtn: {
     backgroundColor: '#E75734',

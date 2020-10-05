@@ -1,4 +1,4 @@
-export const SET_SNACKBAR = 'teamly/settings/SET_SNACKBAR';
+export const SET_SNACKBAR = 'teamly/settings/SET_SNACKBAR'; //project name/reducer name/action name
 
 const initialState = {
   snackbarOpen: false,

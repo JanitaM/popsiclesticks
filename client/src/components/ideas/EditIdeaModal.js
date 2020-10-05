@@ -302,7 +302,7 @@ const EditIdeaModal = ({
           }
         }).then(() => {
           handleClose();
-          dispatch(setSnackbar(true, 'success', 'Status updated!'));
+          dispatch(setSnackbar(true, 'success', 'Idea updated!'));
         });
       }
 

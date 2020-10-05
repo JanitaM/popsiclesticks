@@ -2,13 +2,13 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql2/promise');
-const path = require('path');
-const { response } = require('express');
+// const path = require('path');
+// const { response } = require('express');
 const jwt = require('jsonwebtoken');
 const jwkToPem = require('jwk-to-pem');
 const aws = require('aws-sdk');
 const asyncMap = require('./helpers');
-const { CodeCommit } = require('aws-sdk');
+// const { CodeCommit } = require('aws-sdk');
 
 function setCreds() {
   aws.config.setPromisesDependency();
